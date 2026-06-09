@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.env
+*.pyc
+__pycache__/
+.vite/
+.DS_Store
+*.log
+
+# 章节数据 → R2, 不进 Git
+/data/1/
+/data/2/
+/data/3/
+/data/4/
+/data/5/
+/data/6/
+/data/7/
+/data/8/
+/data/9/
+/data/10/
+/data/catalog_*.json
+
+# 保留 books.json
+!/data/books.json
