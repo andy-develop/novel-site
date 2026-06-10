@@ -68,8 +68,19 @@ async function loadBook() {
   }
 }
 
+function renderMd(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>')
+}
+
 const paragraphs = computed(() => {
   return chapterContent.value.split('\n\n').filter(Boolean)
+})
+
+const renderedParagraphs = computed(() => {
+  return paragraphs.value.map(p => renderMd(p))
 })
 
 const currentIndex = computed(() => {
@@ -133,7 +144,7 @@ function nextChapter() {
     <h1>{{ chapterTitle }}</h1>
 
     <div class="content">
-      <p v-for="(p, i) in paragraphs" :key="i">{{ p }}</p>
+      <p v-for="(p, i) in renderedParagraphs" :key="i" v-html="p"></p>
     </div>
 
     <div class="chapter-nav bottom-nav">

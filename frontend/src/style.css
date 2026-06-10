@@ -283,6 +283,8 @@ header {
   margin-bottom: 0.6em;
 }
 .content p:first-of-type { text-indent: 0; }
+.content p em { font-style: italic; color: var(--gold); }
+.content p strong { font-weight: 700; color: var(--gold); }
 
 @media (max-width: 480px) {
   .reader { padding: 20px 16px 60px; }
