@@ -4,14 +4,14 @@ import MiniSearch from 'minisearch'
 
 const props = defineProps({
   books: { type: Array, default: () => [] },
-  categories: { type: Array, default: () => ['全部'] },
+  categories: { type: Array, default: () => ['All'] },
   r2Base: { type: String, default: '' },
 })
 
 const emit = defineEmits(['open-reader'])
 
 const searchQuery = ref('')
-const selectedCat = ref('全部')
+const selectedCat = ref('All')
 const miniSearch = ref(null)
 
 onMounted(() => {
@@ -24,8 +24,8 @@ watch(() => props.books, (books) => {
 
 function initSearch() {
   const ms = new MiniSearch({
-    fields: ['title', 'author'],
-    storeFields: ['id', 'title', 'author', 'category', 'intro', 'total_chapters', 'lang'],
+    fields: ['title', 'author', 'category'],
+    storeFields: ['id', 'title', 'author', 'category', 'intro', 'total_chapters'],
     searchOptions: { boost: { title: 2 }, prefix: true, fuzzy: 0.2 }
   })
   ms.addAll(props.books)
@@ -38,7 +38,7 @@ const filteredBooks = computed(() => {
     const results = miniSearch.value?.search(searchQuery.value.trim()) || []
     list = results.map(r => r)
   }
-  if (selectedCat.value !== '全部') {
+  if (selectedCat.value !== 'All') {
     list = list.filter(b => b.category === selectedCat.value)
   }
   return list
@@ -53,10 +53,10 @@ function getCoverChar(title) {
 <template>
   <header>
     <div class="header-inner">
-      <div class="logo"><span>书</span>阁</div>
+      <div class="logo"><span>N</span>OVEL VAULT</div>
       <div class="search-wrap">
         <span class="icon">⌕</span>
-        <input type="search" v-model="searchQuery" placeholder="搜索书名或作者..." />
+        <input type="search" v-model="searchQuery" placeholder="Search by title or author..." />
       </div>
     </div>
   </header>
@@ -73,20 +73,19 @@ function getCoverChar(title) {
       @click="emit('open-reader', book.id)">
       <div class="card-cover">
         <span class="cover-char">{{ getCoverChar(book.title) }}</span>
-        <span v-if="book.lang === 'english'" class="lang-badge">EN</span>
       </div>
       <div class="card-body">
         <div class="card-title">{{ book.title }}</div>
-        <div class="card-author">{{ book.author || '匿名' }}</div>
+        <div class="card-author">{{ book.author || 'Unknown' }}</div>
         <div class="card-meta">
-          <span>{{ book.category || '未分类' }}</span>
-          <span>{{ book.total_chapters }} 章</span>
+          <span>{{ book.category || 'Uncategorized' }}</span>
+          <span>{{ book.total_chapters }} chapters</span>
         </div>
       </div>
     </div>
   </div>
 
   <div v-else class="empty-state">
-    <p>未找到匹配的小说</p>
+    <p>No novels found</p>
   </div>
 </template>

@@ -7,10 +7,9 @@ const R2_BASE = 'https://data.lyriq.space'
 const route = ref('home')
 const params = ref({})
 
-const booksData = ref([])
-const categories = ref([])
+const allBooks = ref([])
 
-// 路由解析: #/reader/1/5 或 #/
+// Parse hash routing
 function parseHash() {
   const hash = window.location.hash.slice(1) || '/'
   const parts = hash.split('/').filter(Boolean)
@@ -34,15 +33,20 @@ function navigateToHome() {
   window.location.hash = '#/'
 }
 
-const BOOKS_URL = './data/books.json'
+// Only show English novels
+const books = computed(() =>
+  allBooks.value.filter(b => b.lang === 'english' || b.lang === 'en')
+)
+
+const categories = computed(() => {
+  const cats = new Set(books.value.map(b => b.category).filter(Boolean))
+  return ['All', ...Array.from(cats)]
+})
 
 async function loadBooks() {
   try {
-    const res = await fetch(BOOKS_URL)
-    const data = await res.json()
-    booksData.value = data
-    const cats = new Set(data.map(b => b.category).filter(Boolean))
-    categories.value = ['全部', ...Array.from(cats)]
+    const res = await fetch('./data/books.json')
+    allBooks.value = await res.json()
   } catch (e) {
     console.error('Failed to load books:', e)
   }
@@ -53,7 +57,7 @@ loadBooks()
 <template>
   <HomePage
     v-if="route === 'home'"
-    :books="booksData"
+    :books="books"
     :categories="categories"
     :r2Base="R2_BASE"
     @open-reader="navigateToReader"
@@ -62,7 +66,7 @@ loadBooks()
     v-else-if="route === 'reader'"
     :bookId="params.bookId"
     :chapterId="params.chapterId"
-    :books="booksData"
+    :books="books"
     :r2Base="R2_BASE"
     @navigate-home="navigateToHome"
     @navigate-chapter="(chId) => navigateToReader(params.bookId, chId)"

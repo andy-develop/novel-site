@@ -30,7 +30,7 @@ async function loadBook() {
   error.value = ''
   findBook()
   if (!book.value) {
-    error.value = '小说未找到'
+    error.value = 'Novel not found'
     loading.value = false
     return
   }
@@ -104,21 +104,21 @@ function nextChapter() {
   <header>
     <div class="header-inner">
       <div class="logo" @click="emit('navigate-home')" style="cursor:pointer">
-        <span>书</span>阁
+        <span>N</span>OVEL VAULT
       </div>
       <span class="header-book-title" v-if="book">{{ book.title }}</span>
     </div>
   </header>
 
-  <div v-if="loading" class="loading">加载中...</div>
+  <div v-if="loading" class="loading">Loading...</div>
 
   <div v-else-if="error" class="reader">
-    <button class="back-btn" @click="emit('navigate-home')">← 返回书库</button>
+    <button class="back-btn" @click="emit('navigate-home')">← Back to Library</button>
     <p style="color:var(--text-dim);margin-top:40px">{{ error }}</p>
   </div>
 
   <div v-else class="reader">
-    <button class="back-btn" @click="emit('navigate-home')">← 返回书库</button>
+    <button class="back-btn" @click="emit('navigate-home')">← Back to Library</button>
 
     <div class="chapter-nav">
       <select v-model="currentCh" @change="goChapter" v-if="chapters.length">
@@ -126,8 +126,8 @@ function nextChapter() {
           {{ ch.title }}
         </option>
       </select>
-      <button @click="prevChapter" :disabled="isFirst">← 上一章</button>
-      <button @click="nextChapter" :disabled="isLast">下一章 →</button>
+      <button @click="prevChapter" :disabled="isFirst">← Previous</button>
+      <button @click="nextChapter" :disabled="isLast">Next →</button>
     </div>
 
     <h1>{{ chapterTitle }}</h1>
@@ -137,8 +137,8 @@ function nextChapter() {
     </div>
 
     <div class="chapter-nav bottom-nav">
-      <button @click="prevChapter" :disabled="isFirst">← 上一章</button>
-      <button @click="nextChapter" :disabled="isLast">下一章 →</button>
+      <button @click="prevChapter" :disabled="isFirst">← Previous</button>
+      <button @click="nextChapter" :disabled="isLast">Next →</button>
     </div>
   </div>
 </template>
