@@ -1,55 +1,5 @@
 [
   {
-    "id": 1,
-    "slug": "fulixian",
-    "title": "复利修仙",
-    "author": "Apex Shaw",
-    "category": "修仙/苟道/复利",
-    "intro": "资质最差的四灵根苟王，靠复利思维和极度谨慎在修仙世界稳步崛起。九成九天才死于自身错误，唯有主角永不踩坑。每个人都不蠢，但修行路上全是认知误区和冲动陷阱——这就是全书最大逻辑支点",
-    "total_chapters": 90,
-    "lang": "chinese"
-  },
-  {
-    "id": 2,
-    "slug": "hulianwang-xiuxian",
-    "title": "互联网修仙传",
-    "author": "",
-    "category": "",
-    "intro": "",
-    "total_chapters": 90,
-    "lang": "chinese"
-  },
-  {
-    "id": 3,
-    "slug": "code-epoch",
-    "title": "代码纪元",
-    "author": "AI",
-    "category": "科幻/穿越",
-    "intro": "认知锁解除了，但天空还是灰的。三百年的工业遮蔽不是自然现象——是谁遮住了星星？0x7F3C的信号引来了不止一个回应，而穿越者的原主人意识正在某个地方等待被找到。",
-    "total_chapters": 70,
-    "lang": "chinese"
-  },
-  {
-    "id": 4,
-    "slug": "delivery-knight",
-    "title": "我是一个外卖骑士",
-    "author": "",
-    "category": "都市爽文",
-    "intro": "",
-    "total_chapters": 90,
-    "lang": "chinese"
-  },
-  {
-    "id": 5,
-    "slug": "moshi-zhuixu",
-    "title": "末世赘婿",
-    "author": "Hermes Agent",
-    "category": "都市重生/末世/系统",
-    "intro": "人类最后一位战神在地球沦陷之际被救世系统送回末日爆发前3年，重生为第一豪门的赘婿。他必须保住这段婚姻——因为离婚意味着因果后门失效，末日倒计时将从1095天缩短至3秒。而开启末日传送门的叛徒，正是这个豪门本身。",
-    "total_chapters": 62,
-    "lang": "chinese"
-  },
-  {
     "id": 6,
     "slug": "daylight-tyrant",
     "title": "The Daylight Tyrant",

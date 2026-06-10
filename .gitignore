@@ -7,18 +7,12 @@ __pycache__/
 .DS_Store
 *.log
 
-# 章节数据 → R2, 不进 Git
-/data/1/
-/data/2/
-/data/3/
-/data/4/
-/data/5/
+# Chapter data → R2, not in Git
 /data/6/
 /data/7/
 /data/8/
 /data/9/
-/data/10/
 /data/catalog_*.json
 
-# 保留 books.json
+# Keep books.json
 !/data/books.json
