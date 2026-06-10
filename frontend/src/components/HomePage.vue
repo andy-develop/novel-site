@@ -91,7 +91,7 @@ function openHistory(entry) {
   <div v-if="readingHistory.length" class="history-bar">
     <div class="history-title">📖 Continue Reading</div>
     <div class="history-items">
-      <div v-for="h in readingHistory" :key="h.bookId" class="history-item" @click="openHistory(h)">
+      <div v-for="h in readingHistory.slice(0, 3)" :key="h.bookId" class="history-item" @click="openHistory(h)">
         <span class="history-book">{{ h.bookTitle }}</span>
         <span class="history-chapter">— {{ h.chapterTitle }}</span>
         <span class="history-time">{{ formatTime(h.timestamp) }}</span>
