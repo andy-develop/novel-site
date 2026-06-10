@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import HomePage from './components/HomePage.vue'
 import ReaderPage from './components/ReaderPage.vue'
 
-const R2_BASE = 'https://data.yourdomain.com'
+const R2_BASE = 'https://data.lyriq.space'
 const route = ref('home')
 const params = ref({})
 
