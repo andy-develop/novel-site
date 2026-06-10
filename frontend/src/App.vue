@@ -38,9 +38,9 @@ const books = computed(() =>
   allBooks.value.filter(b => b.lang === 'english' || b.lang === 'en')
 )
 
-const categories = computed(() => {
-  const cats = new Set(books.value.map(b => b.category).filter(Boolean))
-  return ['All', ...Array.from(cats)]
+const tags = computed(() => {
+  const tagSet = new Set(books.value.flatMap(b => b.tags || []))
+  return ['All', ...Array.from(tagSet).sort()]
 })
 
 async function loadBooks() {
@@ -58,7 +58,7 @@ loadBooks()
   <HomePage
     v-if="route === 'home'"
     :books="books"
-    :categories="categories"
+    :tags="tags"
     :r2Base="R2_BASE"
     @open-reader="navigateToReader"
   />

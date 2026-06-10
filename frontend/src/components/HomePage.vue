@@ -4,14 +4,14 @@ import MiniSearch from 'minisearch'
 
 const props = defineProps({
   books: { type: Array, default: () => [] },
-  categories: { type: Array, default: () => ['All'] },
+  tags: { type: Array, default: () => ['All'] },
   r2Base: { type: String, default: '' },
 })
 
 const emit = defineEmits(['open-reader'])
 
 const searchQuery = ref('')
-const selectedCat = ref('All')
+const selectedTag = ref('All')
 const miniSearch = ref(null)
 
 onMounted(() => {
@@ -24,8 +24,8 @@ watch(() => props.books, (books) => {
 
 function initSearch() {
   const ms = new MiniSearch({
-    fields: ['title', 'author', 'category'],
-    storeFields: ['id', 'title', 'author', 'category', 'intro', 'total_chapters'],
+    fields: ['title', 'author', 'tags'],
+    storeFields: ['id', 'title', 'author', 'tags', 'intro', 'total_chapters'],
     searchOptions: { boost: { title: 2 }, prefix: true, fuzzy: 0.2 }
   })
   ms.addAll(props.books)
@@ -38,8 +38,8 @@ const filteredBooks = computed(() => {
     const results = miniSearch.value?.search(searchQuery.value.trim()) || []
     list = results.map(r => r)
   }
-  if (selectedCat.value !== 'All') {
-    list = list.filter(b => b.category === selectedCat.value)
+  if (selectedTag.value !== 'All') {
+    list = list.filter(b => (b.tags || []).includes(selectedTag.value))
   }
   return list
 })
@@ -62,9 +62,9 @@ function getCoverChar(title) {
   </header>
 
   <div class="categories">
-    <button v-for="cat in categories" :key="cat"
-      :class="['cat-btn', { active: selectedCat === cat }]"
-      @click="selectedCat = cat">{{ cat }}</button>
+    <button v-for="tag in tags" :key="tag"
+      :class="['cat-btn', { active: selectedTag === tag }]"
+      @click="selectedTag = tag">{{ tag }}</button>
   </div>
 
   <div class="grid" v-if="filteredBooks.length">
@@ -78,7 +78,7 @@ function getCoverChar(title) {
         <div class="card-title">{{ book.title }}</div>
         <div class="card-author">{{ book.author || 'Unknown' }}</div>
         <div class="card-meta">
-          <span>{{ book.category || 'Uncategorized' }}</span>
+          <span v-for="t in (book.tags || []).slice(0, 3)" :key="t" class="tag-pill">{{ t }}</span>
           <span>{{ book.total_chapters }} chapters</span>
         </div>
       </div>
