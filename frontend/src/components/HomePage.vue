@@ -13,10 +13,19 @@ const emit = defineEmits(['open-reader'])
 const searchQuery = ref('')
 const selectedTag = ref('All')
 const miniSearch = ref(null)
+const readingHistory = ref([])
 
 onMounted(() => {
   if (props.books.length) initSearch()
+  loadHistory()
 })
+
+function loadHistory() {
+  try {
+    const saved = localStorage.getItem('novel-vault-history')
+    readingHistory.value = saved ? JSON.parse(saved) : []
+  } catch { readingHistory.value = [] }
+}
 
 watch(() => props.books, (books) => {
   if (books.length && !miniSearch.value) initSearch()
@@ -48,6 +57,24 @@ function getCoverChar(title) {
   const first = title.charAt(0)
   return /[a-zA-Z]/.test(first) ? first.toUpperCase() : first
 }
+
+function formatTime(ts) {
+  const d = new Date(ts)
+  const now = new Date()
+  const diffMs = now - d
+  const diffMin = Math.floor(diffMs / 60000)
+  if (diffMin < 1) return 'Just now'
+  if (diffMin < 60) return `${diffMin}m ago`
+  const diffHr = Math.floor(diffMin / 60)
+  if (diffHr < 24) return `${diffHr}h ago`
+  const diffDay = Math.floor(diffHr / 24)
+  if (diffDay < 7) return `${diffDay}d ago`
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function openHistory(entry) {
+  emit('open-reader', entry.bookId, entry.chapterId)
+}
 </script>
 
 <template>
@@ -60,6 +87,17 @@ function getCoverChar(title) {
       </div>
     </div>
   </header>
+
+  <div v-if="readingHistory.length" class="history-bar">
+    <div class="history-title">📖 Continue Reading</div>
+    <div class="history-items">
+      <div v-for="h in readingHistory" :key="h.bookId" class="history-item" @click="openHistory(h)">
+        <span class="history-book">{{ h.bookTitle }}</span>
+        <span class="history-chapter">— {{ h.chapterTitle }}</span>
+        <span class="history-time">{{ formatTime(h.timestamp) }}</span>
+      </div>
+    </div>
+  </div>
 
   <div class="categories">
     <button v-for="tag in tags" :key="tag"

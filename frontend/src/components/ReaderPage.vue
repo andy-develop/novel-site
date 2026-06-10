@@ -25,6 +25,25 @@ function findBook() {
   book.value = props.books.find(b => b.id === props.bookId) || null
 }
 
+function saveHistory() {
+  if (!book.value) return
+  const history = JSON.parse(localStorage.getItem('novel-vault-history') || '[]')
+  const idx = history.findIndex(h => h.bookId === props.bookId)
+  const entry = {
+    bookId: props.bookId,
+    bookTitle: book.value.title,
+    chapterId: props.chapterId,
+    chapterTitle: chapterTitle.value,
+    timestamp: Date.now()
+  }
+  if (idx !== -1) {
+    history.splice(idx, 1)
+  }
+  history.unshift(entry)
+  // Keep max 30 entries
+  localStorage.setItem('novel-vault-history', JSON.stringify(history.slice(0, 30)))
+}
+
 async function loadBook() {
   loading.value = true
   error.value = ''
@@ -47,6 +66,7 @@ async function loadBook() {
     const chData = await chRes.json()
     chapterTitle.value = chData.title || ''
     chapterContent.value = (chData.content || []).join('\n\n')
+    saveHistory()
   } catch (e) {
     error.value = e.message
     // fallback: 从本地 data 加载
@@ -60,6 +80,7 @@ async function loadBook() {
       const catFallback = await import(`../../data/catalog_${props.bookId}.json`)
       const cd = catFallback.default || catFallback
       chapters.value = cd.chapters || []
+      saveHistory()
     } catch (f) {
       // keep original error
     }
