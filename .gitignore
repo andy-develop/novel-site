@@ -18,5 +18,9 @@ __pycache__/
 !/data/11/
 !/data/catalog_11.json
 
+# Except coasting which uses local data
+!/data/12/
+!/data/catalog_12.json
+
 # Keep books.json
 !/data/books.json

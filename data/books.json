@@ -132,5 +132,22 @@
       "Dark Comedy",
       "Female Lead"
     ]
+  },
+  {
+    "id": 12,
+    "slug": "coasting",
+    "title": "Coasting",
+    "author": "Apex Shaw",
+    "category": "Urban Drama / Dark Comedy / Female Lead",
+    "intro": "Chloe Hart was a perfectly unremarkable Gen Z burnout — until her billionaire parents and toxic ex had her committed to Serenity Peak, a 'wellness center' that's really a factory for turning rebellious women into obedient Silicon Valley wives. Her mistake? She refused to work 16-hour days and wouldn't apologize for her face. Her strategy? If she's crazy enough, the world has to make room. She smuggles iced coffee and vintage CCD cameras instead of contraband, builds a found family out of the facility's 'broken' girls, and turns the entire institution inside out — one viral livestream at a time.",
+    "total_chapters": 28,
+    "lang": "english",
+    "tags": [
+      "Urban Drama",
+      "Dark Comedy",
+      "Female Lead",
+      "Found Family",
+      "Revenge"
+    ]
   }
 ]

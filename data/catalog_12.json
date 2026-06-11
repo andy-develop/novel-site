@@ -1,0 +1,117 @@
+{
+  "book_id": 12,
+  "chapters": [
+    {
+      "chapter_id": 1,
+      "title": "Chapter 1: The Drop-Off"
+    },
+    {
+      "chapter_id": 2,
+      "title": "Chapter 2: The Welcome Packet"
+    },
+    {
+      "chapter_id": 3,
+      "title": "Chapter 3: The First Smuggle"
+    },
+    {
+      "chapter_id": 4,
+      "title": "Chapter 4: The Therapy Session"
+    },
+    {
+      "chapter_id": 5,
+      "title": "Chapter 5: The Night Visitor"
+    },
+    {
+      "chapter_id": 6,
+      "title": "Chapter 6: The Contraband Economy"
+    },
+    {
+      "chapter_id": 7,
+      "title": "Chapter 7: The CCD Camera"
+    },
+    {
+      "chapter_id": 8,
+      "title": "Chapter 8: The Ward B Manifesto"
+    },
+    {
+      "chapter_id": 9,
+      "title": "Chapter 9: The Crackdown"
+    },
+    {
+      "chapter_id": 10,
+      "title": "Chapter 10: The Data Haul"
+    },
+    {
+      "chapter_id": 11,
+      "title": "Chapter 11: The Trap"
+    },
+    {
+      "chapter_id": 12,
+      "title": "Chapter 12: The Isolation"
+    },
+    {
+      "chapter_id": 13,
+      "title": "Chapter 13: The Broadcast"
+    },
+    {
+      "chapter_id": 14,
+      "title": "Chapter 14: The Morning After"
+    },
+    {
+      "chapter_id": 15,
+      "title": "Chapter 15: The Hearing"
+    },
+    {
+      "chapter_id": 16,
+      "title": "Chapter 16: The First Day Free"
+    },
+    {
+      "chapter_id": 17,
+      "title": "Chapter 17: The Voicemail"
+    },
+    {
+      "chapter_id": 18,
+      "title": "Chapter 18: The Call Back"
+    },
+    {
+      "chapter_id": 19,
+      "title": "Chapter 19: The Price of Freedom"
+    },
+    {
+      "chapter_id": 20,
+      "title": "Chapter 20: Testimony"
+    },
+    {
+      "chapter_id": 21,
+      "title": "Chapter 21: The Auction"
+    },
+    {
+      "chapter_id": 22,
+      "title": "Chapter 22: The Broker"
+    },
+    {
+      "chapter_id": 23,
+      "title": "Chapter 23: The Summons"
+    },
+    {
+      "chapter_id": 24,
+      "title": "Chapter 24: The Arrest"
+    },
+    {
+      "chapter_id": 25,
+      "title": "Chapter 25: The Opening"
+    },
+    {
+      "chapter_id": 26,
+      "title": "Chapter 26: The Coast"
+    },
+    {
+      "chapter_id": 27,
+      "title": "Chapter 27: The Trial"
+    },
+    {
+      "chapter_id": 28,
+      "title": "Chapter 28: One Year Later"
+    }
+  ]
+}
