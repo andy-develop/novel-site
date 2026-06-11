@@ -38,6 +38,7 @@ def main():
             "intro": summary[:200] if summary else "",
             "total_chapters": total_chapters,
             "lang": lang,
+            "tags": [],
         })
 
         # 生成 catalog
