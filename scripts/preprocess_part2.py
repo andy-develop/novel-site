@@ -16,7 +16,6 @@ BOOKS = [
     {"id": 7,  "dir": "wolf-kings-heart",            "slug": "wolf-kings-heart"},
     {"id": 8,  "dir": "war-god-reborn",              "slug": "war-god-reborn"},
     {"id": 9,  "dir": "apocalypse-romance-system",   "slug": "apocalypse-romance-system"},
-    {"id": 10, "dir": "romance-system-apocalypse",   "slug": "romance-system-apocalypse"},
 ]
 
 def parse_yaml(dir_path):
