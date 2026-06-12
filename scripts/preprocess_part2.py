@@ -16,6 +16,7 @@ BOOKS = [
     {"id": 7,  "dir": "wolf-kings-heart",            "slug": "wolf-kings-heart"},
     {"id": 8,  "dir": "war-god-reborn",              "slug": "war-god-reborn"},
     {"id": 9,  "dir": "apocalypse-romance-system",   "slug": "apocalypse-romance-system"},
+    {"id": 10, "dir": "lying-flat-in-the-asylum",    "slug": "lying-flat-in-the-asylum"},
     {"id": 11, "dir": "eldritch-heiress",             "slug": "eldritch-heiress"},
 ]
 

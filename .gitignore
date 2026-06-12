@@ -22,5 +22,9 @@ __pycache__/
 !/data/12/
 !/data/catalog_12.json
 
+# Except lying-flat-in-the-asylum which uses local data
+!/data/10/
+!/data/catalog_10.json
+
 # Keep books.json
 !/data/books.json

@@ -63,11 +63,7 @@
     "intro": "",
     "total_chapters": 29,
     "lang": "english",
-    "tags": [
-      "Fantasy",
-      "Drama",
-      "Royalty"
-    ]
+    "tags": []
   },
   {
     "id": 7,
@@ -78,11 +74,7 @@
     "intro": "Seraphina, a wolf-less girl at the bottom of the Ironmoon Pack's hierarchy, is dragged before the cold, terrifying Wolf King for judgment. But when a Moon Goddess's mischief grants her a one-way mind-",
     "total_chapters": 25,
     "lang": "english",
-    "tags": [
-      "Romance",
-      "Fantasy",
-      "Werewolf"
-    ]
+    "tags": []
   },
   {
     "id": 8,
@@ -93,12 +85,7 @@
     "intro": "",
     "total_chapters": 68,
     "lang": "en",
-    "tags": [
-      "Urban Fantasy",
-      "Sci-Fi",
-      "Thriller",
-      "Reincarnation"
-    ]
+    "tags": []
   },
   {
     "id": 9,
@@ -109,11 +96,29 @@
     "intro": "When the zombie apocalypse turns 99% of humanity into walking corpses, Marcus Chen—a  shut-in gamer playing MMOs in his apartment—is the last person you'd expect to survive.  But when a mysterious Rom",
     "total_chapters": 68,
     "lang": "english",
+    "tags": []
+  },
+  {
+    "id": 10,
+    "slug": "lying-flat-in-the-asylum",
+    "title": "Lying Flat in the Asylum",
+    "author": "Apex Shaw",
+    "category": [
+      "contemporary",
+      "satire",
+      "Gen Z",
+      "female empowerment",
+      "dark comedy"
+    ],
+    "intro": "A Gen Z woman committed to a high-end compliance factory for inconvenient daughters fights back with psychology, internet culture, and weaponized chaos.",
+    "total_chapters": 29,
+    "lang": "english",
     "tags": [
-      "Post-Apocalyptic",
-      "Romance",
-      "LitRPG",
-      "Harem"
+      "Contemporary",
+      "Satire",
+      "Gen Z",
+      "Dark Comedy",
+      "Female Lead"
     ]
   },
   {
@@ -125,29 +130,6 @@
     "intro": "When the Nether-Grid descends and modern currency collapses into ash, Roxanne Vance — a fashion-obsessed art student with crippling credit card debt — discovers she's the sole heir to the Primordial V",
     "total_chapters": 50,
     "lang": "english",
-    "tags": [
-      "Urban Fantasy",
-      "Post-Apocalyptic",
-      "Monster Romance",
-      "Dark Comedy",
-      "Female Lead"
-    ]
-  },
-  {
-    "id": 12,
-    "slug": "coasting",
-    "title": "Coasting",
-    "author": "Apex Shaw",
-    "category": "Urban Drama / Dark Comedy / Female Lead",
-    "intro": "Chloe Hart was a perfectly unremarkable Gen Z burnout — until her billionaire parents and toxic ex had her committed to Serenity Peak, a 'wellness center' that's really a factory for turning rebellious women into obedient Silicon Valley wives. Her mistake? She refused to work 16-hour days and wouldn't apologize for her face. Her strategy? If she's crazy enough, the world has to make room. She smuggles iced coffee and vintage CCD cameras instead of contraband, builds a found family out of the facility's 'broken' girls, and turns the entire institution inside out — one viral livestream at a time.",
-    "total_chapters": 28,
-    "lang": "english",
-    "tags": [
-      "Urban Drama",
-      "Dark Comedy",
-      "Female Lead",
-      "Found Family",
-      "Revenge"
-    ]
+    "tags": []
   }
 ]
