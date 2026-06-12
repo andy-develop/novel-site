@@ -25,6 +25,8 @@ __pycache__/
 # Except coasting which uses local data
 !/data/12/
 !/data/catalog_12.json
+!/data/13/
+!/data/catalog_13.json
 
 # Except lying-flat-in-the-asylum which uses local data
 !/data/10/
