@@ -22,6 +22,10 @@ __pycache__/
 !/data/11/
 !/data/catalog_11.json
 
+# Except delulu-is-the-solulu which uses local data
+!/data/14/
+!/data/catalog_14.json
+
 # Except coasting which uses local data
 !/data/12/
 !/data/catalog_12.json
