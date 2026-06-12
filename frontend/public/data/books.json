@@ -110,16 +110,10 @@
       "female empowerment",
       "dark comedy"
     ],
-    "intro": "A Gen Z woman committed to a high-end compliance factory for inconvenient daughters fights back with psychology, internet culture, and weaponized chaos.",
+    "intro": "",
     "total_chapters": 29,
     "lang": "english",
-    "tags": [
-      "Contemporary",
-      "Satire",
-      "Gen Z",
-      "Dark Comedy",
-      "Female Lead"
-    ]
+    "tags": []
   },
   {
     "id": 11,
@@ -131,5 +125,23 @@
     "total_chapters": 50,
     "lang": "english",
     "tags": []
+  },
+  {
+    "id": 12,
+    "slug": "the-muted",
+    "title": "The Muted",
+    "author": "",
+    "category": "Cyber-thriller Romance",
+    "intro": "A socially anxious illustrator takes an anti-anxiety drug that makes her literally invisible to algorithms and human perception. As she spirals from godlike freedom into absolute isolation, she's save",
+    "total_chapters": 60,
+    "lang": "english",
+    "tags": [
+      "Cyber-thriller",
+      "Romance",
+      "Sci-Fi",
+      "Female Lead",
+      "Invisibility",
+      "Dystopian"
+    ]
   }
 ]
