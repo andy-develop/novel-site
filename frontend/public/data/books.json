@@ -63,7 +63,12 @@
     "intro": "",
     "total_chapters": 29,
     "lang": "english",
-    "tags": []
+    "tags": [
+      "Dark Fantasy",
+      "Tyranny",
+      "Female Lead",
+      "Magic"
+    ]
   },
   {
     "id": 7,
@@ -74,7 +79,12 @@
     "intro": "Seraphina, a wolf-less girl at the bottom of the Ironmoon Pack's hierarchy, is dragged before the cold, terrifying Wolf King for judgment. But when a Moon Goddess's mischief grants her a one-way mind-",
     "total_chapters": 25,
     "lang": "english",
-    "tags": []
+    "tags": [
+      "Werewolf",
+      "Romance",
+      "Fantasy",
+      "Female Lead"
+    ]
   },
   {
     "id": 8,
@@ -85,7 +95,12 @@
     "intro": "",
     "total_chapters": 68,
     "lang": "en",
-    "tags": []
+    "tags": [
+      "Urban Fantasy",
+      "Sci-Fi",
+      "Action",
+      "Rebirth"
+    ]
   },
   {
     "id": 9,
@@ -96,7 +111,12 @@
     "intro": "When the zombie apocalypse turns 99% of humanity into walking corpses, Marcus Chen—a  shut-in gamer playing MMOs in his apartment—is the last person you'd expect to survive.  But when a mysterious Rom",
     "total_chapters": 68,
     "lang": "english",
-    "tags": []
+    "tags": [
+      "Post-Apocalyptic",
+      "Romance",
+      "LitRPG",
+      "Harem"
+    ]
   },
   {
     "id": 10,
@@ -113,7 +133,13 @@
     "intro": "",
     "total_chapters": 29,
     "lang": "english",
-    "tags": []
+    "tags": [
+      "Contemporary",
+      "Satire",
+      "Gen Z",
+      "Dark Comedy",
+      "Female Lead"
+    ]
   },
   {
     "id": 11,
@@ -124,7 +150,12 @@
     "intro": "When the Nether-Grid descends and modern currency collapses into ash, Roxanne Vance — a fashion-obsessed art student with crippling credit card debt — discovers she's the sole heir to the Primordial V",
     "total_chapters": 50,
     "lang": "english",
-    "tags": []
+    "tags": [
+      "Urban Fantasy",
+      "Eldritch",
+      "Dark Comedy",
+      "Monster Romance"
+    ]
   },
   {
     "id": 12,
@@ -140,7 +171,6 @@
       "Romance",
       "Sci-Fi",
       "Female Lead",
-      "Invisibility",
       "Dystopian"
     ]
   }
