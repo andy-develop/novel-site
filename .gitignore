@@ -7,12 +7,16 @@ __pycache__/
 .DS_Store
 *.log
 
-# Chapter data → R2, not in Git
-/data/6/
-/data/7/
-/data/8/
-/data/9/
-/data/catalog_*.json
+# Chapter data -> R2, not in Git
+# (Books 6-9 now also served from git — R2 unavailable)
+!/data/6/
+!/data/7/
+!/data/8/
+!/data/9/
+!/data/catalog_6.json
+!/data/catalog_7.json
+!/data/catalog_8.json
+!/data/catalog_9.json
 
 # Except eldritch-heiress which uses local data
 !/data/11/

@@ -33,7 +33,8 @@ function navigateToHome() {
   window.location.hash = '#/'
 }
 
-// Only show English novels
+// Only show English novels (all 7 English books: 6-12)
+const englishBookIds = [6,7,8,9,10,11,12]
 const books = computed(() =>
   allBooks.value.filter(b => b.lang === 'english' || b.lang === 'en')
 )
