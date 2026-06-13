@@ -34,6 +34,10 @@ __pycache__/
 !/data/16/
 !/data/catalog_16.json
 
+# Except Turn-of-the-Screen which uses local data
+!/data/17/
+!/data/catalog_17.json
+
 # Except coasting which uses local data
 !/data/12/
 !/data/catalog_12.json

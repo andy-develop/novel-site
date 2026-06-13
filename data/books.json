@@ -242,5 +242,22 @@
       "Political Thriller",
       "Female Lead"
     ]
+  },
+  {
+    "id": 17,
+    "slug": "turn-of-the-screen",
+    "title": "The Turn of the Screen",
+    "author": "Apex Shaw",
+    "category": "psychological horror / dark academia thriller",
+    "intro": "A deeply unreliable psychology grad takes a £200K job at a Scottish Highlands manor to care for influencer twins—but the internet audience following her Reddit cries for help discovers she may be the ",
+    "total_chapters": 42,
+    "lang": "english",
+    "tags": [
+      "Psychological Horror",
+      "Dark Academia",
+      "Thriller",
+      "Female Lead",
+      "Unreliable Narrator"
+    ]
   }
 ]
