@@ -38,6 +38,14 @@ __pycache__/
 !/data/17/
 !/data/catalog_17.json
 
+# Except The-Fluidity-of-Us which uses local data
+!/data/18/
+!/data/catalog_18.json
+
+# Except Behind-the-Words which uses local data
+!/data/19/
+!/data/catalog_19.json
+
 # Except coasting which uses local data
 !/data/12/
 !/data/catalog_12.json

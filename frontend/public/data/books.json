@@ -259,5 +259,40 @@
       "Female Lead",
       "Unreliable Narrator"
     ]
+  },
+  {
+    "id": 18,
+    "slug": "the-fluidity-of-us",
+    "title": "The Fluidity of Us",
+    "author": "Apex Shaw",
+    "category": "romance",
+    "intro": "An immortal gender-fluid designer and a fashion empire heir are bound by centuries of reincarnated love — but every time their passion peaks, her body shifts, and he must decide if he can love whoever",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Romance",
+      "Dark Academia",
+      "High Fashion",
+      "Queer",
+      "Immortality",
+      "Gender Fluid"
+    ]
+  },
+  {
+    "id": 19,
+    "slug": "behind-the-words",
+    "title": "Behind the Words",
+    "author": "Apex Shaw",
+    "category": "Contemporary Romance / Dark Academia / Epistolary",
+    "intro": "A brilliant but self-loathing goth girl ghostwrites love letters for her gorgeous influencer best friend to win over a sapiosexual literature professor — and falls for him himself through the words.",
+    "total_chapters": 30,
+    "lang": "english",
+    "tags": [
+      "Romance",
+      "Dark Academia",
+      "Epistolary",
+      "Contemporary",
+      "Love Triangle"
+    ]
   }
 ]
