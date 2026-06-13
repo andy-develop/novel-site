@@ -1,245 +1,348 @@
 [
-    {
-        "id": 1,
-        "slug": "fulixian",
-        "title": "复利修仙",
-        "author": "Apex Shaw",
-        "category": "修仙/苟道/复利",
-        "intro": "资质最差的四灵根苟王，靠复利思维和极度谨慎在修仙世界稳步崛起。九成九天才死于自身错误，唯有主角永不踩坑。每个人都不蠢，但修行路上全是认知误区和冲动陷阱——这就是全书最大逻辑支点",
-        "total_chapters": 90,
-        "lang": "chinese",
-        "tags": []
-    },
-    {
-        "id": 2,
-        "slug": "hulianwang-xiuxian",
-        "title": "互联网修仙传",
-        "author": "",
-        "category": "",
-        "intro": "",
-        "total_chapters": 90,
-        "lang": "chinese",
-        "tags": []
-    },
-    {
-        "id": 3,
-        "slug": "code-epoch",
-        "title": "代码纪元",
-        "author": "AI",
-        "category": "科幻/穿越",
-        "intro": "认知锁解除了，但天空还是灰的。三百年的工业遮蔽不是自然现象——是谁遮住了星星？0x7F3C的信号引来了不止一个回应，而穿越者的原主人意识正在某个地方等待被找到。",
-        "total_chapters": 70,
-        "lang": "chinese",
-        "tags": []
-    },
-    {
-        "id": 4,
-        "slug": "delivery-knight",
-        "title": "我是一个外卖骑士",
-        "author": "",
-        "category": "都市爽文",
-        "intro": "",
-        "total_chapters": 90,
-        "lang": "chinese",
-        "tags": []
-    },
-    {
-        "id": 5,
-        "slug": "moshi-zhuixu",
-        "title": "末世赘婿",
-        "author": "Hermes Agent",
-        "category": "都市重生/末世/系统",
-        "intro": "人类最后一位战神在地球沦陷之际被救世系统送回末日爆发前3年，重生为第一豪门的赘婿。他必须保住这段婚姻——因为离婚意味着因果后门失效，末日倒计时将从1095天缩短至3秒。而开启末日传送门的叛徒，正是这个豪门本身。",
-        "total_chapters": 62,
-        "lang": "chinese",
-        "tags": []
-    },
-    {
-        "id": 6,
-        "slug": "daylight-tyrant",
-        "title": "The Daylight Tyrant",
-        "author": "Apex Shaw",
-        "category": "",
-        "intro": "",
-        "total_chapters": 29,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 7,
-        "slug": "wolf-kings-heart",
-        "title": "Hearing the Wolf King's Heart, I Became the Wolf Queen",
-        "author": "Apex Shaw",
-        "category": "Romance Fantasy / Werewolf / Sweet Pet",
-        "intro": "Seraphina, a wolf-less girl at the bottom of the Ironmoon Pack's hierarchy, is dragged before the cold, terrifying Wolf King for judgment. But when a Moon Goddess's mischief grants her a one-way mind-",
-        "total_chapters": 25,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 8,
-        "slug": "war-god-reborn",
-        "title": "War God Reborn",
-        "author": "",
-        "category": "urban-fantasy/sci-fi/thriller",
-        "intro": "",
-        "total_chapters": 68,
-        "lang": "en",
-        "tags": []
-    },
-    {
-        "id": 9,
-        "slug": "apocalypse-romance-system",
-        "title": "Apocalypse Romance System",
-        "author": "Apex Shaw",
-        "category": "Post-Apocalyptic Romance / LitRPG / Harem",
-        "intro": "When the zombie apocalypse turns 99% of humanity into walking corpses, Marcus Chen—a  shut-in gamer playing MMOs in his apartment—is the last person you'd expect to survive.  But when a mysterious Rom",
-        "total_chapters": 68,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 10,
-        "slug": "lying-flat-in-the-asylum",
-        "title": "Lying Flat in the Asylum",
-        "author": "Apex Shaw",
-        "category": [
-            "contemporary",
-            "satire",
-            "Gen Z",
-            "female empowerment",
-            "dark comedy"
-        ],
-        "intro": "",
-        "total_chapters": 29,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 11,
-        "slug": "eldritch-heiress",
-        "title": "The Eldritch Heiress's Bottomless Black Card",
-        "author": "Apex Shaw",
-        "category": "urban-fantasy / post-apocalyptic / monster-romance / dark-comedy",
-        "intro": "When the Nether-Grid descends and modern currency collapses into ash, Roxanne Vance — a fashion-obsessed art student with crippling credit card debt — discovers she's the sole heir to the Primordial V",
-        "total_chapters": 50,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 12,
-        "slug": "the-muted",
-        "title": "The Muted",
-        "author": "",
-        "category": "Cyber-thriller Romance",
-        "intro": "A socially anxious illustrator takes an anti-anxiety drug that makes her literally invisible to algorithms and human perception. As she spirals from godlike freedom into absolute isolation, she's save",
-        "total_chapters": 60,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 13,
-        "slug": "no-thoughts-just-fluff",
-        "title": "No Thoughts, Just Fluff",
-        "author": "Apex Shaw",
-        "category": "cozy fantasy comedy",
-        "intro": "A burned-out 25-year-old PR worker in Brooklyn transforms into a giant, eternally relaxed capybara-like creature — and discovers that the best thing she can do for herself is absolutely nothing.",
-        "total_chapters": 55,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 14,
-        "slug": "delulu-is-the-solulu",
-        "title": "delulu-is-the-solulu",
-        "author": "Apex Shaw",
-        "category": "",
-        "intro": "",
-        "total_chapters": 20,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 15,
-        "slug": "algorithm-a",
-        "title": "Algorithm-A",
-        "author": "Apex Shaw",
-        "category": "",
-        "intro": "",
-        "total_chapters": 77,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 16,
-        "slug": "of-rust-and-roses",
-        "title": "Of Rust and Roses",
-        "author": "Apex Shaw",
-        "category": "Cyberpunk NA Sci-Fi Romance / Sapphic Political Thriller",
-        "intro": "A 21st-century climate physicist is thrusted into a post-apocalyptic world split between a 'perfect' solar-powered Eden on the surface and a cyberpunk hellscape underground, where she must ally with t",
-        "total_chapters": 33,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 17,
-        "slug": "turn-of-the-screen",
-        "title": "The Turn of the Screen",
-        "author": "Apex Shaw",
-        "category": "psychological horror / dark academia thriller",
-        "intro": "A deeply unreliable psychology grad takes a £200K job at a Scottish Highlands manor to care for influencer twins—but the internet audience following her Reddit cries for help discovers she may be the ",
-        "total_chapters": 42,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 18,
-        "slug": "the-fluidity-of-us",
-        "title": "The Fluidity of Us",
-        "author": "Apex Shaw",
-        "category": "romance",
-        "intro": "An immortal gender-fluid designer and a fashion empire heir are bound by centuries of reincarnated love — but every time their passion peaks, her body shifts, and he must decide if he can love whoever",
-        "total_chapters": 40,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 19,
-        "slug": "behind-the-words",
-        "title": "Behind the Words",
-        "author": "Apex Shaw",
-        "category": "Contemporary Romance / Dark Academia / Epistolary",
-        "intro": "A brilliant but self-loathing goth girl ghostwrites love letters for her gorgeous influencer best friend to win over a sapiosexual literature professor — and falls for him himself through the words.",
-        "total_chapters": 30,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 20,
-        "slug": "glitching-through-fate",
-        "title": "Glitching Through Fate",
-        "author": "Apex Shaw",
-        "category": "romance",
-        "intro": "22-year-old Ivy League grad Avery, paralyzed by FOMO and choice anxiety, discovers a mysterious app called Fork that lets her shift consciousness between three parallel lives—but every version of the ",
-        "total_chapters": 40,
-        "lang": "english",
-        "tags": []
-    },
-    {
-        "id": 21,
-        "slug": "phantom-of-the-deep-web",
-        "title": "Phantom of the Deep Web",
-        "author": "Apex Shaw",
-        "category": "Dark Romance / Contemporary / Cyber Thriller",
-        "intro": "A struggling singer drowning in poverty is discovered by an invisible phantom — a reclusive genius who controls the internet from his underground labyrinth. He'll make her a star. The price: everythin",
-        "total_chapters": 40,
-        "lang": "english",
-        "tags": [
-            "Dark Romance",
-            "Stalker Romance",
-            "Music Industry",
-            "Cyber Thriller",
-            "Deep Web"
-        ]
-    }
+  {
+    "id": 1,
+    "slug": "fulixian",
+    "title": "复利修仙",
+    "author": "Apex Shaw",
+    "category": "修仙/苟道/复利",
+    "intro": "资质最差的四灵根苟王，靠复利思维和极度谨慎在修仙世界稳步崛起。九成九天才死于自身错误，唯有主角永不踩坑。每个人都不蠢，但修行路上全是认知误区和冲动陷阱——这就是全书最大逻辑支点",
+    "total_chapters": 90,
+    "lang": "chinese",
+    "tags": []
+  },
+  {
+    "id": 2,
+    "slug": "hulianwang-xiuxian",
+    "title": "互联网修仙传",
+    "author": "",
+    "category": "",
+    "intro": "",
+    "total_chapters": 90,
+    "lang": "chinese",
+    "tags": []
+  },
+  {
+    "id": 3,
+    "slug": "code-epoch",
+    "title": "代码纪元",
+    "author": "AI",
+    "category": "科幻/穿越",
+    "intro": "认知锁解除了，但天空还是灰的。三百年的工业遮蔽不是自然现象——是谁遮住了星星？0x7F3C的信号引来了不止一个回应，而穿越者的原主人意识正在某个地方等待被找到。",
+    "total_chapters": 70,
+    "lang": "chinese",
+    "tags": []
+  },
+  {
+    "id": 4,
+    "slug": "delivery-knight",
+    "title": "我是一个外卖骑士",
+    "author": "",
+    "category": "都市爽文",
+    "intro": "",
+    "total_chapters": 90,
+    "lang": "chinese",
+    "tags": []
+  },
+  {
+    "id": 5,
+    "slug": "moshi-zhuixu",
+    "title": "末世赘婿",
+    "author": "Hermes Agent",
+    "category": "都市重生/末世/系统",
+    "intro": "人类最后一位战神在地球沦陷之际被救世系统送回末日爆发前3年，重生为第一豪门的赘婿。他必须保住这段婚姻——因为离婚意味着因果后门失效，末日倒计时将从1095天缩短至3秒。而开启末日传送门的叛徒，正是这个豪门本身。",
+    "total_chapters": 62,
+    "lang": "chinese",
+    "tags": []
+  },
+  {
+    "id": 6,
+    "slug": "daylight-tyrant",
+    "title": "The Daylight Tyrant",
+    "author": "Apex Shaw",
+    "category": "",
+    "intro": "",
+    "total_chapters": 29,
+    "lang": "english",
+    "tags": [
+      "Dark Fantasy",
+      "Tyranny",
+      "Female Lead",
+      "Magic"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "wolf-kings-heart",
+    "title": "Hearing the Wolf King's Heart, I Became the Wolf Queen",
+    "author": "Apex Shaw",
+    "category": "Romance Fantasy / Werewolf / Sweet Pet",
+    "intro": "Seraphina, a wolf-less girl at the bottom of the Ironmoon Pack's hierarchy, is dragged before the cold, terrifying Wolf King for judgment. But when a Moon Goddess's mischief grants her a one-way mind-",
+    "total_chapters": 25,
+    "lang": "english",
+    "tags": [
+      "Werewolf",
+      "Romance",
+      "Fantasy",
+      "Female Lead"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "war-god-reborn",
+    "title": "War God Reborn",
+    "author": "",
+    "category": "urban-fantasy/sci-fi/thriller",
+    "intro": "",
+    "total_chapters": 68,
+    "lang": "en",
+    "tags": [
+      "Urban Fantasy",
+      "Sci-Fi",
+      "Action",
+      "Rebirth"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "apocalypse-romance-system",
+    "title": "Apocalypse Romance System",
+    "author": "Apex Shaw",
+    "category": "Post-Apocalyptic Romance / LitRPG / Harem",
+    "intro": "When the zombie apocalypse turns 99% of humanity into walking corpses, Marcus Chen—a  shut-in gamer playing MMOs in his apartment—is the last person you'd expect to survive.  But when a mysterious Rom",
+    "total_chapters": 68,
+    "lang": "english",
+    "tags": [
+      "Post-Apocalyptic",
+      "Romance",
+      "LitRPG",
+      "Harem"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "lying-flat-in-the-asylum",
+    "title": "Lying Flat in the Asylum",
+    "author": "Apex Shaw",
+    "category": [
+      "contemporary",
+      "satire",
+      "Gen Z",
+      "female empowerment",
+      "dark comedy"
+    ],
+    "intro": "",
+    "total_chapters": 29,
+    "lang": "english",
+    "tags": [
+      "Contemporary",
+      "Satire",
+      "Gen Z",
+      "Dark Comedy",
+      "Female Lead"
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "eldritch-heiress",
+    "title": "The Eldritch Heiress's Bottomless Black Card",
+    "author": "Apex Shaw",
+    "category": "urban-fantasy / post-apocalyptic / monster-romance / dark-comedy",
+    "intro": "When the Nether-Grid descends and modern currency collapses into ash, Roxanne Vance — a fashion-obsessed art student with crippling credit card debt — discovers she's the sole heir to the Primordial V",
+    "total_chapters": 50,
+    "lang": "english",
+    "tags": [
+      "Urban Fantasy",
+      "Eldritch",
+      "Dark Comedy",
+      "Monster Romance"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "the-muted",
+    "title": "The Muted",
+    "author": "",
+    "category": "Cyber-thriller Romance",
+    "intro": "A socially anxious illustrator takes an anti-anxiety drug that makes her literally invisible to algorithms and human perception. As she spirals from godlike freedom into absolute isolation, she's save",
+    "total_chapters": 60,
+    "lang": "english",
+    "tags": [
+      "Cyber-thriller",
+      "Romance",
+      "Sci-Fi",
+      "Female Lead",
+      "Dystopian"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "no-thoughts-just-fluff",
+    "title": "No Thoughts, Just Fluff",
+    "author": "Apex Shaw",
+    "category": "cozy fantasy comedy",
+    "intro": "A burned-out 25-year-old PR worker in Brooklyn transforms into a giant, eternally relaxed capybara-like creature — and discovers that the best thing she can do for herself is absolutely nothing.",
+    "total_chapters": 55,
+    "lang": "english",
+    "tags": [
+      "Romance",
+      "Contemporary",
+      "Dark Comedy",
+      "Female Lead"
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "delulu-is-the-solulu",
+    "title": "delulu-is-the-solulu",
+    "author": "Apex Shaw",
+    "category": "",
+    "intro": "",
+    "total_chapters": 20,
+    "lang": "english",
+    "tags": [
+      "Romance",
+      "Contemporary",
+      "Dark Comedy",
+      "Female Lead"
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "algorithm-a",
+    "title": "Algorithm-A",
+    "author": "Apex Shaw",
+    "category": "",
+    "intro": "",
+    "total_chapters": 77,
+    "lang": "english",
+    "tags": [
+      "Sci-Fi",
+      "Tech Thriller",
+      "AI Governance",
+      "Female Lead",
+      "Dystopian",
+      "Startup"
+    ]
+  },
+  {
+    "id": 16,
+    "slug": "of-rust-and-roses",
+    "title": "Of Rust and Roses",
+    "author": "Apex Shaw",
+    "category": "Cyberpunk NA Sci-Fi Romance / Sapphic Political Thriller",
+    "intro": "A 21st-century climate physicist is thrusted into a post-apocalyptic world split between a 'perfect' solar-powered Eden on the surface and a cyberpunk hellscape underground, where she must ally with t",
+    "total_chapters": 33,
+    "lang": "english",
+    "tags": [
+      "Cyberpunk",
+      "Sci-Fi",
+      "Romance",
+      "Sapphic",
+      "Post-Apocalyptic",
+      "Political Thriller",
+      "Female Lead"
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "turn-of-the-screen",
+    "title": "The Turn of the Screen",
+    "author": "Apex Shaw",
+    "category": "psychological horror / dark academia thriller",
+    "intro": "A deeply unreliable psychology grad takes a £200K job at a Scottish Highlands manor to care for influencer twins—but the internet audience following her Reddit cries for help discovers she may be the ",
+    "total_chapters": 42,
+    "lang": "english",
+    "tags": [
+      "Psychological Horror",
+      "Dark Academia",
+      "Thriller",
+      "Female Lead",
+      "Unreliable Narrator"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "the-fluidity-of-us",
+    "title": "The Fluidity of Us",
+    "author": "Apex Shaw",
+    "category": "romance",
+    "intro": "An immortal gender-fluid designer and a fashion empire heir are bound by centuries of reincarnated love — but every time their passion peaks, her body shifts, and he must decide if he can love whoever",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Romance",
+      "Dark Academia",
+      "High Fashion",
+      "Queer",
+      "Immortality",
+      "Gender Fluid"
+    ]
+  },
+  {
+    "id": 19,
+    "slug": "behind-the-words",
+    "title": "Behind the Words",
+    "author": "Apex Shaw",
+    "category": "Contemporary Romance / Dark Academia / Epistolary",
+    "intro": "A brilliant but self-loathing goth girl ghostwrites love letters for her gorgeous influencer best friend to win over a sapiosexual literature professor — and falls for him himself through the words.",
+    "total_chapters": 30,
+    "lang": "english",
+    "tags": [
+      "Romance",
+      "Dark Academia",
+      "Epistolary",
+      "Contemporary",
+      "Love Triangle"
+    ]
+  },
+  {
+    "id": 20,
+    "slug": "glitching-through-fate",
+    "title": "Glitching Through Fate",
+    "author": "Apex Shaw",
+    "category": "romance",
+    "intro": "22-year-old Ivy League grad Avery, paralyzed by FOMO and choice anxiety, discovers a mysterious app called Fork that lets her shift consciousness between three parallel lives—but every version of the ",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Romance",
+      "Parallel Universe",
+      "Sci-Fi",
+      "BookTok",
+      "Choice Anxiety"
+    ]
+  },
+  {
+    "id": 21,
+    "slug": "phantom-of-the-deep-web",
+    "title": "Phantom of the Deep Web",
+    "author": "Apex Shaw",
+    "category": "Dark Romance / Contemporary",
+    "intro": "A struggling singer drowning in poverty is discovered by an invisible phantom — a reclusive genius who controls the internet from his underground labyrinth. He'll make her a star. The price: everythin",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Dark Romance",
+      "Stalker Romance",
+      "Music Industry",
+      "Cyber Thriller",
+      "Deep Web"
+    ]
+  },
+  {
+    "id": 22,
+    "slug": "unraveled",
+    "title": "Unraveled: The Ghost in the Atelier",
+    "author": "Apex Shaw",
+    "category": "fashion thriller / dark romance / mystery",
+    "intro": "A viral vintage critic is hired by a luxury fashion house's charismatic CEO, only to discover the brand's genius designs were stolen from a woman imprisoned in its basement — and now she must choose b",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Dark Romance",
+      "Fashion Thriller",
+      "Mystery",
+      "Female Lead"
+    ]
+  }
 ]

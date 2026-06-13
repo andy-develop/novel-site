@@ -56,5 +56,9 @@ __pycache__/
 !/data/10/
 !/data/catalog_10.json
 
+# Except Unraveled which uses local data
+!/data/22/
+!/data/catalog_22.json
+
 # Keep books.json
 !/data/books.json
