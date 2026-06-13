@@ -14,6 +14,7 @@ const searchQuery = ref('')
 const selectedTag = ref('All')
 const miniSearch = ref(null)
 const readingHistory = ref([])
+const expandedId = ref(null)
 
 onMounted(() => {
   if (props.books.length) initSearch()
@@ -75,6 +76,14 @@ function formatTime(ts) {
 function openHistory(entry) {
   emit('open-reader', entry.bookId, entry.chapterId)
 }
+
+function toggleExpand(bookId) {
+  expandedId.value = expandedId.value === bookId ? null : bookId
+}
+
+function startReading(bookId) {
+  emit('open-reader', bookId)
+}
 </script>
 
 <template>
@@ -107,19 +116,28 @@ function openHistory(entry) {
 
   <div class="grid" v-if="filteredBooks.length">
     <div v-for="(book, i) in filteredBooks" :key="book.id"
-      class="novel-card" :style="{ animationDelay: i * 0.04 + 's' }"
-      @click="emit('open-reader', book.id)">
-      <div class="card-cover">
-        <span class="cover-char">{{ getCoverChar(book.title) }}</span>
-      </div>
-      <div class="card-body">
-        <div class="card-title">{{ book.title }}</div>
-        <div class="card-author">{{ book.author || 'Unknown' }}</div>
-        <div class="card-meta">
-          <span v-for="t in (book.tags || []).slice(0, 3)" :key="t" class="tag-pill">{{ t }}</span>
-          <span>{{ book.total_chapters }} chapters</span>
+      :class="['novel-card', { expanded: expandedId === book.id }]"
+      :style="{ animationDelay: i * 0.04 + 's' }">
+      <div class="card-main" @click="toggleExpand(book.id)">
+        <div class="card-cover">
+          <span class="cover-char">{{ getCoverChar(book.title) }}</span>
         </div>
+        <div class="card-body">
+          <div class="card-title">{{ book.title }}</div>
+          <div class="card-author">{{ book.author || 'Unknown' }}</div>
+          <div class="card-meta">
+            <span v-for="t in (book.tags || []).slice(0, 3)" :key="t" class="tag-pill">{{ t }}</span>
+            <span>{{ book.total_chapters }} chapters</span>
+          </div>
+        </div>
+        <span v-if="book.intro" class="expand-icon">{{ expandedId === book.id ? '▾' : '▸' }}</span>
       </div>
+      <transition name="slide">
+        <div v-if="expandedId === book.id && book.intro" class="card-intro">
+          <p class="intro-text">{{ book.intro }}</p>
+          <button class="start-btn" @click.stop="startReading(book.id)">Start Reading →</button>
+        </div>
+      </transition>
     </div>
   </div>
 
