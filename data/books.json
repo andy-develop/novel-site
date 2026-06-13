@@ -223,5 +223,24 @@
       "Dystopian",
       "Startup"
     ]
+  },
+  {
+    "id": 16,
+    "slug": "of-rust-and-roses",
+    "title": "Of Rust and Roses",
+    "author": "Apex Shaw",
+    "category": "Cyberpunk NA Sci-Fi Romance / Sapphic Political Thriller",
+    "intro": "A 21st-century climate physicist is thrusted into a post-apocalyptic world split between a 'perfect' solar-powered Eden on the surface and a cyberpunk hellscape underground, where she must ally with t",
+    "total_chapters": 33,
+    "lang": "english",
+    "tags": [
+      "Cyberpunk",
+      "Sci-Fi",
+      "Romance",
+      "Sapphic",
+      "Post-Apocalyptic",
+      "Political Thriller",
+      "Female Lead"
+    ]
   }
 ]
