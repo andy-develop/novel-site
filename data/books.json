@@ -184,11 +184,10 @@
     "total_chapters": 55,
     "lang": "english",
     "tags": [
-      "Cozy Fantasy",
-      "Comedy",
-      "Female Lead",
-      "Capybara",
-      "Slice of Life"
+      "Romance",
+      "Contemporary",
+      "Dark Comedy",
+      "Female Lead"
     ]
   },
   {
@@ -201,11 +200,28 @@
     "total_chapters": 20,
     "lang": "english",
     "tags": [
+      "Romance",
       "Contemporary",
       "Dark Comedy",
+      "Female Lead"
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "algorithm-a",
+    "title": "Algorithm-A",
+    "author": "Apex Shaw",
+    "category": "",
+    "intro": "",
+    "total_chapters": 77,
+    "lang": "english",
+    "tags": [
+      "Sci-Fi",
+      "Tech Thriller",
+      "AI Governance",
       "Female Lead",
-      "Satire",
-      "Delulu"
+      "Dystopian",
+      "Startup"
     ]
   }
 ]

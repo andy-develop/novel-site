@@ -26,6 +26,10 @@ __pycache__/
 !/data/14/
 !/data/catalog_14.json
 
+# Except Algorithm-A which uses local data
+!/data/15/
+!/data/catalog_15.json
+
 # Except coasting which uses local data
 !/data/12/
 !/data/catalog_12.json
