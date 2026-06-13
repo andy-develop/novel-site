@@ -219,16 +219,27 @@
         "slug": "glitching-through-fate",
         "title": "Glitching Through Fate",
         "author": "Apex Shaw",
-        "category": "Romance / Parallel Universe / Sci-Fi",
-        "intro": "22-year-old Ivy League grad Avery, paralyzed by FOMO and choice anxiety, discovers a mysterious app called Fork that lets her shift consciousness between three parallel lives—but every version of the same man is waiting for her, and the timelines are starting to bleed together.",
+        "category": "romance",
+        "intro": "22-year-old Ivy League grad Avery, paralyzed by FOMO and choice anxiety, discovers a mysterious app called Fork that lets her shift consciousness between three parallel lives—but every version of the ",
+        "total_chapters": 40,
+        "lang": "english",
+        "tags": []
+    },
+    {
+        "id": 21,
+        "slug": "phantom-of-the-deep-web",
+        "title": "Phantom of the Deep Web",
+        "author": "Apex Shaw",
+        "category": "Dark Romance / Contemporary / Cyber Thriller",
+        "intro": "A struggling singer drowning in poverty is discovered by an invisible phantom — a reclusive genius who controls the internet from his underground labyrinth. He'll make her a star. The price: everythin",
         "total_chapters": 40,
         "lang": "english",
         "tags": [
-            "Romance",
-            "Parallel Universe",
-            "Sci-Fi",
-            "BookTok",
-            "Choice Anxiety"
+            "Dark Romance",
+            "Stalker Romance",
+            "Music Industry",
+            "Cyber Thriller",
+            "Deep Web"
         ]
     }
 ]
