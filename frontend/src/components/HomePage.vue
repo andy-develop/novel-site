@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import MiniSearch from 'minisearch'
+import { getReadHistory, getBookshelf, isInBookshelf, addToBookshelf, removeFromBookshelf } from '../utils/storage.js'
 
 const props = defineProps({
   books: { type: Array, default: () => [] },
@@ -14,18 +15,43 @@ const searchQuery = ref('')
 const selectedTag = ref('All')
 const miniSearch = ref(null)
 const readingHistory = ref([])
+const bookshelf = ref([])
 const expandedId = ref(null)
+const contextMenu = ref({ show: false, x: 0, y: 0, bookId: null })
+const mobileAction = ref({ show: false, bookId: null })
+const longPressTimer = ref(null)
+
+const topSection = computed(() => {
+  if (bookshelf.value.length > 0) return 'bookshelf'
+  if (readingHistory.value.length > 0) return 'history'
+  return 'empty'
+})
 
 onMounted(() => {
   if (props.books.length) initSearch()
-  loadHistory()
+  loadLocalData()
+  window.addEventListener('storage', loadLocalData)
+  document.addEventListener('click', hideContextMenu)
+  document.addEventListener('contextmenu', hideContextMenu)
 })
 
-function loadHistory() {
-  try {
-    const saved = localStorage.getItem('novel-vault-history')
-    readingHistory.value = saved ? JSON.parse(saved) : []
-  } catch { readingHistory.value = [] }
+function loadLocalData() {
+  readingHistory.value = getReadHistory()
+  bookshelf.value = getBookshelf()
+}
+
+function isOnShelf(bookId) {
+  return isInBookshelf(bookId)
+}
+
+function toggleBookshelf(book, event) {
+  event.stopPropagation()
+  if (isOnShelf(book.id)) {
+    removeFromBookshelf(book.id)
+  } else {
+    addToBookshelf({ bookId: book.id, title: book.title, cover: getCoverChar(book.title), addedAt: Date.now() })
+  }
+  loadLocalData()
 }
 
 watch(() => props.books, (books) => {
@@ -77,12 +103,57 @@ function openHistory(entry) {
   emit('open-reader', entry.bookId, entry.chapterId)
 }
 
+function formatShelfTime(ts) {
+  if (!ts) return ''
+  const d = new Date(ts)
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
+}
+
 function toggleExpand(bookId) {
   expandedId.value = expandedId.value === bookId ? null : bookId
 }
 
 function startReading(bookId) {
   emit('open-reader', bookId)
+}
+
+function onShelfRightClick(e, bookId) {
+  e.preventDefault()
+  contextMenu.value = { show: true, x: e.clientX, y: e.clientY, bookId }
+}
+
+function removeShelfFromMenu() {
+  if (contextMenu.value.bookId != null) {
+    removeFromBookshelf(contextMenu.value.bookId)
+    loadLocalData()
+  }
+  hideContextMenu()
+}
+
+function hideContextMenu() {
+  contextMenu.value.show = false
+}
+
+function onShelfTouchStart(bookId) {
+  longPressTimer.value = setTimeout(() => {
+    mobileAction.value = { show: true, bookId }
+  }, 1000)
+}
+
+function onShelfTouchEnd() {
+  clearTimeout(longPressTimer.value)
+}
+
+function removeShelfFromMobile() {
+  if (mobileAction.value.bookId != null) {
+    removeFromBookshelf(mobileAction.value.bookId)
+    loadLocalData()
+  }
+  mobileAction.value = { show: false, bookId: null }
+}
+
+function cancelMobileAction() {
+  mobileAction.value = { show: false, bookId: null }
 }
 </script>
 
@@ -97,7 +168,23 @@ function startReading(bookId) {
     </div>
   </header>
 
-  <div v-if="readingHistory.length" class="history-bar">
+  <div v-if="topSection === 'bookshelf'" class="history-bar bookshelf-bar">
+    <div class="history-title">📚 My Bookshelf</div>
+    <div class="history-items">
+      <div v-for="b in bookshelf" :key="b.bookId" class="history-item shelf-item"
+        @click="openHistory({ bookId: b.bookId })"
+        @contextmenu="onShelfRightClick($event, b.bookId)"
+        @touchstart="onShelfTouchStart(b.bookId)"
+        @touchend="onShelfTouchEnd"
+        @touchmove="onShelfTouchEnd">
+        <div class="shelf-cover">{{ b.cover }}</div>
+        <span class="history-book">{{ b.title }}</span>
+        <span class="shelf-time">{{ formatShelfTime(b.addedAt) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div v-else-if="topSection === 'history'" class="history-bar">
     <div class="history-title">📖 Continue Reading</div>
     <div class="history-items">
       <div v-for="h in readingHistory.slice(0, 3)" :key="h.bookId" class="history-item" @click="openHistory(h)">
@@ -106,6 +193,10 @@ function startReading(bookId) {
         <span class="history-time">{{ formatTime(h.timestamp) }}</span>
       </div>
     </div>
+  </div>
+
+  <div v-else class="history-bar empty-top">
+    <div class="history-title" style="color:var(--text-muted)">暂无阅读/书架书籍</div>
   </div>
 
   <div class="categories">
@@ -130,6 +221,12 @@ function startReading(bookId) {
             <span>{{ book.total_chapters }} chapters</span>
           </div>
         </div>
+        <button :class="['shelf-btn', { active: isOnShelf(book.id) }]"
+          @click.stop="toggleBookshelf(book, $event)">
+          <span v-if="isOnShelf(book.id)">✓</span>
+          <span v-else>+</span>
+          {{ isOnShelf(book.id) ? '已加入书架' : '加入书架' }}
+        </button>
         <span class="expand-icon">{{ expandedId === book.id ? '▾' : '▸' }}</span>
       </div>
       <transition name="slide">
@@ -144,5 +241,19 @@ function startReading(bookId) {
 
   <div v-else class="empty-state">
     <p>No novels found</p>
+  </div>
+
+  <!-- PC right-click context menu -->
+  <div v-if="contextMenu.show" class="ctx-menu"
+    :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }">
+    <div class="ctx-item" @click="removeShelfFromMenu">移出书架</div>
+  </div>
+
+  <!-- Mobile long-press action sheet -->
+  <div v-if="mobileAction.show" class="mobile-overlay" @click="cancelMobileAction">
+    <div class="mobile-action" @click.stop>
+      <button class="mobile-action-btn danger" @click="removeShelfFromMobile">移出书架</button>
+      <button class="mobile-action-btn" @click="cancelMobileAction">取消</button>
+    </div>
   </div>
 </template>

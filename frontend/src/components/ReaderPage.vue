@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
+import { isInBookshelf, addToBookshelf, removeFromBookshelf, isTipIgnored, addTipIgnore, saveReadHistory } from '../utils/storage.js'
 
 const props = defineProps({
   bookId: { type: Number, required: true },
@@ -17,6 +18,8 @@ const chapterTitle = ref('')
 const loading = ref(true)
 const error = ref('')
 const currentCh = ref(props.chapterId)
+const showBookshelfTip = ref(false)
+const shelfBtnActive = ref(false)
 
 onMounted(() => loadBook())
 watch(() => [props.bookId, props.chapterId], loadBook)
@@ -27,21 +30,42 @@ function findBook() {
 
 function saveHistory() {
   if (!book.value) return
-  const history = JSON.parse(localStorage.getItem('novel-vault-history') || '[]')
-  const idx = history.findIndex(h => h.bookId === props.bookId)
-  const entry = {
+  saveReadHistory({
     bookId: props.bookId,
     bookTitle: book.value.title,
+    cover: book.value.title.charAt(0),
     chapterId: props.chapterId,
     chapterTitle: chapterTitle.value,
     timestamp: Date.now()
+  })
+}
+
+function checkBookshelfTip() {
+  shelfBtnActive.value = isInBookshelf(props.bookId)
+  if (!isInBookshelf(props.bookId) && !isTipIgnored(props.bookId)) {
+    showBookshelfTip.value = true
   }
-  if (idx !== -1) {
-    history.splice(idx, 1)
+}
+
+function acceptBookshelfTip() {
+  addToBookshelf({ bookId: props.bookId, title: book.value?.title || '', cover: book.value?.title?.charAt(0) || '', addedAt: Date.now() })
+  shelfBtnActive.value = true
+  showBookshelfTip.value = false
+}
+
+function declineBookshelfTip() {
+  addTipIgnore(props.bookId)
+  showBookshelfTip.value = false
+}
+
+function toggleReaderShelf() {
+  if (isInBookshelf(props.bookId)) {
+    removeFromBookshelf(props.bookId)
+    shelfBtnActive.value = false
+  } else {
+    addToBookshelf({ bookId: props.bookId, title: book.value?.title || '', cover: book.value?.title?.charAt(0) || '', addedAt: Date.now() })
+    shelfBtnActive.value = true
   }
-  history.unshift(entry)
-  // Keep max 30 entries
-  localStorage.setItem('novel-vault-history', JSON.stringify(history.slice(0, 30)))
 }
 
 async function loadBook() {
@@ -86,6 +110,7 @@ async function loadBook() {
     }
   } finally {
     loading.value = false
+    checkBookshelfTip()
   }
 }
 
@@ -139,6 +164,11 @@ function nextChapter() {
         <span>N</span>OVEL VAULT
       </div>
       <span class="header-book-title" v-if="book">{{ book.title }}</span>
+      <button :class="['shelf-btn', 'reader-shelf-btn', { active: shelfBtnActive }]"
+        @click="toggleReaderShelf">
+        <span v-if="shelfBtnActive">✓</span><span v-else>+</span>
+        {{ shelfBtnActive ? '已加入书架' : '加入书架' }}
+      </button>
     </div>
   </header>
 
@@ -171,6 +201,17 @@ function nextChapter() {
     <div class="chapter-nav bottom-nav">
       <button @click="prevChapter" :disabled="isFirst">← Previous</button>
       <button @click="nextChapter" :disabled="isLast">Next →</button>
+    </div>
+  </div>
+
+  <!-- Bookshelf tip popup -->
+  <div v-if="showBookshelfTip" class="tip-overlay" @click.self="declineBookshelfTip">
+    <div class="tip-dialog">
+      <p class="tip-text">是否将本书加入书架，方便后续阅读？</p>
+      <div class="tip-actions">
+        <button class="tip-btn tip-accept" @click="acceptBookshelfTip">加入书架</button>
+        <button class="tip-btn tip-decline" @click="declineBookshelfTip">暂时不加</button>
+      </div>
     </div>
   </div>
 </template>
