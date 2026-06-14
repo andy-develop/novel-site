@@ -223,6 +223,7 @@ function cancelMobileAction() {
           <div class="card-author">{{ book.author || 'Unknown' }}</div>
           <div class="card-meta">
             <span v-for="t in (book.tags || []).slice(0, 3)" :key="t" class="tag-pill">{{ t }}</span>
+            <span>{{ book.total_chapters }} chapters</span>
           </div>
         </div>
         <button :class="['shelf-btn', { active: isOnShelf(book.id) }]"
