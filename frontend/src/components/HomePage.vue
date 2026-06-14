@@ -103,6 +103,11 @@ function openHistory(entry) {
   emit('open-reader', entry.bookId, entry.chapterId)
 }
 
+function openShelfBook(bookId) {
+  const lastRead = readingHistory.value.find(h => h.bookId === bookId)
+  emit('open-reader', bookId, lastRead?.chapterId)
+}
+
 function formatShelfTime(ts) {
   if (!ts) return ''
   const d = new Date(ts)
@@ -172,7 +177,7 @@ function cancelMobileAction() {
     <div class="history-title">📚 My Bookshelf</div>
     <div class="history-items">
       <div v-for="b in bookshelf" :key="b.bookId" class="history-item shelf-item"
-        @click="openHistory({ bookId: b.bookId })"
+        @click="openShelfBook(b.bookId)"
         @contextmenu="onShelfRightClick($event, b.bookId)"
         @touchstart="onShelfTouchStart(b.bookId)"
         @touchend="onShelfTouchEnd"
