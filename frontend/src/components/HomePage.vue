@@ -196,7 +196,7 @@ function cancelMobileAction() {
   </div>
 
   <div v-else class="history-bar empty-top">
-    <div class="history-title" style="color:var(--text-muted)">暂无阅读/书架书籍</div>
+    <div class="history-title" style="color:var(--text-muted)">No reading history or shelf books yet</div>
   </div>
 
   <div class="categories">
@@ -225,7 +225,7 @@ function cancelMobileAction() {
           @click.stop="toggleBookshelf(book, $event)">
           <span v-if="isOnShelf(book.id)">✓</span>
           <span v-else>+</span>
-          {{ isOnShelf(book.id) ? '已加入书架' : '加入书架' }}
+          {{ isOnShelf(book.id) ? 'On Shelf' : 'Add to Shelf' }}
         </button>
         <span class="expand-icon">{{ expandedId === book.id ? '▾' : '▸' }}</span>
       </div>
@@ -246,14 +246,14 @@ function cancelMobileAction() {
   <!-- PC right-click context menu -->
   <div v-if="contextMenu.show" class="ctx-menu"
     :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }">
-    <div class="ctx-item" @click="removeShelfFromMenu">移出书架</div>
+    <div class="ctx-item" @click="removeShelfFromMenu">Remove from Shelf</div>
   </div>
 
   <!-- Mobile long-press action sheet -->
   <div v-if="mobileAction.show" class="mobile-overlay" @click="cancelMobileAction">
     <div class="mobile-action" @click.stop>
-      <button class="mobile-action-btn danger" @click="removeShelfFromMobile">移出书架</button>
-      <button class="mobile-action-btn" @click="cancelMobileAction">取消</button>
+      <button class="mobile-action-btn danger" @click="removeShelfFromMobile">Remove from Shelf</button>
+      <button class="mobile-action-btn" @click="cancelMobileAction">Cancel</button>
     </div>
   </div>
 </template>

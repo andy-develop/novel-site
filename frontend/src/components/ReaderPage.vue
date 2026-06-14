@@ -167,7 +167,7 @@ function nextChapter() {
       <button :class="['shelf-btn', 'reader-shelf-btn', { active: shelfBtnActive }]"
         @click="toggleReaderShelf">
         <span v-if="shelfBtnActive">✓</span><span v-else>+</span>
-        {{ shelfBtnActive ? '已加入书架' : '加入书架' }}
+        {{ shelfBtnActive ? 'On Shelf' : 'Add to Shelf' }}
       </button>
     </div>
   </header>
@@ -207,10 +207,10 @@ function nextChapter() {
   <!-- Bookshelf tip popup -->
   <div v-if="showBookshelfTip" class="tip-overlay" @click.self="declineBookshelfTip">
     <div class="tip-dialog">
-      <p class="tip-text">是否将本书加入书架，方便后续阅读？</p>
+      <p class="tip-text">Add this book to your shelf for easy access next time?</p>
       <div class="tip-actions">
-        <button class="tip-btn tip-accept" @click="acceptBookshelfTip">加入书架</button>
-        <button class="tip-btn tip-decline" @click="declineBookshelfTip">暂时不加</button>
+        <button class="tip-btn tip-accept" @click="acceptBookshelfTip">Add to Shelf</button>
+        <button class="tip-btn tip-decline" @click="declineBookshelfTip">Not Now</button>
       </div>
     </div>
   </div>
