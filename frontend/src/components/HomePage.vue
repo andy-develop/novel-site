@@ -243,19 +243,21 @@ function cancelMobileAction() {
           <span class="cover-char">{{ getCoverChar(book.title) }}</span>
         </div>
         <div class="card-body">
-          <div class="card-title" v-html="highlightText(book.title, searchQuery)"></div>
+          <div class="title-row">
+            <div class="card-title" v-html="highlightText(book.title, searchQuery)"></div>
+            <button :class="['shelf-btn', { active: isOnShelf(book.id) }]"
+              @click.stop="toggleBookshelf(book, $event)">
+              <span v-if="isOnShelf(book.id)">✓</span>
+              <span v-else>+</span>
+              {{ isOnShelf(book.id) ? 'On Shelf' : 'Add to Shelf' }}
+            </button>
+          </div>
           <div class="card-author" v-html="highlightText(book.author || 'Unknown', searchQuery)"></div>
           <div class="card-meta">
             <span v-for="t in (book.tags || []).slice(0, 3)" :key="t" class="tag-pill">{{ t }}</span>
             <span>{{ book.total_chapters }} chapters</span>
           </div>
         </div>
-        <button :class="['shelf-btn', { active: isOnShelf(book.id) }]"
-          @click.stop="toggleBookshelf(book, $event)">
-          <span v-if="isOnShelf(book.id)">✓</span>
-          <span v-else>+</span>
-          {{ isOnShelf(book.id) ? 'On Shelf' : 'Add to Shelf' }}
-        </button>
         <span class="expand-icon">{{ expandedId === book.id ? '▾' : '▸' }}</span>
       </div>
       <transition name="slide">
