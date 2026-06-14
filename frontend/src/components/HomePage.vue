@@ -130,11 +130,12 @@ function startReading(bookId) {
             <span>{{ book.total_chapters }} chapters</span>
           </div>
         </div>
-        <span v-if="book.intro" class="expand-icon">{{ expandedId === book.id ? '▾' : '▸' }}</span>
+        <span class="expand-icon">{{ expandedId === book.id ? '▾' : '▸' }}</span>
       </div>
       <transition name="slide">
-        <div v-if="expandedId === book.id && book.intro" class="card-intro">
-          <p class="intro-text">{{ book.intro }}</p>
+        <div v-if="expandedId === book.id" class="card-intro">
+          <p v-if="book.intro" class="intro-text">{{ book.intro }}</p>
+          <p v-else class="intro-text intro-placeholder">No synopsis available.</p>
           <button class="start-btn" @click.stop="startReading(book.id)">Start Reading →</button>
         </div>
       </transition>

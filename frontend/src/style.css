@@ -211,6 +211,10 @@ header {
   padding: 12px 0;
   margin: 0;
 }
+.intro-placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
 .start-btn {
   display: inline-block;
   padding: 6px 18px;
