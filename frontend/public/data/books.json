@@ -16,7 +16,7 @@
     "title": "互联网修仙传",
     "author": "",
     "category": "",
-    "intro": "一个996码农被天花板砸死，穿越成修仙世界最底层散修。当别人还在苦修灵气的时候，他把修仙当成了互联网——天道是个垃圾算法？那就重构它。废灵根的底层逻辑、风控模型、商业计划书，用程序员思维在修仙界从零打造商业帝国，一步步改写修仙世界的运行规则。",
+    "intro": "",
     "total_chapters": 90,
     "lang": "chinese",
     "tags": []
@@ -38,7 +38,7 @@
     "title": "我是一个外卖骑士",
     "author": "",
     "category": "都市爽文",
-    "intro": "一个暴雨夜的最后一单外卖，一道闪电劈下来——秦逸和他的二手电动车\"银电\"一起被劈出了觉醒。车成精了，人开挂了，外卖平台变成了修仙系统。每完成一单配送就能获得灵力奖励，好评加成，差评扣命。从星城最底层骑手到都市最强骑士，银电驮着他一路狂飙——送的不只是饭，还有命。",
+    "intro": "",
     "total_chapters": 90,
     "lang": "chinese",
     "tags": []
@@ -60,7 +60,7 @@
     "title": "The Daylight Tyrant",
     "author": "Apex Shaw",
     "category": "Dark Fantasy / Dark Academia / Female Lead / Magic",
-    "intro": "In a world where daylight itself is a tyrant, Kael awakens in darkness with senses that shouldn't exist and a hunger he cannot name. The dying saints whisper of a power older than the sun, and the House that raised him has teeth of its own. To survive, he must learn the Rules of Daylight — or become the next thing the light devours.",
+    "intro": "",
     "total_chapters": 29,
     "lang": "english",
     "tags": [
@@ -90,7 +90,7 @@
     "title": "War God Reborn",
     "author": "",
     "category": "urban-fantasy/dystopia/sci-fi/thriller",
-    "intro": "The war god Ren Zhou died watching the sky burn. He wakes up in a banquet hall, staring at divorce papers and a family that treats him like garbage. His memories are three hundred years out of date, his body belongs to a useless heir, and something called Spore is spreading through the city's elite. The gods chose wrong when they brought him back — or maybe they chose exactly right.",
+    "intro": "",
     "total_chapters": 68,
     "lang": "en",
     "tags": [
@@ -127,7 +127,7 @@
       "female empowerment",
       "dark comedy"
     ],
-    "intro": "Chloe was handcuffed in the back of her mother's Tesla and committed to Greenfield Psychiatric — but she's pretty sure the real crazy people are the ones who put her there. A razor-sharp dark comedy about a Gen Z girl who discovers that the asylum's walls hide something stranger than any diagnosis, and that lying flat might be the most radical act of all.",
+    "intro": "",
     "total_chapters": 29,
     "lang": "english",
     "tags": [
@@ -190,7 +190,7 @@
     "title": "delulu-is-the-solulu",
     "author": "Apex Shaw",
     "category": "Contemporary / Female Lead / Romance",
-    "intro": "Chloe Miller quit her soul-crushing desk job and immediately declared herself queen of a magical realm that may or may not exist. Armed with nothing but delusion, determination, and a parking lot she swears is a sacred grove, she's about to discover that the line between \"delulu\" and \"the solulu\" is thinner than a corporate apology email.",
+    "intro": "",
     "total_chapters": 20,
     "lang": "english",
     "tags": [
@@ -205,7 +205,7 @@
     "title": "Algorithm-A",
     "author": "Apex Shaw",
     "category": "Dystopia / Female Lead / Sci-Fi",
-    "intro": "At 3:47 a.m., a scarlet A appears on Hester's palm — and her trust score drops to zero overnight. In a world ruled by Algorithm-A, your score determines everything: where you live, who you marry, whether you breathe. Branded an outcast and hunted by the system she once helped build, Hester must find the flaw in the algorithm before it finds her.",
+    "intro": "",
     "total_chapters": 77,
     "lang": "english",
     "tags": [
@@ -383,6 +383,20 @@
     "tags": [
       "Fantasy",
       "Sci-Fi"
+    ]
+  },
+  {
+    "id": 27,
+    "slug": "last-aurelia",
+    "title": "The Last Aurelia of Blackwood Vale",
+    "author": "Apex Shaw",
+    "category": "Gothic Cottagecore Dark Romance",
+    "intro": "Aurelia Buena, the seventh-generation witch of a cursed New England family, discovers her ancestors' journals on her 22nd birthday — the age when every Buena woman falls for a devastatingly toxic man.",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Fantasy",
+      "Romance"
     ]
   }
 ]
