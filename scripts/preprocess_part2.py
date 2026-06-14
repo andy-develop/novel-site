@@ -31,7 +31,48 @@ BOOKS = [
     {"id": 22, "dir": "Unraveled",                         "slug": "unraveled"},
     {"id": 23, "dir": "Unfollowed",                        "slug": "unfollowed"},
     {"id": 24, "dir": "ashes-of-us",                       "slug": "ashes-of-us"},
+    {"id": 25, "dir": "BurnBook2",                         "slug": "burn-book-2-inferno-exe"},
 ]
+
+# Synonym map: genre text fragments → site standard tags
+_SYNONYM_MAP = {
+    "Fantasy":      ["fantasy", "dark fantasy", "urban fantasy", "romance fantasy", "werewolf", "litrpg", "eldritch", "vampire", "cozy fantasy", "gothic"],
+    "Romance":      ["romance", "monster romance", "stalker romance", "dark romance", "sweet pet", "harem", "love triangle"],
+    "Sci-Fi":       ["sci-fi", "scifi", "science fiction", "cyberpunk"],
+    "Thriller":     ["thriller", "political thriller", "tech thriller", "cyber thriller", "fashion thriller", "psychological thriller", "cyber-thriller", "psychological horror", "mystery"],
+    "Dystopia":     ["dystopia", "dystopian", "post-apocalyptic", "apocalyptic"],
+    "Dark Academia":["dark academia"],
+    "Contemporary": ["contemporary", "satire", "dark comedy"],
+    "Queer":        ["sapphic", "queer", "lgbtq", "gender fluid"],
+    "Female Lead":  ["female lead", "female protagonist", "female empowerment"],
+}
+
+def _genre_to_tags(genre, data=None):
+    """从 YAML genre/subgenre 用近义词匹配出网站标准 tag 列表。"""
+    data = data or {}
+    meta = data.get("meta", data)
+    # 大写 key 兼容 (如 Meta, Premise)
+    for key in list(data.keys()):
+        if key[0].isupper() and key.lower() not in data:
+            data[key.lower()] = data[key]
+    # 只读 genre + subgenre
+    parts = []
+    for key in ["genre", "subgenre"]:
+        val = meta.get(key) or data.get(key, "")
+        if isinstance(val, list):
+            parts.extend(str(x) for x in val)
+        elif val:
+            for sep in [" / ", "/", ", "]:
+                val = str(val).replace(sep, "|")
+            parts.extend(t.strip() for t in str(val).split("|") if t.strip())
+    text = " ".join(parts).lower()
+    matched = []
+    for tag, synonyms in _SYNONYM_MAP.items():
+        for syn in synonyms:
+            if syn in text:
+                matched.append(tag)
+                break
+    return sorted(matched)
 
 def parse_yaml(dir_path):
     yp = dir_path / "novel-project.yaml"
@@ -42,14 +83,30 @@ def parse_yaml(dir_path):
         data = yaml.safe_load(raw) or {}
     except:
         data = {}
+    # 大写 key 兼容 (如 Meta→meta, Premise→premise)
+    # 当同时存在大写和小写 key (如 Meta + meta)，合并内容
+    for key in list(data.keys()):
+        kl = key.lower()
+        if key[0].isupper():
+            if kl not in data:
+                data[kl] = data[key]
+            elif isinstance(data[kl], dict) and isinstance(data[key], dict):
+                # 大写版优先（通常含更多字段），合并进去
+                merged = {**data[kl], **data[key]}
+                data[kl] = merged
     meta = data.get("meta", data)
     # meta 存在但可能不含元字段, 回退到顶层
     if not meta.get("title") and not meta.get("name"):
         meta = data
+    # 近义词映射：YAML genre 关键词 → 网站标准 tag
+    genre = meta.get("genre", "")
+    tags = _genre_to_tags(genre, data)
+
     return {
         "title": meta.get("title") or meta.get("name", dir_path.name),
         "author": meta.get("author", ""),
-        "genre": meta.get("genre", ""),
+        "genre": genre,
         "summary": data.get("premise", "") or meta.get("summary", ""),
         "lang": meta.get("language", "chinese"),
+        "tags": tags,
     }

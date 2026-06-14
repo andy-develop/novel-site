@@ -60,5 +60,9 @@ __pycache__/
 !/data/22/
 !/data/catalog_22.json
 
+# Except BurnBook2 which uses local data
+!/data/25/
+!/data/catalog_25.json
+
 # Keep books.json
 !/data/books.json

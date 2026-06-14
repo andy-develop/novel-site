@@ -23,6 +23,7 @@ def main():
         genre = meta.get("genre", "")
         summary = meta.get("summary", "")
         lang = meta.get("lang", "chinese")
+        book_tags = meta.get("tags", [])
 
         chapter_files = get_chapter_files(dir_path)
         total_chapters = len(chapter_files)
@@ -38,7 +39,7 @@ def main():
             "intro": summary[:200] if summary else "",
             "total_chapters": total_chapters,
             "lang": lang,
-            "tags": [],
+            "tags": book_tags,
         })
 
         # 生成 catalog
