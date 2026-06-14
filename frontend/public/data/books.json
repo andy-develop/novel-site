@@ -16,7 +16,7 @@
     "title": "互联网修仙传",
     "author": "",
     "category": "",
-    "intro": "996码农加班猝死穿越成杂灵根散修，修炼二十年还在炼气三层。但他发现天道的灵气运转路径……太像算法了。大数据杀熟、新用户礼包、A/B测试——修仙世界的底层逻辑，居然全是他前世写烂的代码。既然天道是代码，那就能逆向工程。",
+    "intro": "",
     "total_chapters": 90,
     "lang": "chinese",
     "tags": []
@@ -38,7 +38,7 @@
     "title": "我是一个外卖骑士",
     "author": "",
     "category": "都市爽文",
-    "intro": "外卖小哥暴雨天送餐被雷劈，醒来发现电动车\"银电\"能光速骑行。从此抢在分手前送到和解奶茶、3秒送到奶粉、在每个人最需要的瞬间刚好出现——光速开挂处处打脸。但银电的纹路在衰减，每次骑行都在倒计时。速度能解决距离，解决不了离别。",
+    "intro": "",
     "total_chapters": 90,
     "lang": "chinese",
     "tags": []
@@ -60,7 +60,7 @@
     "title": "The Daylight Tyrant",
     "author": "Apex Shaw",
     "category": "Dark Fantasy / Dark Academia / Female Lead / Magic",
-    "intro": "Kael Ashworth was forcibly turned and abandoned—fledgling vampire, no sire, no coven, no chance. Then he made a Blood Pact with a dying paladin and gained something that shouldn't exist: full immunity to sunlight. Now the night's most hunted prey is about to become its most dangerous predator.",
+    "intro": "",
     "total_chapters": 29,
     "lang": "english",
     "tags": [
@@ -90,9 +90,9 @@
     "title": "War God Reborn",
     "author": "",
     "category": "urban-fantasy/dystopia/sci-fi/thriller",
-    "intro": "The War God died watching the sky burn. He reopened his eyes to divorce papers at a banquet—reborn as the despised husband of Liang Xue. He must keep this marriage alive, because divorce collapses the Salvation System's backdoor into her family's arrays, and the apocalypse countdown drops from 1095 days to three seconds. The family that wants him gone? They're the ones building the portal to end the world.",
+    "intro": "",
     "total_chapters": 68,
-    "lang": "english",
+    "lang": "en",
     "tags": [
       "Dystopia",
       "Fantasy",
@@ -127,7 +127,7 @@
       "female empowerment",
       "dark comedy"
     ],
-    "intro": "Chloe's mother had her handcuffed and committed to the Serenity Institute—a luxury wellness retreat with a 94% success rate and a creepy interest in compliance. But Chloe has a psychology degree, a weaponized meme account, and zero respect for institutions that call rebellion a disease.",
+    "intro": "",
     "total_chapters": 29,
     "lang": "english",
     "tags": [
@@ -190,7 +190,7 @@
     "title": "delulu-is-the-solulu",
     "author": "Apex Shaw",
     "category": "Contemporary / Female Lead / Romance",
-    "intro": "After 36 sleepless hours writing ad copy for a protein powder that tastes like chalk, Chloe Miller snapped—but not the way you'd expect. She didn't cry or quit. She simply decided she was a fallen queen from a magical realm, and the corporate world was beneath her. The delulu isn't just real—it's her superpower.",
+    "intro": "",
     "total_chapters": 20,
     "lang": "english",
     "tags": [
@@ -205,7 +205,7 @@
     "title": "Algorithm-A",
     "author": "Apex Shaw",
     "category": "Dystopia / Female Lead / Sci-Fi",
-    "intro": "At 3:47 a.m., a scarlet A appeared on Hester's door. Not a letter—a verdict, broadcast by an algorithm that decides who belongs and who disappears. She's a scientist who built models that would never bear her name. Now she's the name the system wants to erase.",
+    "intro": "",
     "total_chapters": 77,
     "lang": "english",
     "tags": [
@@ -301,7 +301,7 @@
     "category": "Dark Romance / Contemporary / Sci-Fi",
     "intro": "A struggling singer drowning in poverty is discovered by an invisible phantom — a reclusive genius who controls the internet from his underground labyrinth. He'll make her a star. The price: everythin",
     "total_chapters": 40,
-    "lang": "english",
+    "lang": "chinese",
     "tags": [
       "Contemporary",
       "Romance",
@@ -332,7 +332,7 @@
     "category": "Contemporary / Cyber-Gothic / Sci-Fi / Thriller",
     "intro": "When wellness influencer Lucy Chen vanishes after a secretive tech summit, her best friend Maya — a audio engineer with supernatural hearing — discovers something inhuman in Lucy's last recording. Tog",
     "total_chapters": 40,
-    "lang": "english",
+    "lang": "chinese",
     "tags": [
       "Contemporary",
       "Fantasy",
@@ -369,6 +369,20 @@
       "Female Lead",
       "Sci-Fi",
       "Thriller"
+    ]
+  },
+  {
+    "id": 26,
+    "slug": "terms-of-soul",
+    "title": "Terms of Soul",
+    "author": "Apex Shaw",
+    "category": "urban fantasy / cyberpunk / rags-to-riches",
+    "intro": "After signing a digital blood contract with a demonic MCN, a broke art grad becomes a billionaire influencer—but every million likes costs her a memory of someone she loves. When the system tries to f",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Fantasy",
+      "Sci-Fi"
     ]
   }
 ]

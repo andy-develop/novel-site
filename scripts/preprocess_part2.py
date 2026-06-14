@@ -32,6 +32,7 @@ BOOKS = [
     {"id": 23, "dir": "Unfollowed",                        "slug": "unfollowed"},
     {"id": 24, "dir": "ashes-of-us",                       "slug": "ashes-of-us"},
     {"id": 25, "dir": "BurnBook2",                         "slug": "burn-book-2-inferno-exe"},
+    {"id": 26, "dir": "Terms-of-Soul",                     "slug": "terms-of-soul"},
 ]
 
 # Synonym map: genre text fragments → site standard tags
