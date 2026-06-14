@@ -344,5 +344,21 @@
       "Mystery",
       "Female Lead"
     ]
+  },
+  {
+    "id": 23,
+    "slug": "unfollowed",
+    "title": "Unfollowed: The Silicon Valley Vampire Liquidation Guide",
+    "author": "Apex Shaw",
+    "category": "Cyber-Gothic Thriller",
+    "intro": "When wellness influencer Lucy Chen vanishes after a secretive tech summit, her best friend Maya — a audio engineer with supernatural hearing — discovers something inhuman in Lucy's last recording. Together with hacktivist Chloe, they uncover a centuries-old vampire running a biotech empire that harvests young women through a health app. The hunt is on — and this time, the hunters have WiFi.",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Cyber-Gothic",
+      "Vampire",
+      "Thriller",
+      "Social Media"
+    ]
   }
 ]

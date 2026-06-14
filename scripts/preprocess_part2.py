@@ -29,6 +29,7 @@ BOOKS = [
     {"id": 20, "dir": "Glitching-Through-Fate",          "slug": "glitching-through-fate"},
     {"id": 21, "dir": "Phantom-of-the-Deep-Web",          "slug": "phantom-of-the-deep-web"},
     {"id": 22, "dir": "Unraveled",                         "slug": "unraveled"},
+    {"id": 23, "dir": "Unfollowed",                        "slug": "unfollowed"},
 ]
 
 def parse_yaml(dir_path):
