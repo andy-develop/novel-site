@@ -60,19 +60,43 @@ watch(() => props.books, (books) => {
 
 function initSearch() {
   const ms = new MiniSearch({
-    fields: ['title', 'author', 'tags'],
+    fields: ['title', 'author', 'tags', 'intro'],
     storeFields: ['id', 'title', 'author', 'tags', 'intro', 'total_chapters'],
-    searchOptions: { boost: { title: 2 }, prefix: true, fuzzy: 0.2 }
+    searchOptions: { boost: { title: 3, author: 2 }, prefix: true, fuzzy: 0.2 }
   })
   ms.addAll(props.books)
   miniSearch.value = ms
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function highlightText(text, query) {
+  if (!query || !text) return text || ''
+  const terms = query.trim().split(/\s+/).filter(Boolean)
+  if (!terms.length) return text
+  const pattern = terms.map(escapeRegex).join('|')
+  const re = new RegExp(`(${pattern})`, 'gi')
+  return text.replace(re, '<mark class="hl">$1</mark>')
+}
+
+function lastSearchTerms() {
+  return searchQuery.value.trim().split(/\s+/).filter(Boolean)
 }
 
 const filteredBooks = computed(() => {
   let list = props.books
   if (searchQuery.value.trim()) {
     const results = miniSearch.value?.search(searchQuery.value.trim()) || []
-    list = results.map(r => r)
+    const ids = new Set(results.map(r => r.id))
+    list = props.books.filter(b => ids.has(b.id))
+    // preserve MiniSearch relevance order
+    list.sort((a, b) => {
+      const ai = results.findIndex(r => r.id === a.id)
+      const bi = results.findIndex(r => r.id === b.id)
+      return ai - bi
+    })
   }
   if (selectedTag.value !== 'All') {
     list = list.filter(b => (b.tags || []).includes(selectedTag.value))
@@ -168,7 +192,7 @@ function cancelMobileAction() {
       <div class="logo"><span>N</span>OVEL VAULT</div>
       <div class="search-wrap">
         <span class="icon">⌕</span>
-        <input type="search" v-model="searchQuery" placeholder="Search by title or author..." />
+        <input type="search" v-model="searchQuery" placeholder="Search by title, author, or synopsis..." />
       </div>
     </div>
   </header>
@@ -219,8 +243,8 @@ function cancelMobileAction() {
           <span class="cover-char">{{ getCoverChar(book.title) }}</span>
         </div>
         <div class="card-body">
-          <div class="card-title">{{ book.title }}</div>
-          <div class="card-author">{{ book.author || 'Unknown' }}</div>
+          <div class="card-title" v-html="highlightText(book.title, searchQuery)"></div>
+          <div class="card-author" v-html="highlightText(book.author || 'Unknown', searchQuery)"></div>
           <div class="card-meta">
             <span v-for="t in (book.tags || []).slice(0, 3)" :key="t" class="tag-pill">{{ t }}</span>
             <span>{{ book.total_chapters }} chapters</span>
@@ -236,7 +260,7 @@ function cancelMobileAction() {
       </div>
       <transition name="slide">
         <div v-if="expandedId === book.id" class="card-intro">
-          <p v-if="book.intro" class="intro-text">{{ book.intro }}</p>
+          <p v-if="book.intro" class="intro-text" v-html="highlightText(book.intro, searchQuery)"></p>
           <p v-else class="intro-text intro-placeholder">No synopsis available.</p>
           <button class="start-btn" @click.stop="startReading(book.id)">Start Reading →</button>
         </div>
