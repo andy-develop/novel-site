@@ -46,7 +46,7 @@ const tags = computed(() => {
 
 async function loadBooks() {
   try {
-    const res = await fetch('./data/books.json')
+    const res = await fetch('./data/books.json?v=' + Date.now())
     allBooks.value = await res.json()
   } catch (e) {
     console.error('Failed to load books:', e)
