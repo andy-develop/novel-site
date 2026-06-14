@@ -42,8 +42,13 @@ function saveHistory() {
 
 function checkBookshelfTip() {
   shelfBtnActive.value = isInBookshelf(props.bookId)
-  if (!isInBookshelf(props.bookId) && !isTipIgnored(props.bookId)) {
+}
+
+function tryGoHome() {
+  if (!isInBookshelf(props.bookId) && !isTipIgnored(props.bookId) && book.value) {
     showBookshelfTip.value = true
+  } else {
+    emit('navigate-home')
   }
 }
 
@@ -51,11 +56,13 @@ function acceptBookshelfTip() {
   addToBookshelf({ bookId: props.bookId, title: book.value?.title || '', cover: book.value?.title?.charAt(0) || '', addedAt: Date.now() })
   shelfBtnActive.value = true
   showBookshelfTip.value = false
+  emit('navigate-home')
 }
 
 function declineBookshelfTip() {
   addTipIgnore(props.bookId)
   showBookshelfTip.value = false
+  emit('navigate-home')
 }
 
 function toggleReaderShelf() {
@@ -160,7 +167,7 @@ function nextChapter() {
 <template>
   <header>
     <div class="header-inner">
-      <div class="logo" @click="emit('navigate-home')" style="cursor:pointer">
+      <div class="logo" @click="tryGoHome" style="cursor:pointer">
         <span>N</span>OVEL VAULT
       </div>
       <span class="header-book-title" v-if="book">{{ book.title }}</span>
@@ -175,12 +182,12 @@ function nextChapter() {
   <div v-if="loading" class="loading">Loading...</div>
 
   <div v-else-if="error" class="reader">
-    <button class="back-btn" @click="emit('navigate-home')">← Back to Library</button>
+    <button class="back-btn" @click="tryGoHome">← Back to Library</button>
     <p style="color:var(--text-dim);margin-top:40px">{{ error }}</p>
   </div>
 
   <div v-else class="reader">
-    <button class="back-btn" @click="emit('navigate-home')">← Back to Library</button>
+    <button class="back-btn" @click="tryGoHome">← Back to Library</button>
 
     <div class="chapter-nav">
       <select v-model="currentCh" @change="goChapter" v-if="chapters.length">
