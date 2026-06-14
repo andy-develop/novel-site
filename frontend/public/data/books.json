@@ -360,5 +360,20 @@
       "Thriller",
       "Social Media"
     ]
+  },
+  {
+    "id": 24,
+    "slug": "ashes-of-us",
+    "title": "Ashes of Us",
+    "author": "Apex Shaw",
+    "category": "Dark Romance / Dark Academia",
+    "intro": "Two victims of the same abusive system — a controlled heiress and a discarded foster boy — forge a dark pact to burn down the old-money academy that made them, only to be torn apart by betrayal and reunited by revenge.",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Dark Romance",
+      "Dark Academia",
+      "Revenge"
+    ]
   }
 ]
