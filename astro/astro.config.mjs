@@ -5,13 +5,17 @@ import vue from '@astrojs/vue';
 import sitemap from '@astrojs/sitemap';
 
 // Use Node adapter for local dev/build (Node 24 incompatible with miniflare)
-// Cloudflare adapter is used in CI (Node 20) via CF_PAGES=true
+// Cloudflare adapter is used in CI (Node 22) via CF_PAGES=true
 const isCF = process.env.CF_PAGES === '1' || process.env.CF_PAGES === 'true';
 
 export default defineConfig({
   output: 'server',
   adapter: isCF
-    ? cloudflare()
+    ? cloudflare({
+        platformProxy: { enabled: false },
+        sessionKVBindingName: undefined,
+        imagesBindingName: undefined,
+      })
     : node({ mode: 'standalone' }),
   site: 'https://lyriq.space',
   integrations: [
