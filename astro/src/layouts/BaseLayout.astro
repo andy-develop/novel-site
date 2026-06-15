@@ -1,0 +1,43 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  canonicalUrl?: string;
+  jsonLd?: object;
+}
+
+const { title, description = 'Read free novels online — fantasy, romance, sci-fi, thriller and more.', canonicalUrl, jsonLd } = Astro.props;
+const siteTitle = title === 'Home' ? 'Novel Vault — Read Free Novels Online' : `${title} — Novel Vault`;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>{siteTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#c9a84c" />
+  {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Novel Vault" />
+  <meta property="og:title" content={siteTitle} />
+  <meta property="og:description" content={description} />
+  <meta name="twitter:card" content="summary" />
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+</head>
+<body>
+  <slot />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
+<style is:global>
+@import '../styles/global.css';
+</style>

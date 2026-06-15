@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getBooks, getEnglishBooks, getBooksByTag, getAllTags } from '../../utils/data';
+
+const { tag: rawTag } = Astro.params;
+const tag = decodeURIComponent(rawTag);
+if (!tag) return Astro.redirect('/');
+
+const allBooks = await getBooks(Astro.locals);
+const books = getEnglishBooks(allBooks);
+const tagged = getBooksByTag(books, tag);
+if (!tagged.length) return Astro.redirect('/');
+
+const tags = getAllTags(books);
+const description = `Browse ${tagged.length} free ${tag} novels online at Novel Vault.`;
+---
+<BaseLayout title={`${tag} Novels`} description={description} canonicalUrl={`https://lyriq.space/tag/${encodeURIComponent(tag)}`}>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
+    </div>
+  </header>
+
+  <div class="tag-page">
+    <div class="tag-header">
+      <h1>{tag}</h1>
+      <span class="tag-count">{tagged.length} {tagged.length === 1 ? 'novel' : 'novels'}</span>
+    </div>
+
+    <div class="categories">
+      <a href="/" class="cat-btn">All</a>
+      {tags.map(t => (
+        <a href={`/tag/${encodeURIComponent(t)}`} class:list={['cat-btn', { active: t === tag }]}>{t}</a>
+      ))}
+    </div>
+
+    <div class="grid">
+      {tagged.map((book, i) => (
+        <a href={`/novel/${book.id}`} class="novel-card" style={`animation-delay:${i*0.04}s`} data-astro-prefetch>
+          <div class="card-cover">
+            <span class="cover-char">{book.title.charAt(0)}</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">{book.title}</div>
+            <div class="card-author">{book.author || 'Unknown'}</div>
+            <div class="card-meta">
+              {(book.tags || []).slice(0, 3).map(t => <span>{t}</span>)}
+              <span>{book.total_chapters} ch.</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-page { max-width:900px; margin:0 auto; padding:20px; }
+  .tag-header { display:flex; align-items:baseline; gap:12px; margin-bottom:16px; }
+  .tag-header h1 { font-family:var(--font-display); font-size:1.8rem; color:var(--gold); font-weight:400; }
+  .tag-count { font-family:var(--font-ui); font-size:0.85rem; color:var(--text-dim); }
+  .novel-card { text-decoration:none; color:inherit; }
+</style>

@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ChapterNavIsland from '../../../components/ChapterNavIsland.vue';
+import { getBooks, getEnglishBooks, findBook, getCatalog, getChapter } from '../../../utils/data';
+
+const { id, chapterId } = Astro.params;
+const bookId = parseInt(id);
+const chId = parseInt(chapterId);
+if (!bookId || !chId) return Astro.redirect('/404');
+
+const allBooks = await getBooks(Astro.locals);
+const books = getEnglishBooks(allBooks);
+const book = findBook(books, bookId);
+if (!book) return Astro.redirect('/404');
+
+const catalog = await getCatalog(bookId, Astro.locals);
+const chapters = catalog?.chapters || [];
+const currentChapter = chapters.find(c => c.chapter_id === chId);
+if (!currentChapter) return Astro.redirect('/404');
+
+const chapterData = await getChapter(bookId, chId, Astro.locals);
+const content = chapterData?.content || [];
+
+const currentIndex = chapters.findIndex(c => c.chapter_id === chId);
+const prevChapter = currentIndex > 0 ? chapters[currentIndex - 1] : null;
+const nextChapter = currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null;
+const chapterTitle = chapterData?.title || currentChapter.title;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Chapter",
+  "name": chapterTitle,
+  "isPartOf": { "@type": "Book", "name": book.title },
+};
+
+const paragraphs = content.join('\n\n').split('\n\n').filter(Boolean);
+function renderMd(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
+const description = `Read "${chapterTitle}" of ${book.title} online for free.`;
+---
+<BaseLayout title={`${chapterTitle} — ${book.title}`} description={description} canonicalUrl={`https://lyriq.space/novel/${bookId}/${chId}`} jsonLd={jsonLd}>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
+      <span class="header-book-title">{book.title}</span>
+    </div>
+  </header>
+
+  <div class="reader">
+    <a href={`/novel/${bookId}`} class="back-btn">← Back to {book.title}</a>
+
+    <ChapterNavIsland client:load bookId={bookId} chapterId={chId} bookTitle={book.title} />
+
+    <div class="chapter-nav">
+      <select onchange={`window.location='/novel/${bookId}/'+this.value`}>
+        {chapters.map(ch => (
+          <option value={ch.chapter_id} selected={ch.chapter_id === chId}>{ch.title}</option>
+        ))}
+      </select>
+      {prevChapter
+        ? <a href={`/novel/${bookId}/${prevChapter.chapter_id}`} data-astro-prefetch>← Previous</a>
+        : <button disabled>← Previous</button>
+      }
+      {nextChapter
+        ? <a href={`/novel/${bookId}/${nextChapter.chapter_id}`} data-astro-prefetch>Next →</a>
+        : <button disabled>Next →</button>
+      }
+    </div>
+
+    <h1>{chapterTitle}</h1>
+
+    <div class="content">
+      {paragraphs.map(p => <p set:html={renderMd(p)} />)}
+    </div>
+
+    <div class="chapter-nav bottom-nav">
+      {prevChapter
+        ? <a href={`/novel/${bookId}/${prevChapter.chapter_id}`} data-astro-prefetch>← Previous</a>
+        : <button disabled>← Previous</button>
+      }
+      {nextChapter
+        ? <a href={`/novel/${bookId}/${nextChapter.chapter_id}`} data-astro-prefetch>Next →</a>
+        : <button disabled>Next →</button>
+      }
+    </div>
+  </div>
+</BaseLayout>

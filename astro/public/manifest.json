@@ -1,0 +1,16 @@
+{
+  "name": "Novel Vault",
+  "short_name": "NovelVault",
+  "description": "Read free English novels online",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#c9a84c",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
