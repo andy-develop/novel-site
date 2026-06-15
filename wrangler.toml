@@ -1,4 +1,4 @@
-name = "novel-vault"
+name = "novel-site"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 

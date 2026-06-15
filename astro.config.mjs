@@ -13,8 +13,6 @@ export default defineConfig({
   adapter: isCF
     ? cloudflare({
         platformProxy: { enabled: false },
-        sessionKVBindingName: false,
-        imagesBindingName: false,
       })
     : node({ mode: 'standalone' }),
   site: 'https://lyriq.space',
