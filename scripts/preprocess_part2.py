@@ -105,11 +105,15 @@ def parse_yaml(dir_path):
     genre = meta.get("genre", "")
     tags = _genre_to_tags(genre, data)
 
+    summary = (data.get("premise", "") or meta.get("premise", "")
+               or meta.get("summary", "") or data.get("summary", "")
+               or data.get("tagline", "") or meta.get("tagline", "")
+               or data.get("synopsis", "") or meta.get("synopsis", ""))
     return {
         "title": meta.get("title") or meta.get("name", dir_path.name),
         "author": meta.get("author", ""),
         "genre": genre,
-        "summary": data.get("premise", "") or meta.get("summary", ""),
+        "summary": summary,
         "lang": meta.get("language", "chinese"),
         "tags": tags,
     }
