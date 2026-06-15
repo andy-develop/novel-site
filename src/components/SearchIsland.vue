@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import MiniSearch from 'minisearch'
+import { getBookshelf, isInBookshelf, addToBookshelf, removeFromBookshelf, getBookProgress, getReadingProgress } from '../utils/storage.js'
 
 const props = defineProps({
   books: Array,
@@ -10,8 +11,9 @@ const props = defineProps({
 
 const query = ref('')
 const activeTag = ref('All')
-const expandedId = ref(null)
 const ms = ref(null)
+const shelf = ref([])
+const progress = ref({})
 
 onMounted(() => {
   const idx = new MiniSearch({
@@ -21,6 +23,8 @@ onMounted(() => {
   })
   idx.addAll(props.books)
   ms.value = idx
+  shelf.value = getBookshelf()
+  progress.value = getReadingProgress()
 })
 
 const filtered = computed(() => {
@@ -43,6 +47,28 @@ function hl(text,q) {
   if(!terms.length) return text
   return text.replace(new RegExp(`(${terms.map(esc).join('|')})`,'gi'),'<mark class="hl">$1</mark>')
 }
+
+function onShelf(bookId) { return shelf.value.some(b => b.bookId === bookId) }
+
+function toggleShelf(book, e) {
+  e.stopPropagation()
+  if (onShelf(book.id)) {
+    removeFromBookshelf(book.id)
+  } else {
+    addToBookshelf({ bookId: book.id, title: book.title, author: book.author, total_chapters: book.total_chapters })
+  }
+  shelf.value = getBookshelf()
+}
+
+function getProgressChapter(bookId) {
+  const p = progress.value[bookId]
+  return p ? p.chapterTitle : null
+}
+
+function getProgressHref(bookId) {
+  const p = progress.value[bookId]
+  return p ? `/novel/${bookId}/${p.chapterId}` : `/novel/${bookId}`
+}
 </script>
 
 <template>
@@ -61,26 +87,34 @@ function hl(text,q) {
     <button v-for="t in tags" :key="t" :class="['cat-btn',{active:activeTag===t}]" @click="activeTag=t">{{t}} ({{tagCounts[t]||0}})</button>
   </div>
 
+  <div class="shelf-section" v-if="shelf.length">
+    <div class="shelf-title">My Shelf</div>
+    <div class="shelf-scroll">
+      <a v-for="item in shelf" :key="item.bookId" :href="getProgressHref(item.bookId)" class="shelf-item">
+        <span class="shelf-book-title">{{item.title}}</span>
+        <span class="shelf-progress" v-if="getProgressChapter(item.bookId)">{{getProgressChapter(item.bookId)}}</span>
+        <span class="shelf-progress" v-else>Ch. 1</span>
+      </a>
+    </div>
+  </div>
+
   <div class="grid" v-if="filtered.length">
-    <div v-for="(book,i) in filtered" :key="book.id" :class="['novel-card',{expanded:expandedId===book.id}]" :style="{animationDelay:i*0.04+'s'}">
-      <div class="card-main" @click="expandedId=expandedId===book.id?null:book.id">
+    <div v-for="(book,i) in filtered" :key="book.id" class="novel-card" :style="{animationDelay:i*0.04+'s'}">
+      <a :href="'/novel/'+book.id" class="card-main">
         <div class="card-cover"><span class="cover-char">{{cover(book.title)}}</span></div>
         <div class="card-body">
           <div class="title-row">
             <div class="card-title" v-html="hl(book.title,query)"></div>
+            <button :class="['shelf-btn',{active:onShelf(book.id)}]" @click.prevent="toggleShelf(book,$event)" :title="onShelf(book.id)?'Remove from shelf':'Add to shelf'">{{onShelf(book.id)?'★':'☆'}}</button>
           </div>
           <div class="card-author" v-html="hl(book.author||'Unknown',query)"></div>
           <div class="card-meta">
             <span v-for="t in (book.tags||[]).slice(0,3)" :key="t" class="tag-pill">{{t}}</span>
             <span>{{book.total_chapters}} ch.</span>
           </div>
+          <div class="card-continue" v-if="getProgressChapter(book.id)">Continue: {{getProgressChapter(book.id)}}</div>
         </div>
-        <span class="expand-icon">{{expandedId===book.id?'▾':'▸'}}</span>
-      </div>
-      <div v-if="expandedId===book.id" class="card-intro">
-        <p v-if="book.intro" class="intro-text" v-html="hl(book.intro,query)"></p>
-        <a :href="'/novel/'+book.id" class="start-btn">Start Reading →</a>
-      </div>
+      </a>
     </div>
   </div>
   <div v-else class="empty-state"><p>No novels found</p></div>

@@ -90,3 +90,8 @@ const description = `Read "${chapterTitle}" of ${book.title} online for free.`;
     </div>
   </div>
 </BaseLayout>
+
+<script define:vars={{ bookId, chId, chapterTitle }}>
+  import { saveBookProgress } from '../../utils/storage.js';
+  saveBookProgress(bookId, chId, chapterTitle);
+</script>

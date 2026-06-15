@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ChapterNavIsland from '../../components/ChapterNavIsland.vue';
+import ShelfBtnIsland from '../../components/ShelfBtnIsland.vue';
 import { getBooks, getEnglishBooks, findBook, getCatalog, getChapter } from '../../utils/data';
 
 const { id } = Astro.params;
@@ -40,7 +41,10 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
     <a href="/" class="back-btn">← Back to Library</a>
 
     <h1>{book.title}</h1>
-    <p class="book-author">by {book.author || 'Unknown'}</p>
+    <div class="detail-title-row">
+      <p class="book-author">by {book.author || 'Unknown'}</p>
+      <ShelfBtnIsland client:load bookId={bookId} title={book.title} author={book.author || 'Unknown'} totalChapters={book.total_chapters} />
+    </div>
 
     <div class="book-tags">
       {(book.tags || []).map(t => (
@@ -65,6 +69,8 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
 
 <style>
   .book-author { font-family:var(--font-body); font-size:1.1rem; color:var(--text-dim); margin-bottom:16px; }
+  .detail-title-row { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .detail-title-row .book-author { margin-bottom:0; }
   .book-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
   .book-tags .tag-pill { font-size:0.75rem; cursor:pointer; transition:all 0.15s; }
   .book-tags .tag-pill:hover { background:var(--gold-dim); color:var(--gold); border-color:var(--gold); }
