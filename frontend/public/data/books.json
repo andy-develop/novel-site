@@ -398,5 +398,22 @@
       "Fantasy",
       "Romance"
     ]
+  },
+  {
+    "id": 28,
+    "slug": "gilded-glitch",
+    "title": "Gilded Glitch",
+    "author": "Apex Shaw",
+    "category": "Sapphic Romance / Cyber-Luxe Thriller",
+    "intro": "A crypto queen builds a billion-dollar empire to win back the woman she lost — but the glitch in her perfect code is love itself.",
+    "total_chapters": 40,
+    "lang": "english",
+    "tags": [
+      "Fantasy",
+      "Female Lead",
+      "Queer",
+      "Romance",
+      "Thriller"
+    ]
   }
 ]

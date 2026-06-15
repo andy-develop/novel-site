@@ -34,6 +34,7 @@ BOOKS = [
     {"id": 25, "dir": "BurnBook2",                         "slug": "burn-book-2-inferno-exe"},
     {"id": 26, "dir": "Terms-of-Soul",                     "slug": "terms-of-soul"},
     {"id": 27, "dir": "Last-Aurelia",                       "slug": "last-aurelia"},
+    {"id": 28, "dir": "GildedGlitch",                       "slug": "gilded-glitch"},
 ]
 
 # Synonym map: genre text fragments → site standard tags
@@ -57,10 +58,10 @@ def _genre_to_tags(genre, data=None):
     for key in list(data.keys()):
         if key[0].isupper() and key.lower() not in data:
             data[key.lower()] = data[key]
-    # 只读 genre + subgenre
+    # 只读 genre + subgenre(s)
     parts = []
     for key in ["genre", "subgenre"]:
-        val = meta.get(key) or data.get(key, "")
+        val = meta.get(key) or data.get(key, "") or meta.get(key + "s") or data.get(key + "s", "")
         if isinstance(val, list):
             parts.extend(str(x) for x in val)
         elif val:
