@@ -118,6 +118,7 @@ mark.hl { background:none; color:var(--gold); font-weight:700; padding:0; border
 .shelf-btn:hover { border-color:var(--gold); color:var(--gold); }
 .shelf-btn.active { background:var(--gold-dim); color:var(--gold); border-color:var(--gold); }
 .reader-shelf-btn { margin-left:auto; padding:5px 12px; font-size:0.78rem; }
+.card-shelf-btn { padding:5px 14px; font-size:0.72rem; }
 
 /* DARK MODE TOGGLE */
 body.dark-mode { --bg:#050508; --bg-card:#0e0e14; --bg-card-hover:#14141e; --border:rgba(201,168,76,0.04); --text:#c8bfa8; --text-dim:#6b6350; --text-muted:#4a4538; }

@@ -82,11 +82,6 @@ function getProgressHref(bookId) {
     </div>
   </header>
 
-  <div class="categories">
-    <button :class="['cat-btn',{active:activeTag==='All'}]" @click="activeTag='All'">All ({{books.length}})</button>
-    <button v-for="t in tags" :key="t" :class="['cat-btn',{active:activeTag===t}]" @click="activeTag=t">{{t}} ({{tagCounts[t]||0}})</button>
-  </div>
-
   <div class="shelf-section" v-if="shelf.length">
     <div class="shelf-title">My Shelf</div>
     <div class="shelf-scroll">
@@ -98,6 +93,11 @@ function getProgressHref(bookId) {
     </div>
   </div>
 
+  <div class="categories">
+    <button :class="['cat-btn',{active:activeTag==='All'}]" @click="activeTag='All'">All</button>
+    <button v-for="t in tags" :key="t" :class="['cat-btn',{active:activeTag===t}]" @click="activeTag=t">{{t}}</button>
+  </div>
+
   <div class="grid" v-if="filtered.length">
     <div v-for="(book,i) in filtered" :key="book.id" class="novel-card" :style="{animationDelay:i*0.04+'s'}">
       <a :href="'/novel/'+book.id" class="card-main">
@@ -105,7 +105,7 @@ function getProgressHref(bookId) {
         <div class="card-body">
           <div class="title-row">
             <div class="card-title" v-html="hl(book.title,query)"></div>
-            <button :class="['shelf-btn',{active:onShelf(book.id)}]" @click.prevent="toggleShelf(book,$event)" :title="onShelf(book.id)?'Remove from shelf':'Add to shelf'">{{onShelf(book.id)?'★':'☆'}}</button>
+            <button :class="['shelf-btn','card-shelf-btn',{active:onShelf(book.id)}]" @click.prevent="toggleShelf(book,$event)" :title="onShelf(book.id)?'Remove from shelf':'Add to shelf'">{{onShelf(book.id)?'★ On Shelf':'☆ Add to Shelf'}}</button>
           </div>
           <div class="card-author" v-html="hl(book.author||'Unknown',query)"></div>
           <div class="card-meta">
