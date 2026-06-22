@@ -63,25 +63,35 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
     {book.intro && <p class="book-intro">{book.intro}</p>}
 
     {keyCharacters.length > 0 && (
-      <div class="characters-section">
+      <div class="characters-section" id="characters-section">
         <h2>Key Characters</h2>
-        <div class="characters-grid">
-          {keyCharacters.map(char => (
-            <div class="character-card">
-              <span class="char-name">{char.primary_name}</span>
+        <div class="char-names-row">
+          {keyCharacters.map((char, ci) => (
+            <>
+              {ci > 0 && <span class="char-dot">·</span>}
+              <button class="char-toggle" data-char-idx={ci} aria-expanded="false">
+                {char.primary_name}
+              </button>
+            </>
+          ))}
+        </div>
+        {keyCharacters.map((char, ci) => (
+          <div class="char-detail" id={`char-detail-${ci}`}>
+            <div class="char-detail-header">
+              <span class="char-detail-name">{char.primary_name}</span>
               {char.aliases?.length > 1 && (
                 <span class="char-alias">{char.aliases.slice(1).slice(0, 2).join(' · ')}</span>
               )}
-              <span class="char-sep">—</span>
-              {char.dossier.epic_nodes.slice(0, 4).map((node, i) => (
-                <>
-                  {i > 0 && <span class="path-arrow">→</span>}
-                  <a href={node.url} class="path-node" data-astro-prefetch>{node.title.replace(/^📖\s*/, '')}</a>
-                </>
+            </div>
+            <div class="char-nodes">
+              {char.dossier.epic_nodes.slice(0, 5).map((node, ni) => (
+                <a href={node.url} class="char-node-link" data-astro-prefetch>
+                  {node.title.replace(/^📖\s*/, '')}
+                </a>
               ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     )}
 
@@ -108,17 +118,39 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
   .book-intro { font-family:var(--font-body); font-size:0.95rem; line-height:1.7; color:var(--text-dim); margin-bottom:28px; }
   .characters-section { margin-bottom:22px; }
   .characters-section h2 { font-family:var(--font-ui); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); margin-bottom:8px; }
-  .characters-grid { display:flex; flex-direction:column; gap:3px; }
-  .character-card { display:flex; align-items:baseline; flex-wrap:wrap; gap:0; padding:5px 10px; border:1px solid var(--border); border-radius:4px; background:var(--bg-card); transition:all 0.15s; }
-  .character-card:hover { border-color:rgba(201,168,76,0.2); background:var(--bg-card-hover); }
-  .char-name { font-family:var(--font-display); font-size:0.82rem; color:var(--text); margin-right:5px; }
-  .char-alias { font-family:var(--font-ui); font-size:0.62rem; color:var(--text-muted); margin-right:5px; }
-  .char-sep { color:var(--text-muted); font-size:0.65rem; margin:0 6px 0 2px; opacity:0.4; }
-  .path-node { font-family:var(--font-ui); font-size:0.68rem; color:var(--text-dim); text-decoration:none; transition:color 0.15s; }
-  .path-node:hover { color:var(--gold); }
-  .path-arrow { font-size:0.5rem; color:var(--gold-dim); margin:0 4px; opacity:0.35; }
+  .char-names-row { display:flex; align-items:baseline; flex-wrap:wrap; gap:0; }
+  .char-dot { color:var(--text-muted); margin:0 6px; font-size:0.9rem; opacity:0.4; }
+  .char-toggle { font-family:var(--font-display); font-size:0.88rem; color:var(--text); background:none; border:none; cursor:pointer; padding:2px 1px; border-radius:3px; transition:color 0.15s; outline:none; }
+  .char-toggle:hover { color:var(--gold); }
+  .char-toggle:focus-visible { box-shadow:0 0 0 2px var(--gold-dim); }
+  .char-toggle.active { color:var(--gold); }
+  .char-detail { display:grid; grid-template-rows:0fr; transition:grid-template-rows 0.25s ease; overflow:hidden; }
+  .char-detail.open { grid-template-rows:1fr; }
+  .char-detail > * { overflow:hidden; min-height:0; }
+  .char-detail-header { padding:8px 0 2px; display:flex; align-items:baseline; gap:6px; }
+  .char-detail-name { font-family:var(--font-display); font-size:0.82rem; color:var(--text); }
+  .char-alias { font-family:var(--font-ui); font-size:0.62rem; color:var(--text-muted); }
+  .char-nodes { display:flex; flex-wrap:wrap; gap:3px 6px; padding:4px 0 8px; }
+  .char-node-link { font-family:var(--font-ui); font-size:0.72rem; color:var(--text-dim); text-decoration:none; padding:3px 8px; border:1px solid var(--border); border-radius:4px; background:var(--bg-card); transition:all 0.15s; white-space:nowrap; }
+  .char-node-link:hover { color:var(--gold); border-color:rgba(201,168,76,0.2); background:var(--bg-card-hover); }
   .chapter-list-section h2 { font-family:var(--font-ui); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); margin-bottom:12px; }
   .chapter-list { list-style:none; display:flex; flex-direction:column; gap:4px; }
   .chapter-list li a { display:block; padding:8px 12px; border:1px solid var(--border); border-radius:6px; color:var(--text-dim); font-family:var(--font-ui); font-size:0.82rem; transition:all 0.15s; }
   .chapter-list li a:hover { background:var(--bg-card-hover); border-color:rgba(201,168,76,0.2); color:var(--gold); }
 </style>
+<script>
+document.querySelectorAll('.char-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const idx = btn.dataset.charIdx;
+    const detail = document.getElementById('char-detail-' + idx);
+    const isOpen = detail.classList.contains('open');
+    document.querySelectorAll('.char-detail.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.char-toggle.active').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-expanded','false'); });
+    if (!isOpen) {
+      detail.classList.add('open');
+      btn.classList.add('active');
+      btn.setAttribute('aria-expanded','true');
+    }
+  });
+});
+</script>
