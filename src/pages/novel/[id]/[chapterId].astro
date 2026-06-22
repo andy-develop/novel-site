@@ -1,25 +1,41 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import ChapterNavIsland from '../../../components/ChapterNavIsland.vue';
-import { getBooks, getEnglishBooks, findBook, getCatalog, getChapter } from '../../../utils/data';
+import DanmakuEngine from '../../../components/vue/DanmakuEngine.vue';
+import CharacterDossierOverlay from '../../../components/vue/CharacterDossierOverlay.vue';
+import { getBooks, getEnglishBooks, findBook, getCatalog, getChapter, getCharacters } from '../../../utils/data';
+import { injectCharacterLinks } from '../../../utils/seoProcessor';
 
 const { id, chapterId } = Astro.params;
 const bookId = parseInt(id);
 const chId = parseInt(chapterId);
 if (!bookId || !chId) return Astro.redirect('/404');
 
-const allBooks = await getBooks(Astro.locals);
+const allBooks = await getBooks();
 const books = getEnglishBooks(allBooks);
 const book = findBook(books, bookId);
 if (!book) return Astro.redirect('/404');
 
-const catalog = await getCatalog(bookId, Astro.locals);
+const catalog = await getCatalog(bookId);
 const chapters = catalog?.chapters || [];
 const currentChapter = chapters.find(c => c.chapter_id === chId);
 if (!currentChapter) return Astro.redirect('/404');
 
-const chapterData = await getChapter(bookId, chId, Astro.locals);
+const chapterData = await getChapter(bookId, chId);
 const content = chapterData?.content || [];
+
+// Character link injection: load config + process after renderMd
+const charConfig = await getCharacters(bookId);
+function renderMd(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+const rawParagraphs = content.join('\n\n').split('\n\n').filter(Boolean);
+const htmlParagraphs = rawParagraphs.map(p => renderMd(p));
+const processedParagraphs = charConfig
+  ? injectCharacterLinks(htmlParagraphs, charConfig)
+  : htmlParagraphs;
 
 const currentIndex = chapters.findIndex(c => c.chapter_id === chId);
 const prevChapter = currentIndex > 0 ? chapters[currentIndex - 1] : null;
@@ -31,17 +47,20 @@ const jsonLd = {
   "@type": "Chapter",
   "name": chapterTitle,
   "isPartOf": { "@type": "Book", "name": book.title },
+  ...(chapterData?.highlight ? { "abstract": chapterData.highlight, "headline": chapterData.highlight } : {}),
 };
 
-const paragraphs = content.join('\n\n').split('\n\n').filter(Boolean);
-function renderMd(text) {
-  return text
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\n/g, '<br>');
-}
+const description = chapterData?.highlight
+  ? `${chapterData.highlight} — from "${chapterTitle}" of ${book.title} by ${book.author}.`
+  : `Read "${chapterTitle}" of ${book.title} online for free.`;
 
-const description = `Read "${chapterTitle}" of ${book.title} online for free.`;
+// CDN cache: 404 不缓存，正常页面强缓存 7 天 + 1 小时浏览器缓存 + 1 天 stale 容忍
+if (chapterData) {
+  Astro.response.headers.set(
+    'Cache-Control',
+    'public, max-age=3600, s-maxage=604800, stale-while-revalidate=86400'
+  );
+}
 ---
 <BaseLayout title={`${chapterTitle} — ${book.title}`} description={description} canonicalUrl={`https://lyriq.space/novel/${bookId}/${chId}`} jsonLd={jsonLd}>
   <header>
@@ -54,41 +73,54 @@ const description = `Read "${chapterTitle}" of ${book.title} online for free.`;
   <div class="reader">
     <a href={`/novel/${bookId}`} class="back-btn">← Back to {book.title}</a>
 
-    <ChapterNavIsland client:load bookId={bookId} chapterId={chId} bookTitle={book.title} />
-
     <div class="chapter-nav">
-      <select onchange={`window.location='/novel/${bookId}/'+this.value`}>
-        {chapters.map(ch => (
-          <option value={ch.chapter_id} selected={ch.chapter_id === chId}>{ch.title}</option>
-        ))}
-      </select>
+      <div class="select-wrap">
+        <select onchange={`window.location='/novel/${bookId}/'+this.value`}>
+          {chapters.map(ch => (
+            <option value={ch.chapter_id} selected={ch.chapter_id === chId}>{ch.title}</option>
+          ))}
+        </select>
+        <span class="select-arrow">▾</span>
+      </div>
       {prevChapter
-        ? <a href={`/novel/${bookId}/${prevChapter.chapter_id}`} data-astro-prefetch>← Previous</a>
+        ? <a href={`/novel/${bookId}/${prevChapter.chapter_id}`} rel="prev" data-astro-prefetch>← Previous</a>
         : <button disabled>← Previous</button>
       }
       {nextChapter
-        ? <a href={`/novel/${bookId}/${nextChapter.chapter_id}`} data-astro-prefetch>Next →</a>
+        ? <a href={`/novel/${bookId}/${nextChapter.chapter_id}`} rel="next" data-astro-prefetch>Next →</a>
         : <button disabled>Next →</button>
       }
     </div>
 
-    <h1>{chapterTitle}</h1>
+    {chapterData?.highlight && (
+      <blockquote class="chapter-teaser">
+        <span class="teaser-icon">✨</span>
+        <p>{chapterData.highlight}</p>
+      </blockquote>
+    )}
 
-    <div class="content">
-      {paragraphs.map(p => <p set:html={renderMd(p)} />)}
+    <div id="novel-content" class="content">
+      {processedParagraphs.map((p, idx) => (
+        <div class="paragraph-block" data-p-idx={idx}>
+          <p set:html={p} />
+        </div>
+      ))}
     </div>
 
     <div class="chapter-nav bottom-nav">
       {prevChapter
-        ? <a href={`/novel/${bookId}/${prevChapter.chapter_id}`} data-astro-prefetch>← Previous</a>
+        ? <a href={`/novel/${bookId}/${prevChapter.chapter_id}`} rel="prev" data-astro-prefetch>← Previous</a>
         : <button disabled>← Previous</button>
       }
       {nextChapter
-        ? <a href={`/novel/${bookId}/${nextChapter.chapter_id}`} data-astro-prefetch>Next →</a>
+        ? <a href={`/novel/${bookId}/${nextChapter.chapter_id}`} rel="next" data-astro-prefetch>Next →</a>
         : <button disabled>Next →</button>
       }
     </div>
   </div>
+
+  <DanmakuEngine bookId={bookId} chapterId={chId} client:idle />
+  {charConfig && <CharacterDossierOverlay client:idle charData={charConfig} />}
 </BaseLayout>
 
 <script define:vars={{ bookId, chId, chapterTitle }}>

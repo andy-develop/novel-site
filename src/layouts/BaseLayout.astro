@@ -1,12 +1,15 @@
 ---
+import GlobalControlsIsland from '../components/GlobalControlsIsland.vue';
+
 export interface Props {
   title: string;
   description?: string;
   canonicalUrl?: string;
   jsonLd?: object;
+  hideControls?: boolean;
 }
 
-const { title, description = 'Read free novels online — fantasy, romance, sci-fi, thriller and more.', canonicalUrl, jsonLd } = Astro.props;
+const { title, description = 'Read free novels online — fantasy, romance, sci-fi, thriller and more.', canonicalUrl, jsonLd, hideControls = false } = Astro.props;
 const siteTitle = title === 'Home' ? 'Novel Vault — Read Free Novels Online' : `${title} — Novel Vault`;
 ---
 <!doctype html>
@@ -30,6 +33,7 @@ const siteTitle = title === 'Home' ? 'Novel Vault — Read Free Novels Online' :
   {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 </head>
 <body>
+  {hideControls ? null : <GlobalControlsIsland client:load />}
   <slot />
   <script>
     if ('serviceWorker' in navigator) {

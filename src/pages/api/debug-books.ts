@@ -1,19 +1,33 @@
 import type { APIRoute } from 'astro';
 import { getBooks } from '../../utils/data';
 
-export const GET: APIRoute = async ({ locals }) => {
-  const allBooks = await getBooks(locals);
-  const ids = allBooks.map(b => b.id);
-  const has29 = allBooks.some(b => b.id === 29);
-  const b29 = allBooks.find(b => b.id === 29);
+export const GET: APIRoute = async () => {
+  try {
+    const allBooks = await getBooks();
+    const ids = allBooks.map(b => b.id);
+    const has29 = allBooks.some(b => b.id === 29);
+    const b29 = allBooks.find(b => b.id === 29);
 
-  return new Response(JSON.stringify({
-    total: allBooks.length,
-    ids,
-    has29,
-    book29: b29 || null,
-    source: locals?.runtime?.env?.R2_BUCKET ? 'R2_BINDING' : 'HTTP_FALLBACK',
-  }, null, 2), {
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
-  });
+    // cloudflare:workers only available in CF runtime
+    let bucketExists = false;
+    try {
+      const { env: cfEnv } = await import('cloudflare:workers');
+      bucketExists = !!(cfEnv as Record<string, any>).R2_BUCKET;
+    } catch { /* not in CF runtime */ }
+
+    return new Response(JSON.stringify({
+      total: allBooks.length,
+      ids,
+      has29,
+      book29: b29 || null,
+      source: bucketExists ? 'R2_BINDING' : 'HTTP_FALLBACK',
+    }, null, 2), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+    });
+  } catch (e: any) {
+    return new Response(JSON.stringify({ error: e.message, stack: e.stack }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 };

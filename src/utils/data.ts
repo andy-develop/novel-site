@@ -1,6 +1,8 @@
 /**
- * Data layer — R2 binding first, HTTP fallback for dev/preview
+ * Data layer - R2 binding first, HTTP fallback for dev/preview
+ * Astro v6: top-level import from cloudflare:workers (locals.runtime.env removed)
  */
+import { env as cfEnv } from 'cloudflare:workers';
 
 export interface Book {
   id: number;
@@ -29,32 +31,25 @@ export interface ChapterData {
   chapter_id: number;
   title: string;
   content: string[];
+  highlight?: string;
 }
 
 const R2_PUBLIC = 'https://data.lyriq.space';
 
-/**
- * Get R2 bucket from Astro locals, or null if unavailable (static build/dev)
- */
-function getBucket(locals: any): R2Bucket | null {
-  try {
-    return locals?.runtime?.env?.R2_BUCKET ?? null;
-  } catch {
-    return null;
-  }
+function getBucket(): R2Bucket | null {
+  return (cfEnv as Record<string, any>).R2_BUCKET ?? null;
 }
 
 /* ---------- Books list ---------- */
 
-export async function getBooks(locals?: any): Promise<Book[]> {
-  const bucket = getBucket(locals);
+export async function getBooks(): Promise<Book[]> {
+  const bucket = getBucket();
   if (bucket) {
     try {
       const obj = await bucket.get('books.json');
       if (obj) return await obj.json();
     } catch { /* fall through */ }
   }
-  // Fallback: fetch from public R2
   const res = await fetch(`${R2_PUBLIC}/books.json`);
   if (res.ok) return res.json();
   return [];
@@ -77,8 +72,8 @@ export function findBook(books: Book[], id: number): Book | undefined {
 
 /* ---------- Catalog ---------- */
 
-export async function getCatalog(bookId: number, locals?: any): Promise<Catalog | null> {
-  const bucket = getBucket(locals);
+export async function getCatalog(bookId: number): Promise<Catalog | null> {
+  const bucket = getBucket();
   const key = `catalog_${bookId}.json`;
   if (bucket) {
     try {
@@ -92,8 +87,8 @@ export async function getCatalog(bookId: number, locals?: any): Promise<Catalog 
 
 /* ---------- Chapter content ---------- */
 
-export async function getChapter(bookId: number, chapterId: number, locals?: any): Promise<ChapterData | null> {
-  const bucket = getBucket(locals);
+export async function getChapter(bookId: number, chapterId: number): Promise<ChapterData | null> {
+  const bucket = getBucket();
   const key = `${bookId}/${chapterId}.json`;
   if (bucket) {
     try {
@@ -103,6 +98,60 @@ export async function getChapter(bookId: number, chapterId: number, locals?: any
   }
   const res = await fetch(`${R2_PUBLIC}/${key}`);
   return res.ok ? res.json() : null;
+}
+
+/* ---------- Character config ---------- */
+
+export interface EpicNode {
+  title: string;
+  url: string;
+}
+
+export interface CharacterDossier {
+  title: string;
+  dopamine_sync?: string;
+  heartbreak_logs?: string;
+  epic_nodes: EpicNode[];
+}
+
+export interface CharacterEntry {
+  primary_name: string;
+  aliases: string[];
+  dossier: CharacterDossier;
+}
+
+export type CharactersFile = Record<string, CharacterEntry>;
+
+/** Fetch per-book character configuration from R2 (characters_{bookId}.json) */
+export async function getCharacters(bookId: number): Promise<CharactersFile | null> {
+  const bucket = getBucket();
+  const key = `characters_${bookId}.json`;
+  if (bucket) {
+    try {
+      const obj = await bucket.get(key);
+      if (obj) return await obj.json();
+    } catch { /* fall through */ }
+  }
+  const res = await fetch(`${R2_PUBLIC}/${key}`);
+  return res.ok ? res.json() : null;
+}
+
+/* ---------- Tag display names ---------- */
+
+export const TAG_DISPLAY: Record<string, string> = {
+  'Romance':        '💋 Crush',
+  'Fantasy':        '🏰 Realm',
+  'Sci-Fi':         '🌌 Neon',
+  'Thriller':       '🔪 Shadow',
+  'Dark Academia':  '🦇 Midnight',
+  'Dystopia':       '🔥 Rebel',
+  'Contemporary':   '🏙️ Real',
+  'Female Lead':    '👑 Her',
+  'Queer':          '🌈 Spectrum',
+};
+
+export function getTagDisplay(tag: string): string {
+  return TAG_DISPLAY[tag] ?? tag;
 }
 
 /* ---------- Books by tag ---------- */

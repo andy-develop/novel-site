@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getBooks, getEnglishBooks, getBooksByTag, getAllTags } from '../../utils/data';
+import { getBooks, getEnglishBooks, getBooksByTag, getAllTags, getTagDisplay } from '../../utils/data';
 
 const { tag: rawTag } = Astro.params;
 const tag = decodeURIComponent(rawTag);
 if (!tag) return Astro.redirect('/');
 
-const allBooks = await getBooks(Astro.locals);
+const allBooks = await getBooks();
 const books = getEnglishBooks(allBooks);
 const tagged = getBooksByTag(books, tag);
 if (!tagged.length) return Astro.redirect('/');
@@ -23,14 +23,14 @@ const description = `Browse ${tagged.length} free ${tag} novels online at Novel 
 
   <div class="tag-page">
     <div class="tag-header">
-      <h1>{tag}</h1>
+      <h1>{getTagDisplay(tag)}</h1>
       <span class="tag-count">{tagged.length} {tagged.length === 1 ? 'novel' : 'novels'}</span>
     </div>
 
     <div class="categories">
       <a href="/" class="cat-btn">All</a>
       {tags.map(t => (
-        <a href={`/tag/${encodeURIComponent(t)}`} class:list={['cat-btn', { active: t === tag }]}>{t}</a>
+        <a href={`/tag/${encodeURIComponent(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
       ))}
     </div>
 
@@ -44,7 +44,7 @@ const description = `Browse ${tagged.length} free ${tag} novels online at Novel 
             <div class="card-title">{book.title}</div>
             <div class="card-author">{book.author || 'Unknown'}</div>
             <div class="card-meta">
-              {(book.tags || []).slice(0, 3).map(t => <span>{t}</span>)}
+              {(book.tags || []).slice(0, 3).map(t => <span>{getTagDisplay(t)}</span>)}
               <span>{book.total_chapters} ch.</span>
             </div>
           </div>

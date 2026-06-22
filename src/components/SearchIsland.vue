@@ -9,6 +9,19 @@ const props = defineProps({
   tagCounts: Object,
 })
 
+const TAG_DISPLAY = {
+  'Romance': '💋 Crush',
+  'Fantasy': '🏰 Realm',
+  'Sci-Fi': '🌌 Neon',
+  'Thriller': '🔪 Shadow',
+  'Dark Academia': '🦇 Midnight',
+  'Dystopia': '🔥 Rebel',
+  'Contemporary': '🏙️ Real',
+  'Female Lead': '👑 Her',
+  'Queer': '🌈 Spectrum',
+}
+function tagLabel(t) { return TAG_DISPLAY[t] || t }
+
 const query = ref('')
 const activeTag = ref('All')
 const ms = ref(null)
@@ -95,7 +108,7 @@ function getProgressHref(bookId) {
 
   <div class="categories">
     <button :class="['cat-btn',{active:activeTag==='All'}]" @click="activeTag='All'">All</button>
-    <button v-for="t in tags" :key="t" :class="['cat-btn',{active:activeTag===t}]" @click="activeTag=t">{{t}}</button>
+    <button v-for="t in tags" :key="t" :class="['cat-btn',{active:activeTag===t}]" @click="activeTag=t">{{tagLabel(t)}}</button>
   </div>
 
   <div class="grid" v-if="filtered.length">
@@ -109,7 +122,7 @@ function getProgressHref(bookId) {
           </div>
           <div class="card-author" v-html="hl(book.author||'Unknown',query)"></div>
           <div class="card-meta">
-            <span v-for="t in (book.tags||[]).slice(0,3)" :key="t" class="tag-pill">{{t}}</span>
+            <span v-for="t in (book.tags||[]).slice(0,3)" :key="t" class="tag-pill">{{tagLabel(t)}}</span>
             <span>{{book.total_chapters}} ch.</span>
           </div>
           <div class="card-continue" v-if="getProgressChapter(book.id)">Continue: {{getProgressChapter(book.id)}}</div>

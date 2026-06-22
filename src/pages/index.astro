@@ -1,14 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchIsland from '../components/SearchIsland.vue';
+import LiveTelemetryTicker from '../components/vue/LiveTelemetryTicker.vue';
 import { getBooks, getEnglishBooks, getAllTags } from '../utils/data';
 
-const allBooks = await getBooks(Astro.locals);
+const allBooks = await getBooks();
 const books = getEnglishBooks(allBooks);
 const tags = getAllTags(books);
 const tagCounts = {};
 for (const t of tags) { tagCounts[t] = books.filter(b => (b.tags||[]).includes(t)).length; }
 ---
-<BaseLayout title="Home" description="Read free English novels online — fantasy, romance, sci-fi, thriller and more at Novel Vault.">
+<BaseLayout title="Home" description="Read free English novels online — fantasy, romance, sci-fi, thriller and more at Novel Vault." hideControls>
+  <LiveTelemetryTicker client:load />
   <SearchIsland client:load books={books} tags={tags} tagCounts={tagCounts} />
 </BaseLayout>
