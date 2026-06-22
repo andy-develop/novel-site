@@ -1,0 +1,5 @@
+# 🌌 Lyriq Space Security Policy
+Contact: mailto:Gaussnju@gmail.com
+Expires: 2036-12-31T23:59:59Z
+Preferred-Languages: en, zh
+Canonical: https://lyriq.space/.well-known/security.txt
