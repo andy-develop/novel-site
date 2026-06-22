@@ -124,9 +124,8 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
   .char-toggle:hover { color:var(--gold); }
   .char-toggle:focus-visible { box-shadow:0 0 0 2px var(--gold-dim); }
   .char-toggle.active { color:var(--gold); }
-  .char-detail { display:grid; grid-template-rows:0fr; transition:grid-template-rows 0.25s ease; overflow:hidden; }
-  .char-detail.open { grid-template-rows:1fr; }
-  .char-detail > * { overflow:hidden; min-height:0; }
+  .char-detail { display:none; }
+  .char-detail.open { display:block; }
   .char-detail-header { padding:8px 0 2px; display:flex; align-items:baseline; gap:6px; }
   .char-detail-name { font-family:var(--font-display); font-size:0.82rem; color:var(--text); }
   .char-alias { font-family:var(--font-ui); font-size:0.62rem; color:var(--text-muted); }
