@@ -54,7 +54,7 @@ function toggleDark() { darkMode.value = !darkMode.value }
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
-  background: rgba(31, 30, 28, 0.85);
+  background: rgba(250, 248, 245, 0.85);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: 20px;

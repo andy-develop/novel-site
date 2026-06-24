@@ -78,7 +78,7 @@ onUnmounted(() => {
   padding: 16px;
   z-index: 110;
   backdrop-filter: blur(14px);
-  box-shadow: 0 0 30px rgba(176,168,150,0.08);
+  box-shadow: 0 0 30px rgba(138,128,104,0.08);
   animation: dossierIn 0.25s ease-out;
 }
 .dossier-header {
@@ -119,7 +119,7 @@ onUnmounted(() => {
   margin-bottom: 2px;
 }
 .dossier-val { color: var(--gold); font-weight: 600; }
-.dossier-val-purple { color: #9a8ca8; font-weight: 600; }
+.dossier-val-purple { color: #8a7a96; font-weight: 600; }
 .nodes-label {
   font-family: var(--font-ui);
   font-size: 0.65rem;
@@ -135,7 +135,7 @@ onUnmounted(() => {
   align-items: center;
   padding: 7px 10px;
   margin-bottom: 4px;
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.03);
   border: 1px solid var(--border);
   border-radius: 6px;
   text-decoration: none;
