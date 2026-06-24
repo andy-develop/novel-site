@@ -78,7 +78,7 @@ onUnmounted(() => {
   padding: 16px;
   z-index: 110;
   backdrop-filter: blur(14px);
-  box-shadow: 0 0 30px rgba(201,168,76,0.08);
+  box-shadow: 0 0 30px rgba(176,168,150,0.08);
   animation: dossierIn 0.25s ease-out;
 }
 .dossier-header {
@@ -119,7 +119,7 @@ onUnmounted(() => {
   margin-bottom: 2px;
 }
 .dossier-val { color: var(--gold); font-weight: 600; }
-.dossier-val-purple { color: #b794f6; font-weight: 600; }
+.dossier-val-purple { color: #9a8ca8; font-weight: 600; }
 .nodes-label {
   font-family: var(--font-ui);
   font-size: 0.65rem;

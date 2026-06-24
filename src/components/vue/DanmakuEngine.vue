@@ -109,7 +109,7 @@ class Particle {
     c.save();
     c.globalAlpha = Math.max(0, this.alpha);
     c.font = `${this.size}px serif`;
-    c.fillStyle = '#c9a84c';
+    c.fillStyle = '#b0a896';
     c.fillText(this.char, this.x, this.y);
     c.restore();
   }
@@ -325,8 +325,8 @@ const submitEmoji = async (idx, emoji, event) => {
   left: 50%;
   transform: translateX(-50%);
   width: min(420px, 92vw);
-  background: var(--bg-card, #1a1a2e);
-  border: 1px solid var(--gold-dim, rgba(201,168,76,0.15));
+  background: var(--bg-card, #1f1e1c);
+  border: 1px solid var(--gold-dim, rgba(176,168,150,0.15));
   border-radius: 12px;
   padding: 16px;
   z-index: 100;
@@ -343,12 +343,12 @@ const submitEmoji = async (idx, emoji, event) => {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--gold, #c9a84c);
+  color: var(--gold, #b0a896);
 }
 .cabin-close {
   background: none;
   border: none;
-  color: var(--text-dim, #8b7f6a);
+  color: var(--text-dim, #8e887d);
   font-size: 1rem;
   cursor: pointer;
 }
@@ -362,18 +362,18 @@ const submitEmoji = async (idx, emoji, event) => {
   align-items: center;
   gap: 8px;
   padding: 5px 0;
-  border-bottom: 1px solid var(--border, rgba(201,168,76,0.08));
+  border-bottom: 1px solid var(--border, rgba(176,168,150,0.08));
 }
 .cabin-avatar { font-size: 0.8rem; }
 .cabin-text {
   font-size: 0.82rem;
-  color: var(--text-dim, #8b7f6a);
+  color: var(--text-dim, #8e887d);
   word-break: break-word;
 }
 .cabin-empty {
   font-style: italic;
   font-size: 0.82rem;
-  color: var(--text-muted, #5c5446);
+  color: var(--text-muted, #5d574d);
   text-align: center;
   padding: 12px 0;
 }
@@ -388,13 +388,13 @@ const submitEmoji = async (idx, emoji, event) => {
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.15s;
-  border: 1px solid var(--border, rgba(201,168,76,0.08));
+  border: 1px solid var(--border, rgba(176,168,150,0.08));
   background: transparent;
-  color: var(--text-dim, #8b7f6a);
+  color: var(--text-dim, #8e887d);
 }
 .emoji-btn:hover {
-  border-color: var(--gold, #c9a84c);
-  color: var(--gold, #c9a84c);
+  border-color: var(--gold, #b0a896);
+  color: var(--gold, #b0a896);
 }
 .cabin-input-row {
   display: flex;
@@ -403,24 +403,24 @@ const submitEmoji = async (idx, emoji, event) => {
 .cabin-input {
   flex: 1;
   padding: 7px 12px;
-  border: 1px solid var(--border, rgba(201,168,76,0.08));
+  border: 1px solid var(--border, rgba(176,168,150,0.08));
   border-radius: 6px;
-  background: var(--bg, #0f0f1a);
-  color: var(--text, #efe6d5);
+  background: var(--bg, #151413);
+  color: var(--text, #e0dcd3);
   font-size: 0.82rem;
   outline: none;
 }
 .cabin-input:focus {
-  border-color: var(--gold, #c9a84c);
+  border-color: var(--gold, #b0a896);
 }
 .cabin-input::placeholder {
-  color: var(--text-muted, #5c5446);
+  color: var(--text-muted, #5d574d);
 }
 .cabin-submit {
   padding: 7px 16px;
-  background: var(--gold-dim, rgba(201,168,76,0.15));
-  color: var(--gold, #c9a84c);
-  border: 1px solid var(--gold, #c9a84c);
+  background: var(--gold-dim, rgba(176,168,150,0.15));
+  color: var(--gold, #b0a896);
+  border: 1px solid var(--gold, #b0a896);
   border-radius: 6px;
   font-size: 0.82rem;
   font-weight: 600;
@@ -428,8 +428,8 @@ const submitEmoji = async (idx, emoji, event) => {
   transition: all 0.15s;
 }
 .cabin-submit:hover {
-  background: var(--gold, #c9a84c);
-  color: var(--bg, #0f0f1a);
+  background: var(--gold, #b0a896);
+  color: var(--bg, #151413);
 }
 @keyframes cabinIn {
   from { opacity: 0; transform: translateX(-50%) translateY(8px); }

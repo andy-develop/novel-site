@@ -44,8 +44,8 @@ onMounted(async () => {
 <style scoped>
 .ticker-wrap {
   width: 100%;
-  background: var(--bg, #0f0f1a);
-  border-bottom: 1px solid rgba(201,168,76,0.15);
+  background: var(--bg, #151413);
+  border-bottom: 1px solid rgba(176,168,150,0.15);
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 11px;
   letter-spacing: 0.5px;
@@ -69,12 +69,12 @@ onMounted(async () => {
   position: absolute;
   left: 0;
   z-index: 10;
-  background: var(--bg, #0f0f1a);
+  background: var(--bg, #151413);
   padding: 0 10px;
   display: flex;
   align-items: center;
   gap: 6px;
-  border-right: 1px solid rgba(201,168,76,0.15);
+  border-right: 1px solid rgba(176,168,150,0.15);
   height: 100%;
 }
 .pulse-dot {
@@ -82,10 +82,10 @@ onMounted(async () => {
 }
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; text-shadow: 0 0 6px rgba(201,168,76,0.5); }
+  50% { opacity: 1; text-shadow: 0 0 6px rgba(176,168,150,0.5); }
 }
 .label-text {
-  color: var(--gold, #c9a84c);
+  color: var(--gold, #b0a896);
   font-weight: 700;
   font-size: 9px;
   text-transform: uppercase;
@@ -111,17 +111,17 @@ onMounted(async () => {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  color: var(--text-dim, #8b8b9e);
+  color: var(--text-dim, #8e887d);
   transition: color 0.15s;
 }
 .track-item:hover {
-  color: var(--text, #e0ddd5);
+  color: var(--text, #e0dcd3);
 }
 .item-type {
-  color: #00f5d4;
+  color: #7a9690;
 }
 .item-book {
-  color: var(--gold, #c9a84c);
+  color: var(--gold, #b0a896);
   font-weight: 600;
 }
 </style>

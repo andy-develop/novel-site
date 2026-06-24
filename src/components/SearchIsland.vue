@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import MiniSearch from 'minisearch'
 import { getBookshelf, isInBookshelf, addToBookshelf, removeFromBookshelf, getBookProgress, getReadingProgress } from '../utils/storage.js'
 
@@ -27,6 +27,8 @@ const activeTag = ref('All')
 const ms = ref(null)
 const shelf = ref([])
 const progress = ref({})
+const currentPage = ref(1)
+const PER_PAGE = 20
 
 onMounted(() => {
   const idx = new MiniSearch({
@@ -51,6 +53,21 @@ const filtered = computed(() => {
   if (activeTag.value !== 'All') list = list.filter(b=>(b.tags||[]).includes(activeTag.value))
   return list
 })
+
+const totalPages = computed(() => Math.ceil(filtered.value.length / PER_PAGE))
+
+const pagedBooks = computed(() => {
+  const start = (currentPage.value - 1) * PER_PAGE
+  return filtered.value.slice(start, start + PER_PAGE)
+})
+
+watch([query, activeTag], () => { currentPage.value = 1 })
+
+function goToPage(p) {
+  if (p < 1 || p > totalPages.value) return
+  currentPage.value = p
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 function cover(title) { const c=title.charAt(0); return /[a-zA-Z]/.test(c)?c.toUpperCase():c }
 function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') }
@@ -112,7 +129,7 @@ function getProgressHref(bookId) {
   </div>
 
   <div class="grid" v-if="filtered.length">
-    <div v-for="(book,i) in filtered" :key="book.id" class="novel-card" :style="{animationDelay:i*0.04+'s'}">
+    <div v-for="(book,i) in pagedBooks" :key="book.id" class="novel-card" :style="{animationDelay:i*0.04+'s'}">
       <a :href="'/novel/'+book.id" class="card-main">
         <div class="card-cover"><span class="cover-char">{{cover(book.title)}}</span></div>
         <div class="card-body">
@@ -130,5 +147,14 @@ function getProgressHref(bookId) {
       </a>
     </div>
   </div>
-  <div v-else class="empty-state"><p>No novels found</p></div>
+  <div class="pagination" v-if="filtered.length && totalPages > 1">
+    <button class="page-btn" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">‹ Prev</button>
+    <button
+      v-for="p in totalPages" :key="p"
+      :class="['page-num', { active: p === currentPage }]"
+      @click="goToPage(p)"
+    >{{ p }}</button>
+    <button class="page-btn" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">Next ›</button>
+  </div>
+  <div v-if="!filtered.length" class="empty-state"><p>No novels found</p></div>
 </template>
