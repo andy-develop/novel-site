@@ -34,7 +34,8 @@ a { color: inherit; text-decoration: none; }
 /* HEADER */
 header { position:sticky; top:0; z-index:100; background:rgba(250,248,245,0.88); backdrop-filter:blur(14px) saturate(1.2); border-bottom:1px solid var(--border); padding:14px 0; }
 .header-inner { max-width:900px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:14px; }
-.logo { font-family:var(--font-display); font-size:1.5rem; font-weight:400; color:var(--gold); letter-spacing:0.04em; flex-shrink:0; cursor:pointer; }
+.logo { font-family:var(--font-display); font-size:1.5rem; font-weight:400; color:var(--gold); letter-spacing:0.04em; flex-shrink:0; cursor:pointer; text-shadow:0 0 18px rgba(138,128,104,0.45), 0 0 36px rgba(138,128,104,0.2); transition:text-shadow 0.3s; }
+.logo:hover { text-shadow:0 0 22px rgba(138,128,104,0.6), 0 0 44px rgba(138,128,104,0.3); }
 .logo span { color:var(--text); font-weight:700; }
 .header-book-title { font-family:var(--font-display); font-size:0.95rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .search-wrap { flex:1; position:relative; }
@@ -180,6 +181,8 @@ body.dark-mode .chapter-teaser { background:rgba(176,168,150,0.03); }
 body.dark-mode { --bg:#151413; --bg-card:#1f1e1c; --bg-card-hover:#282724; --border:rgba(227,221,210,0.07); --text:#e0dcd3; --text-dim:#8e887d; --text-muted:#5d574d; --gold:#b0a896; --gold-dim:rgba(176,168,150,0.12); }
 body.dark-mode .card-cover { background:linear-gradient(135deg,#2a2620,#1f1e1c 60%,#232023); }
 body.dark-mode .card-meta span, body.dark-mode .tag-pill { background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.04); }
+body.dark-mode .logo { text-shadow:0 0 18px rgba(176,168,150,0.5), 0 0 36px rgba(176,168,150,0.25); }
+body.dark-mode .logo:hover { text-shadow:0 0 22px rgba(176,168,150,0.65), 0 0 44px rgba(176,168,150,0.35); }
 
 /* MOBILE */
 @media (max-width:480px) {
