@@ -18,6 +18,9 @@ export default defineConfig({
     vue(),
   ],
   trailingSlash: 'never',
+  security: {
+    checkOrigin: false,
+  },
   vite: {
     build: {
       rollupOptions: {
