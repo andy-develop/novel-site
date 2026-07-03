@@ -1,5 +1,6 @@
 ---
 import GlobalControlsIsland from '../components/GlobalControlsIsland.vue';
+import FeedbackWidget from '../components/FeedbackWidget.vue';
 
 export interface Props {
   title: string;
@@ -35,6 +36,7 @@ const siteTitle = title === 'Home' ? 'Novel Vault — Read Free Novels Online' :
 <body>
   {hideControls ? null : <GlobalControlsIsland client:load />}
   <slot />
+  <FeedbackWidget client:load />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
