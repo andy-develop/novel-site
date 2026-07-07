@@ -63,7 +63,7 @@ function cover(title: string) {
             {(book.tags || []).slice(0, 3).map(t => <span class="tag-pill">{getTagDisplay(t)}</span>)}
             <span>{book.total_chapters} ch.</span>
           </div>
-
+          {book.intro && <div class="card-intro"><span class="intro-label">Intro:</span> {truncateDescription(book.intro, 120)}</div>}
         </div>
       </a>
     ))}
@@ -82,6 +82,20 @@ function cover(title: string) {
 
 <style>
   .cat-count { font-size: 0.75em; opacity: 0.7; margin-left: 2px; }
+  .card-intro {
+    font-family: var(--font-body);
+    font-size: 0.73rem;
+    line-height: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .intro-label { font-weight: 700; color: var(--gold); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; }
   .novel-card { display:flex; align-items:stretch; text-decoration:none; color:inherit; }
   .page-btn.disabled,
   .page-btn[aria-disabled="true"] {
