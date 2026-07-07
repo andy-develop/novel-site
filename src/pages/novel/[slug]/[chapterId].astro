@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DanmakuEngine from '../../../components/vue/DanmakuEngine.vue';
+import CharacterDossierOverlay from '../../../components/vue/CharacterDossierOverlay.vue';
+import { getBooks, getCatalog, getChapter, getCharacters } from '../../../utils/data';
+import { getBookSlug, findBookBySlug, getCanonicalChapterUrl, getBookUrl, truncateDescription, getBookLang, getCoverImageUrl, buildBreadcrumbList } from '../../../utils/seo';
+import { injectCharacterLinks } from '../../../utils/seoProcessor';
+
+const { slug, chapterId: chapterIdParam } = Astro.params;
+const chId = parseInt(chapterIdParam || '', 10);
+if (!slug || !chId) return Astro.redirect('/404');
+
+const allBooks = await getBooks();
+
+// Legacy numeric IDs redirect 301 to canonical slug URL
+const numericId = /^\d+$/.test(slug) ? parseInt(slug, 10) : null;
+if (numericId) {
+  const legacyBook = allBooks.find(b => b.id === numericId);
+  if (legacyBook) {
+    return Astro.redirect(getCanonicalChapterUrl(legacyBook, chId), 301);
+  }
+}
+
+const book = findBookBySlug(allBooks, slug);
+if (!book) return Astro.redirect('/404');
+
+const canonicalUrl = getCanonicalChapterUrl(book, chId);
+
+const bookId = book.id;
+const catalog = await getCatalog(bookId);
+const chapters = catalog?.chapters || [];
+const currentChapter = chapters.find(c => c.chapter_id === chId);
+if (!currentChapter) return Astro.redirect('/404');
+
+const chapterData = await getChapter(bookId, chId);
+const content = chapterData?.content || [];
+
+const charConfig = await getCharacters(bookId);
+function renderMd(text: string) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+const rawParagraphs = content.join('\n\n').split('\n\n').filter(Boolean);
+const htmlParagraphs = rawParagraphs.map(p => renderMd(p));
+const processedParagraphs = charConfig
+  ? injectCharacterLinks(htmlParagraphs, charConfig)
+  : htmlParagraphs;
+
+const currentIndex = chapters.findIndex(c => c.chapter_id === chId);
+const prevChapter = currentIndex > 0 ? chapters[currentIndex - 1] : null;
+const nextChapter = currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null;
+const chapterTitle = chapterData?.title || currentChapter.title;
+
+const bookSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Book',
+  name: book.title,
+  author: { '@type': 'Person', name: book.author || 'Unknown' },
+  genre: book.tags,
+  numberOfChapters: book.total_chapters,
+  url: getCanonicalChapterUrl(book, chId).replace(/\/[0-9]+$/, ''),
+};
+
+const chapterSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Chapter',
+  name: chapterTitle,
+  isPartOf: { '@type': 'Book', name: book.title },
+  url: canonicalUrl,
+  ...(chapterData?.highlight ? { abstract: chapterData.highlight, headline: chapterData.highlight } : {}),
+};
+
+const breadcrumbSchema = buildBreadcrumbList([
+  { name: 'Home', item: 'https://lyriq.space/' },
+  { name: book.title, item: getBookUrl(book) },
+  { name: chapterTitle },
+]);
+
+const description = truncateDescription(
+  chapterData?.highlight
+    ? `${chapterData.highlight} — from "${chapterTitle}" of ${book.title} by ${book.author || 'Unknown'}.`
+    : `Read "${chapterTitle}" of ${book.title} online for free at Novel Vault.`,
+  160
+);
+
+// CDN cache: 404 不缓存，正常页面强缓存 7 天 + 1 小时浏览器缓存 + 1 天 stale 容忍
+if (chapterData) {
+  Astro.response.headers.set(
+    'Cache-Control',
+    'public, max-age=3600, s-maxage=604800, stale-while-revalidate=86400'
+  );
+}
+---
+<BaseLayout
+  title={`${chapterTitle} — ${book.title}`}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  jsonLd={[bookSchema, chapterSchema, breadcrumbSchema]}
+  lang={getBookLang(book)}
+  ogImage={getCoverImageUrl(book)}
+>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
+      <span class="header-book-title">{book.title}</span>
+    </div>
+  </header>
+
+  <div class="reader">
+    <a href={getBookUrl(book)} class="back-btn">← Back to {book.title}</a>
+
+    <nav aria-label="breadcrumb" class="breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href={getBookUrl(book)}>{book.title}</a></li>
+        <li aria-current="page">{chapterTitle}</li>
+      </ol>
+    </nav>
+
+    <div class="chapter-nav">
+      <div class="select-wrap">
+        <select onchange={`window.location='/novel/${bookSlug}/'+this.value`}>
+          {chapters.map(ch => (
+            <option value={ch.chapter_id} selected={ch.chapter_id === chId}>{ch.title}</option>
+          ))}
+        </select>
+        <span class="select-arrow">▾</span>
+      </div>
+      {prevChapter
+        ? <a href={`/novel/${bookSlug}/${prevChapter.chapter_id}`} rel="prev" data-astro-prefetch>← Previous</a>
+        : <button disabled>← Previous</button>
+      }
+      {nextChapter
+        ? <a href={`/novel/${bookSlug}/${nextChapter.chapter_id}`} rel="next" data-astro-prefetch>Next →</a>
+        : <button disabled>Next →</button>
+      }
+    </div>
+
+    {chapterData?.highlight && (
+      <blockquote class="chapter-teaser">
+        <span class="teaser-icon">✨</span>
+        <p>{chapterData.highlight}</p>
+      </blockquote>
+    )}
+
+    <div id="novel-content" class="content">
+      {processedParagraphs.map((p, idx) => (
+        <div class="paragraph-block" data-p-idx={idx}>
+          <p set:html={p} />
+        </div>
+      ))}
+    </div>
+
+    <div class="chapter-nav bottom-nav">
+      {prevChapter
+        ? <a href={`/novel/${bookSlug}/${prevChapter.chapter_id}`} rel="prev" data-astro-prefetch>← Previous</a>
+        : <button disabled>← Previous</button>
+      }
+      {nextChapter
+        ? <a href={`/novel/${bookSlug}/${nextChapter.chapter_id}`} rel="next" data-astro-prefetch>Next →</a>
+        : <button disabled>Next →</button>
+      }
+    </div>
+  </div>
+
+  <DanmakuEngine bookId={bookId} chapterId={chId} client:idle />
+  {charConfig && <CharacterDossierOverlay client:idle charData={charConfig} />}
+</BaseLayout>
+
+<style>
+  .breadcrumb {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .breadcrumb ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .breadcrumb li:not(:last-child)::after {
+    content: '/';
+    margin-left: 6px;
+    color: var(--text-muted);
+  }
+  .breadcrumb a {
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    color: var(--gold);
+  }
+  .breadcrumb li[aria-current="page"] {
+    color: var(--text);
+  }
+</style>
+
+<script define:vars={{ bookId, chId, chapterTitle }}>
+  import { saveBookProgress } from '../../utils/storage.js';
+  saveBookProgress(bookId, chId, chapterTitle);
+</script>

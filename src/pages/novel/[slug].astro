@@ -1,23 +1,33 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ShelfBtnIsland from '../../components/ShelfBtnIsland.vue';
-import { getBooks, getEnglishBooks, findBook, getCatalog, getChapter, getCharacters, getTagDisplay } from '../../utils/data';
+import { getBooks, getCatalog, getCharacters, getTagDisplay } from '../../utils/data';
+import { getBookSlug, findBookBySlug, getCanonicalBookUrl, getChapterUrl, truncateDescription, getBookLang, getCoverImageUrl, buildBreadcrumbList } from '../../utils/seo';
 
-const { id } = Astro.params;
-const bookId = parseInt(id);
-if (!bookId) return Astro.redirect('/404');
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/404');
 
 const allBooks = await getBooks();
-const books = getEnglishBooks(allBooks);
-const book = findBook(books, bookId);
+
+// Legacy numeric IDs redirect 301 to canonical slug URL
+const numericId = /^\d+$/.test(slug) ? parseInt(slug, 10) : null;
+if (numericId) {
+  const legacyBook = allBooks.find(b => b.id === numericId);
+  if (legacyBook) {
+    return Astro.redirect(getCanonicalBookUrl(legacyBook), 301);
+  }
+}
+
+const book = findBookBySlug(allBooks, slug);
 if (!book) return Astro.redirect('/404');
 
+const canonicalUrl = getCanonicalBookUrl(book);
+
+const bookId = book.id;
 const catalog = await getCatalog(bookId);
 const chapters = catalog?.chapters || [];
-const firstChapter = chapters[0];
 
 const charData = await getCharacters(bookId);
-// Convert to sorted array (max 6 characters) for template iteration
 const keyCharacters = charData
   ? Object.entries(charData)
       .filter(([, v]) => v.dossier?.epic_nodes?.length > 0)
@@ -25,19 +35,35 @@ const keyCharacters = charData
       .map(([id, v]) => ({ id, ...v }))
   : [];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Book",
-  "name": book.title,
-  "author": { "@type": "Person", "name": book.author || "Unknown" },
-  "genre": book.tags,
-  "numberOfChapters": book.total_chapters,
-  "description": book.intro,
+const bookSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Book',
+  name: book.title,
+  author: { '@type': 'Person', name: book.author || 'Unknown' },
+  genre: book.tags,
+  numberOfChapters: book.total_chapters,
+  description: book.intro,
+  url: canonicalUrl,
 };
 
-const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.title} online for free at Novel Vault.`;
+const breadcrumbSchema = buildBreadcrumbList([
+  { name: 'Home', item: 'https://lyriq.space/' },
+  { name: book.title, item: canonicalUrl },
+]);
+
+const description = truncateDescription(
+  book.intro || `Read ${book.title} online for free at Novel Vault.`,
+  160
+);
 ---
-<BaseLayout title={book.title} description={description} canonicalUrl={`https://lyriq.space/novel/${bookId}`} jsonLd={jsonLd}>
+<BaseLayout
+  title={book.title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  jsonLd={[bookSchema, breadcrumbSchema]}
+  lang={getBookLang(book)}
+  ogImage={getCoverImageUrl(book)}
+>
   <header>
     <div class="header-inner">
       <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
@@ -84,8 +110,8 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
               )}
             </div>
             <div class="char-nodes">
-              {char.dossier.epic_nodes.slice(0, 5).map((node, ni) => (
-                <a href={node.url} class="char-node-link" data-astro-prefetch>
+              {char.dossier.epic_nodes.slice(0, 5).map((node) => (
+                <a href={node.url.replace(`/novel/${bookId}/`, `/novel/${getBookSlug(book)}/`)} class="char-node-link" data-astro-prefetch>
                   {node.title.replace(/^📖\s*/, '')}
                 </a>
               ))}
@@ -100,7 +126,7 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
       <ul class="chapter-list">
         {chapters.map(ch => (
           <li>
-            <a href={`/novel/${bookId}/${ch.chapter_id}`} data-astro-prefetch>{ch.title}</a>
+            <a href={getChapterUrl(book, ch.chapter_id)} data-astro-prefetch>{ch.title}</a>
           </li>
         ))}
       </ul>
@@ -140,8 +166,9 @@ const description = book.intro ? book.intro.substring(0, 160) : `Read ${book.tit
 <script>
 document.querySelectorAll('.char-toggle').forEach(btn => {
   btn.addEventListener('click', () => {
-    const idx = btn.dataset.charIdx;
+    const idx = (btn as HTMLElement).dataset.charIdx;
     const detail = document.getElementById('char-detail-' + idx);
+    if (!detail) return;
     const isOpen = detail.classList.contains('open');
     document.querySelectorAll('.char-detail.open').forEach(d => d.classList.remove('open'));
     document.querySelectorAll('.char-toggle.active').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-expanded','false'); });

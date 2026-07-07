@@ -1,20 +1,33 @@
 ---
 import GlobalControlsIsland from '../components/GlobalControlsIsland.vue';
 import FeedbackWidget from '../components/FeedbackWidget.vue';
+import { DEFAULT_OG_IMAGE } from '../utils/seo';
 
 export interface Props {
   title: string;
   description?: string;
   canonicalUrl?: string;
-  jsonLd?: object;
+  jsonLd?: object | object[];
   hideControls?: boolean;
+  lang?: string;
+  ogImage?: string;
 }
 
-const { title, description = 'Read free novels online — fantasy, romance, sci-fi, thriller and more.', canonicalUrl, jsonLd, hideControls = false } = Astro.props;
+const {
+  title,
+  description = 'Read free novels online — fantasy, romance, sci-fi, thriller and more.',
+  canonicalUrl,
+  jsonLd,
+  hideControls = false,
+  lang = 'en',
+  ogImage = DEFAULT_OG_IMAGE,
+} = Astro.props;
 const siteTitle = title === 'Home' ? 'Novel Vault — Read Free Novels Online' : `${title} — Novel Vault`;
+const resolvedOgImage = ogImage || DEFAULT_OG_IMAGE;
+const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -30,8 +43,14 @@ const siteTitle = title === 'Home' ? 'Novel Vault — Read Free Novels Online' :
   <meta property="og:site_name" content="Novel Vault" />
   <meta property="og:title" content={siteTitle} />
   <meta property="og:description" content={description} />
-  <meta name="twitter:card" content="summary" />
-  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  <meta property="og:image" content={resolvedOgImage} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={siteTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={resolvedOgImage} />
+  {jsonLdArray.map(item => (
+    <script type="application/ld+json" set:html={JSON.stringify(item)} />
+  ))}
 </head>
 <body>
   {hideControls ? null : <GlobalControlsIsland client:load />}

@@ -2,7 +2,20 @@
  * Data layer - R2 binding first, HTTP fallback for dev/preview
  * Astro v6: top-level import from cloudflare:workers (locals.runtime.env removed)
  */
-import { env as cfEnv } from 'cloudflare:workers';
+
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
+
+let cfEnv: Record<string, any> = {};
+try {
+  // @ts-ignore — Cloudflare Workers runtime module, not available in Node dev.
+  const mod = await import('cloudflare:workers');
+  cfEnv = mod.env ?? {};
+} catch {
+  // Not running in Cloudflare Workers environment; fall back to HTTP.
+}
 
 export interface Book {
   id: number;
@@ -35,9 +48,24 @@ export interface ChapterData {
 }
 
 const R2_PUBLIC = 'https://data.lyriq.space';
+const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
 function getBucket(): R2Bucket | null {
   return (cfEnv as Record<string, any>).R2_BUCKET ?? null;
+}
+
+async function httpGetJson(url: string): Promise<any> {
+  const res = await fetch(url, {
+    headers: { 'User-Agent': BROWSER_UA, 'Accept': '*/*' },
+  });
+  if (res.ok) return res.json();
+  // Some environments (Node dev behind Cloudflare) block undici fetch but allow curl.
+  try {
+    const { stdout } = await execFileAsync('curl', ['-sL', '-A', BROWSER_UA, url], { maxBuffer: 20 * 1024 * 1024 });
+    return JSON.parse(stdout);
+  } catch {
+    return null;
+  }
 }
 
 /* ---------- Books list ---------- */
@@ -50,9 +78,7 @@ export async function getBooks(): Promise<Book[]> {
       if (obj) return await obj.json();
     } catch { /* fall through */ }
   }
-  const res = await fetch(`${R2_PUBLIC}/books.json`);
-  if (res.ok) return res.json();
-  return [];
+  return (await httpGetJson(`${R2_PUBLIC}/books.json`)) ?? [];
 }
 
 export function getEnglishBooks(books: Book[]): Book[] {
@@ -81,8 +107,7 @@ export async function getCatalog(bookId: number): Promise<Catalog | null> {
       if (obj) return await obj.json();
     } catch { /* fall through */ }
   }
-  const res = await fetch(`${R2_PUBLIC}/${key}`);
-  return res.ok ? res.json() : null;
+  return await httpGetJson(`${R2_PUBLIC}/${key}`);
 }
 
 /* ---------- Chapter content ---------- */
@@ -96,8 +121,7 @@ export async function getChapter(bookId: number, chapterId: number): Promise<Cha
       if (obj) return await obj.json();
     } catch { /* fall through */ }
   }
-  const res = await fetch(`${R2_PUBLIC}/${key}`);
-  return res.ok ? res.json() : null;
+  return await httpGetJson(`${R2_PUBLIC}/${key}`);
 }
 
 /* ---------- Character config ---------- */
@@ -132,8 +156,7 @@ export async function getCharacters(bookId: number): Promise<CharactersFile | nu
       if (obj) return await obj.json();
     } catch { /* fall through */ }
   }
-  const res = await fetch(`${R2_PUBLIC}/${key}`);
-  return res.ok ? res.json() : null;
+  return await httpGetJson(`${R2_PUBLIC}/${key}`);
 }
 
 /* ---------- Tag display names ---------- */

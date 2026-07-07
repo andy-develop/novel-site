@@ -1,9 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getBooks, getEnglishBooks, getBooksByTag, getAllTags, getTagDisplay } from '../../utils/data';
+import { getBookUrl, buildBreadcrumbList, truncateDescription, slugify } from '../../utils/seo';
 
-const { tag: rawTag } = Astro.params;
-const tag = decodeURIComponent(rawTag);
+const { tag: slug } = Astro.params;
+const tag = slug ? decodeURIComponent(slug)
+  .split('-')
+  .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+  .join(' ')
+  .replace('Sci Fi', 'Sci-Fi') : '';
 if (!tag) return Astro.redirect('/');
 
 const allBooks = await getBooks();
@@ -12,14 +17,30 @@ const tagged = getBooksByTag(books, tag);
 if (!tagged.length) return Astro.redirect('/');
 
 const tags = getAllTags(books);
-const description = `Browse ${tagged.length} free ${tag} novels online at Novel Vault.`;
+const description = truncateDescription(
+  `Browse ${tagged.length} free ${tag} novels online at Novel Vault. Read Dark Academia, Romance, Fantasy, Thriller and more.`,
+  160
+);
+
+const canonicalUrl = `https://lyriq.space/tag/${slugify(tag)}`;
+const breadcrumbSchema = buildBreadcrumbList([
+  { name: 'Home', item: 'https://lyriq.space/' },
+  { name: `${tag} Novels`, item: canonicalUrl },
+]);
 ---
-<BaseLayout title={`${tag} Novels`} description={description} canonicalUrl={`https://lyriq.space/tag/${encodeURIComponent(tag)}`}>
+<BaseLayout title={`${tag} Novels`} description={description} canonicalUrl={canonicalUrl} jsonLd={breadcrumbSchema}>
   <header>
     <div class="header-inner">
       <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
     </div>
   </header>
+
+  <nav aria-label="breadcrumb" class="breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li aria-current="page">{tag} Novels</li>
+    </ol>
+  </nav>
 
   <div class="tag-page">
     <div class="tag-header">
@@ -30,13 +51,13 @@ const description = `Browse ${tagged.length} free ${tag} novels online at Novel 
     <div class="categories">
       <a href="/" class="cat-btn">All</a>
       {tags.map(t => (
-        <a href={`/tag/${encodeURIComponent(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
+        <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
       ))}
     </div>
 
     <div class="grid">
       {tagged.map((book, i) => (
-        <a href={`/novel/${book.id}`} class="novel-card" style={`animation-delay:${i*0.04}s`} data-astro-prefetch>
+        <a href={getBookUrl(book)} class="novel-card" style={`animation-delay:${i*0.04}s`} data-astro-prefetch>
           <div class="card-cover">
             <span class="cover-char">{book.title.charAt(0)}</span>
           </div>
@@ -60,4 +81,33 @@ const description = `Browse ${tagged.length} free ${tag} novels online at Novel 
   .tag-header h1 { font-family:var(--font-display); font-size:1.8rem; color:var(--gold); font-weight:400; }
   .tag-count { font-family:var(--font-ui); font-size:0.85rem; color:var(--text-dim); }
   .novel-card { text-decoration:none; color:inherit; }
+  .breadcrumb {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 12px 20px 0;
+  }
+  .breadcrumb ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .breadcrumb li:not(:last-child)::after {
+    content: '/';
+    margin-left: 6px;
+    color: var(--text-muted);
+  }
+  .breadcrumb a {
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    color: var(--gold);
+  }
+  .breadcrumb li[aria-current="page"] {
+    color: var(--text);
+  }
 </style>
