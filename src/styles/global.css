@@ -73,7 +73,7 @@ header { position:sticky; top:0; z-index:100; background:rgba(250,248,245,0.88);
 .grid { max-width:900px; margin:0 auto; padding:14px 20px 40px; display:flex; flex-direction:column; gap:10px; }
 .novel-card { background:var(--bg-card); border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); transition:all 0.25s; animation:cardIn 0.4s ease-out both; cursor:default; }
 .novel-card:hover { background:var(--bg-card-hover); border-color:rgba(138,128,104,0.15); }
-.card-main { display:flex; align-items:center; cursor:pointer; gap:0; text-decoration:none; color:inherit; }
+.card-main { display:flex; align-items:stretch; cursor:pointer; gap:0; text-decoration:none; color:inherit; }
 .card-continue { font-family:var(--font-ui); font-size:0.72rem; color:var(--gold); margin-top:4px; letter-spacing:0.02em; }
 .novel-card.expanded { border-color:rgba(138,128,104,0.25); box-shadow:0 4px 20px rgba(138,128,104,0.06); }
 .expand-icon { flex-shrink:0; padding:0 10px; color:var(--gold); font-size:0.9rem; transition:transform 0.2s; }
@@ -83,8 +83,9 @@ header { position:sticky; top:0; z-index:100; background:rgba(250,248,245,0.88);
 .start-btn { display:inline-block; padding:6px 18px; background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold); border-radius:6px; font-family:var(--font-ui); font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; margin-bottom:4px; }
 .start-btn:hover { background:var(--gold); color:var(--bg); }
 @keyframes cardIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-.card-cover { width:56px; min-width:56px; aspect-ratio:3/4; background:linear-gradient(135deg,#e8e2d8,#ddd5c8 60%,#e2ddd5); display:flex; align-items:center; justify-content:center; position:relative; border-radius:6px; margin:8px 0 8px 8px; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
-.cover-char { font-family:var(--font-display); font-size:1.3rem; color:var(--gold); font-style:italic; letter-spacing:0.08em; }
+.card-cover { width:56px; min-width:56px; align-self:stretch; background:linear-gradient(135deg,#e8e2d8,#ddd5c8 60%,#e2ddd5); display:flex; align-items:center; justify-content:center; position:relative; margin:0; }
+.card-cover::after { content:''; position:absolute; right:0; top:8%; bottom:8%; width:1px; background:rgba(0,0,0,0.05); }
+.cover-char { font-family:var(--font-display); font-size:1.75rem; color:var(--gold); font-style:italic; letter-spacing:0.08em; }
 .card-body { padding:8px 12px 10px; flex:1; min-width:0; }
 .title-row { display:flex; align-items:center; gap:8px; }
 .title-row .card-title { flex:1; min-width:0; }
