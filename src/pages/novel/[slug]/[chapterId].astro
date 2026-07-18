@@ -24,6 +24,7 @@ if (numericId) {
 const book = findBookBySlug(allBooks, slug);
 if (!book || isHidden(book)) return Astro.redirect('/404');
 
+const bookSlug = getBookSlug(book);
 const canonicalUrl = getCanonicalChapterUrl(book, chId);
 
 const bookId = book.id;
