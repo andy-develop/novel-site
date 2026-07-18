@@ -162,15 +162,15 @@ export async function getCharacters(bookId: number): Promise<CharactersFile | nu
 /* ---------- Tag display names ---------- */
 
 export const TAG_DISPLAY: Record<string, string> = {
-  'Romance':        '💋 Crush',
-  'Fantasy':        '🏰 Realm',
-  'Sci-Fi':         '🌌 Neon',
-  'Thriller':       '🔪 Shadow',
-  'Dark Academia':  '🦇 Midnight',
-  'Dystopia':       '🔥 Rebel',
-  'Contemporary':   '🏙️ Real',
-  'Female Lead':    '👑 Her',
-  'Queer':          '🌈 Spectrum',
+  'Romance':        'Crush',
+  'Fantasy':        'Realm',
+  'Sci-Fi':         'Neon',
+  'Thriller':       'Shadow',
+  'Dark Academia':  'Midnight',
+  'Dystopia':       'Rebel',
+  'Contemporary':   'Real',
+  'Female Lead':    'Her Lead',
+  'Queer':          'Spectrum',
 };
 
 export function getTagDisplay(tag: string): string {

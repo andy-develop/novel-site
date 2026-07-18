@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchIsland from '../components/SearchIsland.vue';
-import LiveTelemetryTicker from '../components/vue/LiveTelemetryTicker.vue';
 import { getBooks, getEnglishBooks, getAllTags, getTagDisplay } from '../utils/data';
 import { getBookUrl, truncateDescription, DEFAULT_OG_IMAGE } from '../utils/seo';
 
@@ -37,8 +36,14 @@ function cover(title: string) {
 }
 ---
 <BaseLayout title="Home" description={description} canonicalUrl="https://lyriq.space/" jsonLd={jsonLd} ogImage={DEFAULT_OG_IMAGE}>
-  <LiveTelemetryTicker client:load />
   <SearchIsland client:load books={books} />
+
+  <!-- Hero marquee — typographic entry, no image -->
+  <section class="hero-marquee" aria-label="Site intro">
+    <h1>Stories that <em>keep you up</em> past 2am.</h1>
+    <p>{books.length} free novels — romance, dark academia, fantasy, thriller. Read in your browser, no app, no signup.</p>
+    <span class="scroll-hint">↓ Browse the vault</span>
+  </section>
 
   <!-- SSR visible grid: crawlers and no-JS users see this -->
   <div class="categories">
