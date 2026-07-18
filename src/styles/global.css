@@ -176,9 +176,11 @@ header {
   transition: border-color var(--dur-short) var(--ease-out),
               background-color var(--dur-short) var(--ease-out);
 }
-.search-wrap input:focus {
+.search-wrap input:focus-visible {
   border-color: var(--color-accent);
   background: var(--color-paper);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 .search-wrap input::placeholder { color: var(--color-ink-3); }
 .search-wrap .icon {
@@ -737,8 +739,12 @@ mark.hl {
   transition: border-color var(--dur-short) var(--ease-out);
 }
 .chapter-nav .select-wrap { flex: 1; min-width: 0; position: relative; }
-.chapter-nav .select-wrap select:focus,
-.chapter-nav select:focus { border-color: var(--color-accent); }
+.chapter-nav .select-wrap select:focus-visible,
+.chapter-nav select:focus-visible {
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
 .chapter-nav .select-wrap select:hover { border-color: oklch(56% 0.150 350 / 0.3); }
 .chapter-nav .select-arrow {
   position: absolute;

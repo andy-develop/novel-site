@@ -258,10 +258,9 @@ onUnmounted(() => {
 
 .feedback-trigger:hover,
 .feedback-trigger:focus-visible {
-  background: rgba(250, 248, 245, 0.9);
-  color: var(--gold);
-  border-color: rgba(138, 128, 104, 0.25);
-  transform: scale(1.04);
+  background: var(--color-paper-2);
+  color: var(--color-accent);
+  border-color: oklch(56% 0.150 350 / 0.25);
 }
 
 .feedback-trigger.hidden {
@@ -349,8 +348,10 @@ onUnmounted(() => {
   color: var(--text-muted);
 }
 
-.feedback-modal textarea:focus {
-  border-color: var(--gold);
+.feedback-modal textarea:focus-visible {
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .feedback-meta {
@@ -446,9 +447,9 @@ onUnmounted(() => {
 }
 :global(body.dark-mode) .feedback-trigger:hover,
 :global(body.dark-mode) .feedback-trigger:focus-visible {
-  background: rgba(31, 30, 28, 0.92);
-  color: var(--gold);
-  border-color: rgba(176, 168, 150, 0.3);
+  background: var(--color-paper-2);
+  color: var(--color-accent);
+  border-color: oklch(72% 0.135 350 / 0.3);
 }
 :global(body.dark-mode) .feedback-modal {
   background: var(--bg-card);

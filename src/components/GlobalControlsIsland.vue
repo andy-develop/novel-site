@@ -67,7 +67,7 @@ function toggleDark() { darkMode.value = !darkMode.value }
   border-radius: 12px;
   cursor: pointer;
   font-size: 0.78rem;
-  transition: all 0.15s;
+  transition: color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
   line-height: 1;
 }
 .ctrl-btn:hover { color: var(--gold); background: var(--gold-dim); }
