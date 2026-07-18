@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ShelfBtnIsland from '../../components/ShelfBtnIsland.vue';
-import { getBooks, getCatalog, getCharacters, getTagDisplay } from '../../utils/data';
+import { getBooks, getCatalog, getCharacters, getTagDisplay, isHidden } from '../../utils/data';
 import { getBookSlug, findBookBySlug, getCanonicalBookUrl, getChapterUrl, truncateDescription, getBookLang, getCoverImageUrl, buildBreadcrumbList } from '../../utils/seo';
 
 const { slug } = Astro.params;
@@ -19,7 +19,7 @@ if (numericId) {
 }
 
 const book = findBookBySlug(allBooks, slug);
-if (!book) return Astro.redirect('/404');
+if (!book || isHidden(book)) return Astro.redirect('/404');
 
 const canonicalUrl = getCanonicalBookUrl(book);
 

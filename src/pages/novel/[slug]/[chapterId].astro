@@ -2,7 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import DanmakuEngine from '../../../components/vue/DanmakuEngine.vue';
 import CharacterDossierOverlay from '../../../components/vue/CharacterDossierOverlay.vue';
-import { getBooks, getCatalog, getChapter, getCharacters } from '../../../utils/data';
+import { getBooks, getCatalog, getChapter, getCharacters, isHidden } from '../../../utils/data';
 import { getBookSlug, findBookBySlug, getCanonicalChapterUrl, getBookUrl, truncateDescription, getBookLang, getCoverImageUrl, buildBreadcrumbList } from '../../../utils/seo';
 import { injectCharacterLinks } from '../../../utils/seoProcessor';
 
@@ -22,7 +22,7 @@ if (numericId) {
 }
 
 const book = findBookBySlug(allBooks, slug);
-if (!book) return Astro.redirect('/404');
+if (!book || isHidden(book)) return Astro.redirect('/404');
 
 const canonicalUrl = getCanonicalChapterUrl(book, chId);
 

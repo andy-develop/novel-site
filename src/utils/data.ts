@@ -81,8 +81,25 @@ export async function getBooks(): Promise<Book[]> {
   return (await httpGetJson(`${R2_PUBLIC}/books.json`)) ?? [];
 }
 
+/**
+ * Titles hidden from the public site. Books in this set are filtered out of
+ * all listings (home, tag pages, search) and their detail/reader routes 404.
+ * Source data on R2 is preserved — remove a title from this set to restore it.
+ */
+const HIDDEN_TITLES: ReadonlySet<string> = new Set([
+  'The Daylight Tyrant',
+  'War God Reborn',
+]);
+
+/** Books excluded from every public surface. */
+export function isHidden(book: Book): boolean {
+  return HIDDEN_TITLES.has(book.title);
+}
+
 export function getEnglishBooks(books: Book[]): Book[] {
-  return books.filter(b => b.lang === 'english' || b.lang === 'en');
+  return books.filter(b =>
+    (b.lang === 'english' || b.lang === 'en') && !isHidden(b)
+  );
 }
 
 export function getAllTags(books: Book[]): string[] {
