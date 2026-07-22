@@ -27,6 +27,11 @@ const breadcrumbSchema = buildBreadcrumbList([
   { name: 'Home', item: 'https://lyriq.space/' },
   { name: `${tag} Novels`, item: canonicalUrl },
 ]);
+
+function cover(title: string) {
+  const c = title.charAt(0);
+  return /[a-zA-Z]/.test(c) ? c.toUpperCase() : c;
+}
 ---
 <BaseLayout title={`${tag} Novels`} description={description} canonicalUrl={canonicalUrl} jsonLd={breadcrumbSchema}>
   <header>
@@ -59,15 +64,18 @@ const breadcrumbSchema = buildBreadcrumbList([
       {tagged.map((book, i) => (
         <a href={getBookUrl(book)} class="novel-card" style={`animation-delay:${i*0.04}s`} data-astro-prefetch>
           <div class="card-cover">
-            <span class="cover-char">{book.title.charAt(0)}</span>
+            <span class="cover-char">{cover(book.title)}</span>
           </div>
           <div class="card-body">
-            <div class="card-title">{book.title}</div>
+            <div class="title-row">
+              <div class="card-title">{book.title}</div>
+            </div>
             <div class="card-author">{book.author || 'Unknown'}</div>
             <div class="card-meta">
-              {(book.tags || []).slice(0, 3).map(t => <span>{getTagDisplay(t)}</span>)}
+              {(book.tags || []).slice(0, 3).map(t => <span class="tag-pill">{getTagDisplay(t)}</span>)}
               <span>{book.total_chapters} ch.</span>
             </div>
+            {book.intro && <div class="card-intro"><span class="intro-label">Intro:</span> {truncateDescription(book.intro, 120)}</div>}
           </div>
         </a>
       ))}
@@ -81,6 +89,20 @@ const breadcrumbSchema = buildBreadcrumbList([
   .tag-header h1 { font-family:var(--font-display); font-size:1.8rem; color:var(--gold); font-weight:400; }
   .tag-count { font-family:var(--font-ui); font-size:0.85rem; color:var(--text-dim); }
   .novel-card { display:flex; align-items:stretch; text-decoration:none; color:inherit; }
+  .card-intro {
+    font-family: var(--font-body);
+    font-size: 0.73rem;
+    line-height: 1.45;
+    color: var(--text-muted);
+    margin-top: 6px;
+    padding: 6px 0 0;
+    border-top: 1px solid var(--border);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .intro-label { font-weight: 700; color: var(--gold); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; }
   .breadcrumb {
     font-family: var(--font-ui);
     font-size: 0.78rem;
