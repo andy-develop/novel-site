@@ -47,45 +47,42 @@ function cover(title: string) {
     </ol>
   </nav>
 
-  <div class="tag-page">
-    <div class="tag-header">
-      <h1>{getTagDisplay(tag)}</h1>
-      <span class="tag-count">{tagged.length} {tagged.length === 1 ? 'novel' : 'novels'}</span>
-    </div>
+  <div class="tag-header">
+    <h1>{getTagDisplay(tag)}</h1>
+    <span class="tag-count">{tagged.length} {tagged.length === 1 ? 'novel' : 'novels'}</span>
+  </div>
 
-    <div class="categories">
-      <a href="/" class="cat-btn">All</a>
-      {tags.map(t => (
-        <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
-      ))}
-    </div>
+  <div class="categories">
+    <a href="/" class="cat-btn">All</a>
+    {tags.map(t => (
+      <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
+    ))}
+  </div>
 
-    <div class="grid">
-      {tagged.map((book, i) => (
-        <a href={getBookUrl(book)} class="novel-card" style={`animation-delay:${i*0.04}s`} data-astro-prefetch>
-          <div class="card-cover">
-            <span class="cover-char">{cover(book.title)}</span>
+  <div class="grid">
+    {tagged.map((book, i) => (
+      <a href={getBookUrl(book)} class="novel-card" style={`animation-delay:${i*0.04}s`} data-astro-prefetch>
+        <div class="card-cover">
+          <span class="cover-char">{cover(book.title)}</span>
+        </div>
+        <div class="card-body">
+          <div class="title-row">
+            <div class="card-title">{book.title}</div>
           </div>
-          <div class="card-body">
-            <div class="title-row">
-              <div class="card-title">{book.title}</div>
-            </div>
-            <div class="card-author">{book.author || 'Unknown'}</div>
-            <div class="card-meta">
-              {(book.tags || []).slice(0, 3).map(t => <span class="tag-pill">{getTagDisplay(t)}</span>)}
-              <span>{book.total_chapters} ch.</span>
-            </div>
-            {book.intro && <div class="card-intro"><span class="intro-label">Intro:</span> {truncateDescription(book.intro, 120)}</div>}
+          <div class="card-author">{book.author || 'Unknown'}</div>
+          <div class="card-meta">
+            {(book.tags || []).slice(0, 3).map(t => <span class="tag-pill">{getTagDisplay(t)}</span>)}
+            <span>{book.total_chapters} ch.</span>
           </div>
-        </a>
-      ))}
-    </div>
+          {book.intro && <div class="card-intro"><span class="intro-label">Intro:</span> {truncateDescription(book.intro, 120)}</div>}
+        </div>
+      </a>
+    ))}
   </div>
 </BaseLayout>
 
 <style>
-  .tag-page { max-width:1100px; margin:0 auto; padding:20px; }
-  .tag-header { display:flex; align-items:baseline; gap:12px; margin-bottom:16px; }
+  .tag-header { display:flex; align-items:baseline; gap:12px; margin-bottom:16px; max-width:1100px; margin-left:auto; margin-right:auto; padding: var(--space-lg) var(--space-lg) var(--space-sm); }
   .tag-header h1 { font-family:var(--font-display); font-size:1.8rem; color:var(--gold); font-weight:400; }
   .tag-count { font-family:var(--font-ui); font-size:0.85rem; color:var(--text-dim); }
   .novel-card { display:flex; align-items:stretch; text-decoration:none; color:inherit; }
