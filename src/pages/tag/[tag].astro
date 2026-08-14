@@ -14,6 +14,12 @@ const tagged = getBooksByTag(books, tag);
 if (!tagged.length) return Astro.redirect('/');
 
 const tags = getAllTags(books);
+const tagCounts: Record<string, number> = {};
+for (const t of tags) { tagCounts[t] = books.filter(b => (b.tags || []).includes(t)).length; }
+const INITIAL_TAGS = 15;
+const TAG_BATCH = 20;
+// Active tag always stays visible; the rest sorted by frequency.
+const sortedTags = [...tags].sort((a, b) => (tagCounts[b] ?? 0) - (tagCounts[a] ?? 0));
 const description = truncateDescription(
   `Browse ${tagged.length} free ${tag} novels online at Novel Vault. Read Dark Academia, Romance, Fantasy, Thriller and more.`,
   160
@@ -49,12 +55,12 @@ function cover(title: string) {
     <span class="tag-count">{tagged.length} {tagged.length === 1 ? 'novel' : 'novels'}</span>
   </div>
 
-  <div class="categories tag-cloud" id="tag-cloud">
+  <div class="categories tag-cloud" id="tag-cloud" data-initial={INITIAL_TAGS} data-batch={TAG_BATCH}>
     <a href="/" class="cat-btn">All</a>
-    {tags.map(t => (
-      <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
+    {sortedTags.map((t, ti) => (
+      <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]} data-tag-index={ti}>{getTagDisplay(t)} <span class="cat-count">({tagCounts[t]})</span></a>
     ))}
-    <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Toggle all tags"><span class="caret">▾</span></button>
+    <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Show more tags"><span class="caret">＋ 更多标签</span></button>
   </div>
 
   <div class="grid">
@@ -134,39 +140,35 @@ function cover(title: string) {
     const cloud = document.getElementById('tag-cloud');
     const btn = document.getElementById('tag-toggle-btn');
     if (!cloud || !btn) return;
-    const pills = Array.from(cloud.children).filter(el => el !== btn);
+    const pills = Array.from(cloud.querySelectorAll('[data-tag-index]'));
     if (!pills.length) { btn.style.display = 'none'; return; }
-    let expanded = false;
+    const INITIAL = Number(cloud.dataset.initial ?? 15);
+    const BATCH = Number(cloud.dataset.batch ?? 20);
+    // Active tag is always kept visible.
+    const activeIdx = pills.findIndex(p => p.classList.contains('active'));
+    let revealed = 0;
 
-    function collapse() {
-      pills.forEach(p => { p.style.display = ''; });
-      btn.classList.remove('expanded');
-      btn.setAttribute('aria-expanded', 'false');
-      expanded = false;
-      const firstTop = pills[0].offsetTop;
-      for (let i = pills.length - 1; i >= 0; i--) {
-        if (btn.offsetTop === firstTop) break;
-        pills[i].style.display = 'none';
-      }
-      if (pills[0].style.display === 'none') {
-        pills[0].style.display = '';
+    function sync() {
+      pills.forEach((p, i) => {
+        const active = p.classList.contains('active');
+        p.style.display = (active || i < revealed) ? '' : 'none';
+      });
+      const remaining = pills.length - revealed;
+      if (remaining <= 0) {
+        btn.style.display = 'none';
+      } else {
+        btn.style.display = '';
+        btn.innerHTML = '<span class="caret">＋ 更多标签（' + remaining + '）</span>';
+        btn.setAttribute('aria-expanded', String(revealed < pills.length));
       }
     }
 
-    function expand() {
-      pills.forEach(p => { p.style.display = ''; });
-      btn.classList.add('expanded');
-      btn.setAttribute('aria-expanded', 'true');
-      expanded = true;
-    }
-
-    collapse();
-    btn.addEventListener('click', () => (expanded ? collapse() : expand()));
-
-    let rt;
-    window.addEventListener('resize', () => {
-      clearTimeout(rt);
-      rt = setTimeout(() => { if (!expanded) collapse(); }, 150);
+    btn.addEventListener('click', () => {
+      revealed = Math.min(pills.length, revealed + BATCH);
+      sync();
     });
+
+    revealed = Math.min(pills.length, INITIAL);
+    sync();
   })();
 </script>

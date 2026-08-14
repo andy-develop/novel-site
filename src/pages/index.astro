@@ -9,6 +9,10 @@ const books = getEnglishBooks(allBooks);
 const tags = getAllTags(books);
 const tagCounts: Record<string, number> = {};
 for (const t of tags) { tagCounts[t] = books.filter(b => (b.tags || []).includes(t)).length; }
+// Sort tags by frequency desc (most popular first) for the progressive tag cloud.
+const INITIAL_TAGS = 15;
+const TAG_BATCH = 20;
+const sortedTags = [...tags].sort((a, b) => (tagCounts[b] ?? 0) - (tagCounts[a] ?? 0));
 
 const PER_PAGE = 20;
 const page = Math.max(1, parseInt(Astro.url.searchParams.get('page') || '1', 10));
@@ -46,12 +50,12 @@ function cover(title: string) {
   </section>
 
   <!-- SSR visible grid: crawlers and no-JS users see this -->
-  <div class="categories tag-cloud" id="tag-cloud">
+  <div class="categories tag-cloud" id="tag-cloud" data-initial={INITIAL_TAGS} data-batch={TAG_BATCH}>
     <a href="/" class="cat-btn active">All</a>
-    {tags.map(t => (
-      <a href={`/tag/${slugify(t)}`} class="cat-btn">{getTagDisplay(t)} <span class="cat-count">({tagCounts[t]})</span></a>
+    {sortedTags.map((t, ti) => (
+      <a href={`/tag/${slugify(t)}`} class="cat-btn" data-tag-index={ti}>{getTagDisplay(t)} <span class="cat-count">({tagCounts[t]})</span></a>
     ))}
-    <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Toggle all tags"><span class="caret">▾</span></button>
+    <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Show more tags"><span class="caret">＋ 更多标签</span></button>
   </div>
 
   <div class="grid" id="home-grid">
@@ -116,42 +120,34 @@ function cover(title: string) {
     const cloud = document.getElementById('tag-cloud');
     const btn = document.getElementById('tag-toggle-btn');
     if (!cloud || !btn) return;
-    const pills = Array.from(cloud.children).filter(el => el !== btn);
+    const pills = Array.from(cloud.querySelectorAll('[data-tag-index]'));
     if (!pills.length) { btn.style.display = 'none'; return; }
-    let expanded = false;
+    const INITIAL = Number(cloud.dataset.initial ?? 15);
+    const BATCH = Number(cloud.dataset.batch ?? 20);
+    // Sort pills by their data-tag-index (already frequency-sorted server-side),
+    // then reveal only the first INITIAL ones; the rest load progressively.
+    let revealed = 0;
 
-    function collapse() {
-      pills.forEach(p => { p.style.display = ''; });
-      btn.classList.remove('expanded');
-      btn.setAttribute('aria-expanded', 'false');
-      expanded = false;
-      // Keep the toggle button on the first row: hide pills from the end
-      // until the button shares the first row's top offset.
-      const firstTop = pills[0].offsetTop;
-      for (let i = pills.length - 1; i >= 0; i--) {
-        if (btn.offsetTop === firstTop) break;
-        pills[i].style.display = 'none';
-      }
-      // If nothing on the first row besides the button, keep at least the first pill.
-      if (pills[0].style.display === 'none') {
-        pills[0].style.display = '';
+    function sync() {
+      pills.forEach((p, i) => {
+        p.style.display = i < revealed ? '' : 'none';
+      });
+      const remaining = pills.length - revealed;
+      if (remaining <= 0) {
+        btn.style.display = 'none';
+      } else {
+        btn.style.display = '';
+        btn.innerHTML = '<span class="caret">＋ 更多标签（' + remaining + '）</span>';
+        btn.setAttribute('aria-expanded', String(revealed < pills.length));
       }
     }
 
-    function expand() {
-      pills.forEach(p => { p.style.display = ''; });
-      btn.classList.add('expanded');
-      btn.setAttribute('aria-expanded', 'true');
-      expanded = true;
-    }
-
-    collapse();
-    btn.addEventListener('click', () => (expanded ? collapse() : expand()));
-
-    let rt;
-    window.addEventListener('resize', () => {
-      clearTimeout(rt);
-      rt = setTimeout(() => { if (!expanded) collapse(); }, 150);
+    btn.addEventListener('click', () => {
+      revealed = Math.min(pills.length, revealed + BATCH);
+      sync();
     });
+
+    revealed = Math.min(pills.length, INITIAL);
+    sync();
   })();
 </script>
