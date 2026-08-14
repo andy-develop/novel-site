@@ -49,8 +49,12 @@ function cover(title: string) {
     <span class="tag-count">{tagged.length} {tagged.length === 1 ? 'novel' : 'novels'}</span>
   </div>
 
-  <div class="categories">
+  <input type="checkbox" id="tag-toggle" class="tag-toggle" aria-hidden="true" />
+  <div class="categories tag-nav-bar">
     <a href="/" class="cat-btn">All</a>
+    <label for="tag-toggle" class="cat-btn cat-toggle-btn">Tags <span class="caret">▾</span></label>
+  </div>
+  <div class="categories tag-cloud">
     {tags.map(t => (
       <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
     ))}

@@ -46,8 +46,12 @@ function cover(title: string) {
   </section>
 
   <!-- SSR visible grid: crawlers and no-JS users see this -->
-  <div class="categories">
+  <input type="checkbox" id="tag-toggle" class="tag-toggle" aria-hidden="true" />
+  <div class="categories tag-nav-bar">
     <a href="/" class="cat-btn active">All</a>
+    <label for="tag-toggle" class="cat-btn cat-toggle-btn">Tags <span class="caret">▾</span></label>
+  </div>
+  <div class="categories tag-cloud">
     {tags.map(t => (
       <a href={`/tag/${slugify(t)}`} class="cat-btn">{getTagDisplay(t)} <span class="cat-count">({tagCounts[t]})</span></a>
     ))}

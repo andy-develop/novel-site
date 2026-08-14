@@ -945,3 +945,36 @@ body.dark-mode .tag-pill {
   .header-inner { padding: 0 var(--space-sm); gap: var(--space-2xs); }
   .categories { padding: var(--space-md) var(--space-sm) var(--space-2xs); }
 }
+
+
+/* ---- Collapsible tag cloud ---- */
+.tag-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.tag-nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+.tag-cloud {
+  display: none;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+.tag-toggle:checked ~ .tag-cloud {
+  display: flex;
+}
+.cat-toggle-btn {
+  cursor: pointer;
+  user-select: none;
+}
+.cat-toggle-btn .caret {
+  display: inline-block;
+  transition: transform 0.2s var(--ease-out);
+  font-size: 0.7em;
+}
+.tag-toggle:checked ~ .tag-nav-bar .cat-toggle-btn .caret {
+  transform: rotate(180deg);
+}
