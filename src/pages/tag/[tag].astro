@@ -60,7 +60,7 @@ function cover(title: string) {
     {sortedTags.map((t, ti) => (
       <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]} data-tag-index={ti}>{getTagDisplay(t)} <span class="cat-count">({tagCounts[t]})</span></a>
     ))}
-    <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Show more tags"><span class="caret">＋ 更多标签</span></button>
+    <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Show more tags"><span class="caret">More</span></button>
   </div>
 
   <div class="grid">
@@ -158,7 +158,7 @@ function cover(title: string) {
         btn.style.display = 'none';
       } else {
         btn.style.display = '';
-        btn.innerHTML = '<span class="caret">＋ 更多标签（' + remaining + '）</span>';
+        btn.innerHTML = '<span class="caret">More (' + remaining + ')</span>';
         btn.setAttribute('aria-expanded', String(revealed < pills.length));
       }
     }
