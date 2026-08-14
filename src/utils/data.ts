@@ -68,17 +68,75 @@ async function httpGetJson(url: string): Promise<any> {
   }
 }
 
+/* ---------- Tag normalization ---------- */
+
+/**
+ * Normalize a book's raw tags into a clean, de-duplicated array.
+ *
+ * Rules:
+ *  - A single comma-separated string (e.g. "fashion, revenge, thriller") is split
+ *    into its individual tags, so a book can belong to every one of them.
+ *  - "all" is reserved for the site-wide "All" category and is never a real tag;
+ *    books with no tags simply remain in "All" on the home page.
+ *  - Whitespace is trimmed, empty entries dropped, and duplicates removed
+ *    (case-insensitively) within each book.
+ */
+export function normalizeTags(tags: string[] | string | undefined | null): string[] {
+  if (!tags) return [];
+  const raw = Array.isArray(tags) ? tags : [tags];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const item of raw) {
+    const parts = String(item).split(',').map(s => s.trim()).filter(Boolean);
+    for (const part of parts) {
+      const key = part.toLowerCase();
+      if (key === 'all') continue; // reserved for the All category
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(part);
+    }
+  }
+  return out;
+}
+
+/**
+ * Normalize a tag into a comparable key: lowercase, spaces/hyphens unified.
+ * Lets URL slugs match raw tags regardless of case or kebab/space style
+ * (e.g. "cancel-culture" matches the tag "cancel-culture").
+ */
+export function normalizeTagKey(tag: string): string {
+  return tag.trim().toLowerCase().replace(/[\s-]+/g, ' ');
+}
+
+/**
+ * Resolve the real tag whose key matches a URL slug, or null if none.
+ */
+export function resolveTag(books: Book[], slug: string): string | null {
+  const key = normalizeTagKey(decodeURIComponent(slug));
+  const seen = new Set<string>();
+  for (const b of books) {
+    for (const t of b.tags || []) {
+      if (seen.has(t)) continue;
+      seen.add(t);
+      if (normalizeTagKey(t) === key) return t;
+    }
+  }
+  return null;
+}
+
 /* ---------- Books list ---------- */
 
 export async function getBooks(): Promise<Book[]> {
+  let data: any[] | null = null;
   const bucket = getBucket();
   if (bucket) {
     try {
       const obj = await bucket.get('books.json');
-      if (obj) return await obj.json();
+      if (obj) data = await obj.json();
     } catch { /* fall through */ }
   }
-  return (await httpGetJson(`${R2_PUBLIC}/books.json`)) ?? [];
+  if (!data) data = (await httpGetJson(`${R2_PUBLIC}/books.json`)) ?? [];
+  return (data as any[]).map(b => ({ ...b, tags: normalizeTags(b.tags) }));
 }
 
 /**

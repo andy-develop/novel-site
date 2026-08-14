@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ShelfBtnIsland from '../../components/ShelfBtnIsland.vue';
 import { getBooks, getCatalog, getCharacters, getTagDisplay, isHidden } from '../../utils/data';
-import { getBookSlug, findBookBySlug, getCanonicalBookUrl, getChapterUrl, truncateDescription, getBookLang, getCoverImageUrl, buildBreadcrumbList } from '../../utils/seo';
+import { getBookSlug, findBookBySlug, getCanonicalBookUrl, getChapterUrl, truncateDescription, getBookLang, getCoverImageUrl, buildBreadcrumbList, slugify } from '../../utils/seo';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/404');
@@ -82,7 +82,7 @@ const description = truncateDescription(
 
     <div class="book-tags">
       {(book.tags || []).map(t => (
-        <a href={`/tag/${encodeURIComponent(t)}`} class="tag-pill">{getTagDisplay(t)}</a>
+        <a href={`/tag/${slugify(t)}`} class="tag-pill">{getTagDisplay(t)}</a>
       ))}
     </div>
 

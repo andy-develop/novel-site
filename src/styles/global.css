@@ -351,11 +351,9 @@ header {
   margin: 0 auto;
   padding: var(--space-lg) var(--space-lg) var(--space-sm);
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2xs);
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.categories::-webkit-scrollbar { display: none; }
 .cat-btn {
   flex-shrink: 0;
   padding: var(--space-3xs) var(--space-md);

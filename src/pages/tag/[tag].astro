@@ -1,18 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getBooks, getEnglishBooks, getBooksByTag, getAllTags, getTagDisplay } from '../../utils/data';
+import { getBooks, getEnglishBooks, getBooksByTag, getAllTags, getTagDisplay, resolveTag } from '../../utils/data';
 import { getBookUrl, buildBreadcrumbList, truncateDescription, slugify } from '../../utils/seo';
 
 const { tag: slug } = Astro.params;
-const tag = slug ? decodeURIComponent(slug)
-  .split('-')
-  .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-  .join(' ')
-  .replace('Sci Fi', 'Sci-Fi') : '';
-if (!tag) return Astro.redirect('/');
+if (!slug) return Astro.redirect('/');
 
 const allBooks = await getBooks();
 const books = getEnglishBooks(allBooks);
+const tag = resolveTag(books, slug);
+if (!tag) return Astro.redirect('/');
 const tagged = getBooksByTag(books, tag);
 if (!tagged.length) return Astro.redirect('/');
 
