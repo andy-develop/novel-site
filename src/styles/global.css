@@ -947,34 +947,22 @@ body.dark-mode .tag-pill {
 }
 
 
-/* ---- Collapsible tag cloud ---- */
-.tag-toggle {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.tag-nav-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs);
-}
+/* ---- Collapsible tag cloud (one row + expand button) ---- */
 .tag-cloud {
-  display: none;
+  display: flex;
   flex-wrap: wrap;
   gap: var(--space-2xs);
-}
-.tag-toggle:checked ~ .tag-cloud {
-  display: flex;
 }
 .cat-toggle-btn {
   cursor: pointer;
   user-select: none;
+  flex-shrink: 0;
 }
 .cat-toggle-btn .caret {
   display: inline-block;
+  font-size: 0.72em;
   transition: transform 0.2s var(--ease-out);
-  font-size: 0.7em;
 }
-.tag-toggle:checked ~ .tag-nav-bar .cat-toggle-btn .caret {
+.cat-toggle-btn.expanded .caret {
   transform: rotate(180deg);
 }

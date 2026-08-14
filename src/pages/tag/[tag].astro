@@ -49,15 +49,12 @@ function cover(title: string) {
     <span class="tag-count">{tagged.length} {tagged.length === 1 ? 'novel' : 'novels'}</span>
   </div>
 
-  <input type="checkbox" id="tag-toggle" class="tag-toggle" aria-hidden="true" />
-  <div class="categories tag-nav-bar">
+  <div class="categories tag-cloud" id="tag-cloud">
     <a href="/" class="cat-btn">All</a>
-    <label for="tag-toggle" class="cat-btn cat-toggle-btn">Tags <span class="caret">▾</span></label>
-  </div>
-  <div class="categories tag-cloud">
     {tags.map(t => (
       <a href={`/tag/${slugify(t)}`} class:list={['cat-btn', { active: t === tag }]}>{getTagDisplay(t)}</a>
     ))}
+    <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Toggle all tags"><span class="caret">▾</span></button>
   </div>
 
   <div class="grid">
@@ -131,3 +128,45 @@ function cover(title: string) {
     color: var(--text);
   }
 </style>
+
+<script>
+  (function () {
+    const cloud = document.getElementById('tag-cloud');
+    const btn = document.getElementById('tag-toggle-btn');
+    if (!cloud || !btn) return;
+    const pills = Array.from(cloud.children).filter(el => el !== btn);
+    if (!pills.length) { btn.style.display = 'none'; return; }
+    let expanded = false;
+
+    function collapse() {
+      pills.forEach(p => { p.style.display = ''; });
+      btn.classList.remove('expanded');
+      btn.setAttribute('aria-expanded', 'false');
+      expanded = false;
+      const firstTop = pills[0].offsetTop;
+      for (let i = pills.length - 1; i >= 0; i--) {
+        if (btn.offsetTop === firstTop) break;
+        pills[i].style.display = 'none';
+      }
+      if (pills[0].style.display === 'none') {
+        pills[0].style.display = '';
+      }
+    }
+
+    function expand() {
+      pills.forEach(p => { p.style.display = ''; });
+      btn.classList.add('expanded');
+      btn.setAttribute('aria-expanded', 'true');
+      expanded = true;
+    }
+
+    collapse();
+    btn.addEventListener('click', () => (expanded ? collapse() : expand()));
+
+    let rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => { if (!expanded) collapse(); }, 150);
+    });
+  })();
+</script>
