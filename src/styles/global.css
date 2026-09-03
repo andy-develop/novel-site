@@ -398,7 +398,7 @@ header {
   margin: 0 auto;
   padding: var(--space-sm) var(--space-lg) var(--space-2xl);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-sm);
 }
 @media (min-width: 640px) {
