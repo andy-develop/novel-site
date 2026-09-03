@@ -25,9 +25,10 @@ const description = truncateDescription(
   160
 );
 
-const canonicalUrl = `https://lyriq.space/tag/${slugify(tag)}`;
+const origin = Astro.url.origin;
+const canonicalUrl = `${origin}/tag/${slugify(tag)}`;
 const breadcrumbSchema = buildBreadcrumbList([
-  { name: 'Home', item: 'https://lyriq.space/' },
+  { name: 'Home', item: `${origin}/` },
   { name: `${tag} Novels`, item: canonicalUrl },
 ]);
 

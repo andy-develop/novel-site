@@ -1,6 +1,8 @@
 import type { Book } from './data';
 
-export const DEFAULT_OG_IMAGE = 'https://lyriq.space/og-default.png';
+export function getDefaultOgImage(origin?: string): string {
+  return `${origin || 'https://lyriq.space'}/og-default.png`;
+}
 
 export function getBookLang(book: Book): string {
   const lang = (book.lang || 'en').toLowerCase();
@@ -40,12 +42,12 @@ export function getChapterUrl(book: Book, chapterId: number | string): string {
   return `/novel/${getBookSlug(book)}/${chapterId}`;
 }
 
-export function getCanonicalBookUrl(book: Book): string {
-  return `https://lyriq.space${getBookUrl(book)}`;
+export function getCanonicalBookUrl(book: Book, origin?: string): string {
+  return `${origin || 'https://lyriq.space'}${getBookUrl(book)}`;
 }
 
-export function getCanonicalChapterUrl(book: Book, chapterId: number | string): string {
-  return `https://lyriq.space${getChapterUrl(book, chapterId)}`;
+export function getCanonicalChapterUrl(book: Book, chapterId: number | string, origin?: string): string {
+  return `${origin || 'https://lyriq.space'}${getChapterUrl(book, chapterId)}`;
 }
 
 export function findBookBySlug(books: Book[], slug: string): Book | undefined {

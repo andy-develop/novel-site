@@ -7,27 +7,28 @@ interface UrlEntry {
   lastmod: string;
 }
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request }) => {
   const now = new Date().toISOString();
+  const origin = new URL(request.url).origin;
   const allBooks = await getBooks();
   const books = getEnglishBooks(allBooks);
-  const entries: UrlEntry[] = [{ loc: 'https://lyriq.space', lastmod: now }];
+  const entries: UrlEntry[] = [{ loc: origin, lastmod: now }];
 
   // Novel pages and chapter pages
   for (const book of books) {
-    const bookUrl = `https://lyriq.space${getBookUrl(book)}`;
+    const bookUrl = `${origin}${getBookUrl(book)}`;
     entries.push({ loc: bookUrl, lastmod: now });
 
     const totalChapters = book.total_chapters || 0;
     for (let i = 1; i <= totalChapters; i++) {
-      entries.push({ loc: `https://lyriq.space${getChapterUrl(book, i)}`, lastmod: now });
+      entries.push({ loc: `${origin}${getChapterUrl(book, i)}`, lastmod: now });
     }
   }
 
   // Tag pages (slug URLs)
   const tags = getAllTags(books);
   for (const tag of tags) {
-    entries.push({ loc: `https://lyriq.space/tag/${slugify(tag)}`, lastmod: now });
+    entries.push({ loc: `${origin}/tag/${slugify(tag)}`, lastmod: now });
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

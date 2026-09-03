@@ -1,7 +1,7 @@
 ---
 import GlobalControlsIsland from '../components/GlobalControlsIsland.vue';
 import FeedbackWidget from '../components/FeedbackWidget.vue';
-import { DEFAULT_OG_IMAGE } from '../utils/seo';
+import { getDefaultOgImage } from '../utils/seo';
 
 export interface Props {
   title: string;
@@ -13,6 +13,7 @@ export interface Props {
   ogImage?: string;
 }
 
+const origin = Astro.url.origin;
 const {
   title,
   description = 'Read free novels online — fantasy, romance, sci-fi, thriller and more.',
@@ -20,10 +21,10 @@ const {
   jsonLd,
   hideControls = false,
   lang = 'en',
-  ogImage = DEFAULT_OG_IMAGE,
+  ogImage = getDefaultOgImage(origin),
 } = Astro.props;
 const siteTitle = title === 'Home' ? 'Novel Vault — Read Free Novels Online' : `${title} — Novel Vault`;
-const resolvedOgImage = ogImage || DEFAULT_OG_IMAGE;
+const resolvedOgImage = ogImage || getDefaultOgImage(origin);
 const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 <!doctype html>

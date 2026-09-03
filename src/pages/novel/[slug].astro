@@ -14,14 +14,14 @@ const numericId = /^\d+$/.test(slug) ? parseInt(slug, 10) : null;
 if (numericId) {
   const legacyBook = allBooks.find(b => b.id === numericId);
   if (legacyBook) {
-    return Astro.redirect(getCanonicalBookUrl(legacyBook), 301);
+    return Astro.redirect(getCanonicalBookUrl(legacyBook, Astro.url.origin), 301);
   }
 }
 
 const book = findBookBySlug(allBooks, slug);
 if (!book || isHidden(book)) return Astro.redirect('/404');
 
-const canonicalUrl = getCanonicalBookUrl(book);
+const canonicalUrl = getCanonicalBookUrl(book, Astro.url.origin);
 
 const bookId = book.id;
 const catalog = await getCatalog(bookId);
@@ -47,7 +47,7 @@ const bookSchema = {
 };
 
 const breadcrumbSchema = buildBreadcrumbList([
-  { name: 'Home', item: 'https://lyriq.space/' },
+  { name: 'Home', item: `${Astro.url.origin}/` },
   { name: book.title, item: canonicalUrl },
 ]);
 

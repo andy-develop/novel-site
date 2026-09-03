@@ -17,7 +17,7 @@ const numericId = /^\d+$/.test(slug) ? parseInt(slug, 10) : null;
 if (numericId) {
   const legacyBook = allBooks.find(b => b.id === numericId);
   if (legacyBook) {
-    return Astro.redirect(getCanonicalChapterUrl(legacyBook, chId), 301);
+    return Astro.redirect(getCanonicalChapterUrl(legacyBook, chId, Astro.url.origin), 301);
   }
 }
 
@@ -25,7 +25,8 @@ const book = findBookBySlug(allBooks, slug);
 if (!book || isHidden(book)) return Astro.redirect('/404');
 
 const bookSlug = getBookSlug(book);
-const canonicalUrl = getCanonicalChapterUrl(book, chId);
+const origin = Astro.url.origin;
+const canonicalUrl = getCanonicalChapterUrl(book, chId, origin);
 
 const bookId = book.id;
 const catalog = await getCatalog(bookId);
@@ -61,7 +62,7 @@ const bookSchema = {
   author: { '@type': 'Person', name: book.author || 'Unknown' },
   genre: book.tags,
   numberOfChapters: book.total_chapters,
-  url: getCanonicalChapterUrl(book, chId).replace(/\/[0-9]+$/, ''),
+  url: getCanonicalChapterUrl(book, chId, origin).replace(/\/[0-9]+$/, ''),
 };
 
 const chapterSchema = {
@@ -74,7 +75,7 @@ const chapterSchema = {
 };
 
 const breadcrumbSchema = buildBreadcrumbList([
-  { name: 'Home', item: 'https://lyriq.space/' },
+  { name: 'Home', item: `${origin}/` },
   { name: book.title, item: getBookUrl(book) },
   { name: chapterTitle },
 ]);
