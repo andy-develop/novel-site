@@ -84,10 +84,33 @@ function cover(title: string) {
   {totalPages > 1 && (
     <div class="pagination" id="home-pagination">
       <a href={page > 1 ? `/?page=${page - 1}` : undefined} class="page-btn" aria-disabled={page === 1} class:list={['page-btn', { disabled: page === 1 }]}>‹ Prev</a>
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-        <a href={`/?page=${p}`} class:list={['page-num', { active: p === page }]}>{p}</a>
-      ))}
+      {
+        // Folded page window: 1 … (page-2..page+2) … totalPages; -1/-2 mark ellipses
+        (() => {
+          const pages: number[] = [];
+          const start = Math.max(2, page - 2);
+          const end = Math.min(totalPages - 1, page + 2);
+          if (start > 2) pages.push(-1);
+          for (let p = start; p <= end; p++) pages.push(p);
+          if (end < totalPages - 1) pages.push(-2);
+          return [1, ...pages, totalPages];
+        })().map(p => (
+          p < 0
+            ? <span class="page-ellipsis" aria-hidden="true">…</span>
+            : <a href={`/?page=${p}`} class:list={['page-num', { active: p === page }]}>{p}</a>
+        ))
+      }
       <a href={page < totalPages ? `/?page=${page + 1}` : undefined} class:list={['page-btn', { disabled: page === totalPages }]}>Next ›</a>
+      <span class="page-jump">
+        <select
+          aria-label="Jump to page"
+          onchange={`location.href='/?page=' + this.value`}
+        >
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+            <option value={p} selected={p === page}>Page {p}</option>
+          ))}
+        </select>
+      </span>
     </div>
   )}
 </BaseLayout>
