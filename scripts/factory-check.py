@@ -1,27 +1,30 @@
 #!/usr/bin/env python3
-"""Factory helper: read R2 books.json, print max id, slugs, sample entry."""
-import boto3, json
+"""Read R2 books.json: max id, existing slugs, total chapters."""
+import json, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from dotenv import load_dotenv
+load_dotenv('/root/novel-site/.env')
+import boto3
+from botocore.config import Config
 
-env = {}
-with open('/root/novel-site/.env') as f:
-    for line in f:
-        line = line.strip()
-        if line and not line.startswith('#') and '=' in line:
-            k, v = line.split('=', 1)
-            env[k.strip()] = v.strip().strip('"').strip("'")
-
-s3 = boto3.client('s3', endpoint_url=env.get('R2_ENDPOINT'),
-                  aws_access_key_id=env.get('R2_ACCESS_KEY_ID'),
-                  aws_secret_access_key=env.get('R2_SECRET_ACCESS_KEY'),
-                  region_name='auto')
-bucket = env.get('R2_BUCKET', 'novel-data')
-resp = s3.get_object(Bucket=bucket, Key='books.json')
-books = json.loads(resp['Body'].read())
-ids = sorted(int(b['id']) for b in books)
-slugs = sorted(b.get('slug', '?') for b in books)
-print("num books:", len(books))
-print("max id:", max(ids))
-print("next id:", max(ids) + 1)
-print("slugs:", slugs)
-print()
-print(json.dumps(books[0], indent=1)[:900])
+s3 = boto3.client(
+    's3',
+    endpoint_url=os.environ['R2_ENDPOINT'],
+    aws_access_key_id=os.environ['R2_ACCESS_KEY_ID'],
+    aws_secret_access_key=os.environ['R2_SECRET_ACCESS_KEY'],
+    region_name='auto',
+    config=Config(signature_version='s3v4'),
+)
+bucket = os.environ['R2_BUCKET']
+obj = s3.get_object(Bucket=bucket, Key='books.json')
+books = json.loads(obj['Body'].read().decode('utf-8'))
+if isinstance(books, dict):
+    books = books.get('books', books.get('data', []))
+ids = [b.get('id') for b in books if isinstance(b.get('id'), int)]
+slugs = [b.get('slug') for b in books]
+print("total books:", len(books))
+print("max id:", max(ids) if ids else None)
+print("slugs:", ','.join(slugs))
+for b in books:
+    if b.get('id') == max(ids) if ids else False:
+        print("latest book:", json.dumps(b, ensure_ascii=False)[:500])
