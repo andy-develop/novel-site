@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Offline — Novel Vault</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card-2: #22223a;
+    --gold: #c9a84c;
+    --gold-dim: rgba(201, 168, 76, 0.12);
+    --text: #f2efe7;
+    --text-dim: #b5ad99;
+    --text-muted: #8a826e;
+    --rule: rgba(242, 239, 231, 0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px 80px;
+  }
+  .logo {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .logo b { color: var(--text); font-style: normal; font-weight: 600; }
+  h1 { margin: 28px 0 8px; font-size: 1.15rem; font-weight: 600; }
+  p.sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 28px; }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    background: var(--card);
+    margin-bottom: 32px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .saved-list { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 10px; }
+  .book-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .book-card:hover { border-color: var(--gold); background: var(--card-2); }
+  .book-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .book-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .book-count { font-size: 0.72rem; color: var(--text-muted); }
+  .book-open {
+    font-size: 0.75rem;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    background: var(--gold-dim);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+  .empty { color: var(--text-muted); font-size: 0.9rem; text-align: center; line-height: 1.8; }
+  button.retry {
+    margin-top: 36px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    padding: 10px 28px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button.retry:hover { background: var(--gold-dim); }
+</style>
+</head>
+<body>
+  <a class="logo" href="/"><b>N</b>OVEL VAULT</a>
+  <h1>You're offline</h1>
+  <p class="sub">Saved books below are available — anything else needs a connection.</p>
+  <div class="status"><span class="dot"></span><span id="status-text">Checking saved books…</span></div>
+  <div class="saved-list" id="saved-list"></div>
+  <button class="retry" onclick="location.reload()">Try again</button>
+  <script>
+    (async () => {
+      const list = document.getElementById('saved-list');
+      const statusText = document.getElementById('status-text');
+      try {
+        if (!('caches' in window)) throw new Error('no cache api');
+        const keys = await caches.keys();
+        const bookCaches = keys.filter(k => k.startsWith('novel-vault-book-'));
+        if (!bookCaches.length) {
+          statusText.textContent = 'No saved books';
+          list.innerHTML = '<p class="empty">Nothing has been saved for offline reading yet.<br>Open any book and press <b>⬇ Save</b> in the top-right corner.</p>';
+          return;
+        }
+        const books = [];
+        for (const k of bookCaches) {
+          try {
+            const cache = await caches.open(k);
+            const id = k.replace('novel-vault-book-', '');
+            const hit = await cache.match('/__nv__/meta/' + id);
+            if (hit) {
+              const m = await hit.json();
+              books.push(m);
+            }
+          } catch (e) { /* skip */ }
+        }
+        books.sort((a, b) => b.savedAt - a.savedAt);
+        statusText.textContent = books.length + ' book' + (books.length > 1 ? 's' : '') + ' saved offline';
+        list.innerHTML = books.map(b => {
+          const pct = b.saved >= b.total;
+          return '<a class="book-card" href="/novel/' + b.slug + '">' +
+            '<span class="book-title">' + escapeHtml(b.title) + '</span>' +
+            '<span class="book-meta">' +
+              '<span class="book-count">' + b.saved + '/' + b.total + ' ch</span>' +
+              '<span class="book-open">' + (pct ? 'Read' : 'Continue') + '</span>' +
+            '</span></a>';
+        }).join('');
+      } catch (e) {
+        statusText.textContent = 'Offline storage unavailable';
+        list.innerHTML = '<p class="empty">Your browser blocked offline storage for this site.</p>';
+      }
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+    })();
+  </script>
+</body>
+</html>

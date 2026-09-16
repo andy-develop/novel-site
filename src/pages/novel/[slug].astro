@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ShelfBtnIsland from '../../components/ShelfBtnIsland.vue';
+import SaveBookIsland from '../../components/SaveBookIsland.vue';
 import { getBooks, getCatalog, getCharacters, getTagDisplay, isHidden } from '../../utils/data';
 import { getBookSlug, findBookBySlug, getCanonicalBookUrl, getChapterUrl, truncateDescription, getBookLang, getCoverImageUrl, buildBreadcrumbList, slugify } from '../../utils/seo';
 
@@ -68,6 +69,7 @@ const description = truncateDescription(
     <div class="header-inner">
       <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
       <span class="header-book-title">{book.title}</span>
+      <SaveBookIsland client:load bookId={bookId} slug={getBookSlug(book)} title={book.title} chapters={chapters.map(c => ({ chapter_id: c.chapter_id }))} />
     </div>
   </header>
 
