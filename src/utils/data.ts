@@ -126,7 +126,16 @@ export function resolveTag(books: Book[], slug: string): string | null {
 
 /* ---------- Books list ---------- */
 
+// Parse books.json once per isolate and reuse within a short window. The free
+// Workers tier's 10ms CPU budget is exceeded by re-parsing the ~1MB file on
+// every request (observed 2026-09-26: every SSR route returned 1102).
+let _booksCache: Book[] | null = null;
+let _booksCacheTs = 0;
+const BOOKS_CACHE_TTL_MS = 60_000;
+
 export async function getBooks(): Promise<Book[]> {
+  const now = Date.now();
+  if (_booksCache && now - _booksCacheTs < BOOKS_CACHE_TTL_MS) return _booksCache;
   let data: any[] | null = null;
   const bucket = getBucket();
   if (bucket) {
@@ -136,7 +145,9 @@ export async function getBooks(): Promise<Book[]> {
     } catch { /* fall through */ }
   }
   if (!data) data = (await httpGetJson(`${R2_PUBLIC}/books.json`)) ?? [];
-  return (data as any[]).map(b => ({ ...b, tags: normalizeTags(b.tags) }));
+  _booksCache = (data as any[]).map(b => ({ ...b, tags: normalizeTags(b.tags) }));
+  _booksCacheTs = now;
+  return _booksCache;
 }
 
 /**

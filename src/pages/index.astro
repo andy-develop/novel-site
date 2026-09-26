@@ -8,7 +8,9 @@ const allBooks = await getBooks();
 const books = getEnglishBooks(allBooks);
 const tags = getAllTags(books);
 const tagCounts: Record<string, number> = {};
-for (const t of tags) { tagCounts[t] = books.filter(b => (b.tags || []).includes(t)).length; }
+for (const b of books) {
+  for (const t of b.tags || []) tagCounts[t] = (tagCounts[t] || 0) + 1;
+}
 // Sort tags by frequency desc (most popular first) for the progressive tag cloud.
 const INITIAL_TAGS = 15;
 const TAG_BATCH = 20;
@@ -54,7 +56,7 @@ function cover(title: string) {
 }
 ---
 <BaseLayout title="Home" description={description} canonicalUrl={`${origin}/`} jsonLd={jsonLd} ogImage={getDefaultOgImage(origin)}>
-  <SearchIsland client:load books={books} />
+  <SearchIsland client:load books={books.map(b => ({ ...b, intro: (b.intro || '').slice(0, 120) }))} />
 
   <!-- Hero marquee — typographic entry, no image -->
   <section class="hero-marquee" aria-label="Site intro">

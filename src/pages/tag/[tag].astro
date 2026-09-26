@@ -15,7 +15,9 @@ if (!tagged.length) return Astro.redirect('/');
 
 const tags = getAllTags(books);
 const tagCounts: Record<string, number> = {};
-for (const t of tags) { tagCounts[t] = books.filter(b => (b.tags || []).includes(t)).length; }
+for (const b of books) {
+  for (const t of b.tags || []) tagCounts[t] = (tagCounts[t] || 0) + 1;
+}
 const INITIAL_TAGS = 15;
 const TAG_BATCH = 20;
 // Active tag always stays visible; the rest sorted by frequency.
