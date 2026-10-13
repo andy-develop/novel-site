@@ -1,7 +1,7 @@
 import type { Book } from './data';
 
 export function getDefaultOgImage(origin?: string): string {
-  return `${origin || 'https://lyriq.space'}/og-default.png`;
+  return `${origin || 'https://lyriq.top'}/og-default.png`;
 }
 
 export function getBookLang(book: Book): string {
@@ -43,11 +43,11 @@ export function getChapterUrl(book: Book, chapterId: number | string): string {
 }
 
 export function getCanonicalBookUrl(book: Book, origin?: string): string {
-  return `${origin || 'https://lyriq.space'}${getBookUrl(book)}`;
+  return `${origin || 'https://lyriq.top'}${getBookUrl(book)}`;
 }
 
 export function getCanonicalChapterUrl(book: Book, chapterId: number | string, origin?: string): string {
-  return `${origin || 'https://lyriq.space'}${getChapterUrl(book, chapterId)}`;
+  return `${origin || 'https://lyriq.top'}${getChapterUrl(book, chapterId)}`;
 }
 
 export function findBookBySlug(books: Book[], slug: string): Book | undefined {

@@ -33,14 +33,14 @@ if (totalPages > 1) {
   pageWindow.push(totalPages);
 }
 
-const description = `Read free English novels online — ${books.length} books across Dark Academia, Romance, Fantasy, Thriller and more at Novel Vault.`;
+const description = `Read free English novels online — ${books.length} books across Dark Academia, Romance, Fantasy, Thriller and more at Lyriq.`;
 
 const origin = Astro.url.origin;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Novel Vault',
+  name: 'Lyriq',
   url: origin,
   description,
   potentialAction: {
@@ -62,7 +62,7 @@ function cover(title: string) {
   <section class="hero-marquee" aria-label="Site intro">
     <h1>Stories that <em>keep you up</em> past 2am.</h1>
     <p>{books.length} free novels — romance, dark academia, fantasy, thriller. Read in your browser, no app, no signup.</p>
-    <span class="scroll-hint">↓ Browse the vault</span>
+    <span class="scroll-hint">↓ Browse the library</span>
   </section>
 
   <!-- SSR visible grid: crawlers and no-JS users see this -->
@@ -120,9 +120,9 @@ function cover(title: string) {
   )}
 
   <!-- 站点页脚（首页） -->
-  <footer class="vault-footer">
-    <p class="vault-footer-line">© 2026 Novel Vault · lyriq.top</p>
-    <p class="vault-footer-line">
+  <footer class="lyriq-footer">
+    <p class="lyriq-footer-line">© 2026 Lyriq · lyriq.top</p>
+    <p class="lyriq-footer-line">
       Contact:&nbsp;<a href="mailto:andybuilder@foxmail.com">andybuilder@foxmail.com</a>
     </p>
   </footer>
@@ -192,7 +192,7 @@ function cover(title: string) {
 </script>
 
 <style>
-  .vault-footer {
+  .lyriq-footer {
     max-width: 1100px;
     margin: 0 auto;
     padding: var(--space-xl) var(--space-lg) var(--space-2xl);
@@ -207,17 +207,17 @@ function cover(title: string) {
     /* ink-3 在纸色底上只有 ~2.9:1，达不到 AA；小字统一用 ink-2（约 6.5:1） */
     color: var(--color-ink-2);
   }
-  .vault-footer-line { margin: 0; }
-  .vault-footer a {
+  .lyriq-footer-line { margin: 0; }
+  .lyriq-footer a {
     color: var(--color-accent);
     text-decoration: none;
     border-bottom: 1px solid var(--color-accent);
     padding-bottom: 1px;
     transition: opacity var(--dur-short) var(--ease-out);
   }
-  .vault-footer a:hover { opacity: .78; }
-  .vault-footer a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
+  .lyriq-footer a:hover { opacity: .78; }
+  .lyriq-footer a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
   @media (max-width: 480px) {
-    .vault-footer { flex-direction: column; gap: var(--space-3xs); padding-bottom: var(--space-xl); }
+    .lyriq-footer { flex-direction: column; gap: var(--space-3xs); padding-bottom: var(--space-xl); }
   }
 </style>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Offline — Novel Vault</title>
+<title>Offline — Lyriq</title>
 <style>
   :root {
     --bg: #0f0f1a;
@@ -100,7 +100,7 @@
 </style>
 </head>
 <body>
-  <a class="logo" href="/"><b>N</b>OVEL VAULT</a>
+  <a class="logo" href="/"><b>L</b>YRIQ</a>
   <h1>You're offline</h1>
   <p class="sub">Saved books below are available — anything else needs a connection.</p>
   <div class="status"><span class="dot"></span><span id="status-text">Checking saved books…</span></div>
@@ -113,7 +113,8 @@
       try {
         if (!('caches' in window)) throw new Error('no cache api');
         const keys = await caches.keys();
-        const bookCaches = keys.filter(k => k.startsWith('novel-vault-book-'));
+        const BOOK_PREFIXES = ['lyriq-book-', 'novel-vault-book-'];
+        const bookCaches = keys.filter(k => BOOK_PREFIXES.some(p => k.startsWith(p)));
         if (!bookCaches.length) {
           statusText.textContent = 'No saved books';
           list.innerHTML = '<p class="empty">Nothing has been saved for offline reading yet.<br>Open any book and press <b>⬇ Save</b> in the top-right corner.</p>';
@@ -123,8 +124,8 @@
         for (const k of bookCaches) {
           try {
             const cache = await caches.open(k);
-            const id = k.replace('novel-vault-book-', '');
-            const hit = await cache.match('/__nv__/meta/' + id);
+            const id = k.replace(/^(?:lyriq|novel-vault)-book-/, '');
+            const hit = (await cache.match('/__lyriq__/meta/' + id)) || (await cache.match('/__nv__/meta/' + id));
             if (hit) {
               const m = await hit.json();
               books.push(m);

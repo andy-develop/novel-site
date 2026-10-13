@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://lyriq.space/sitemap.xml
+Sitemap: https://lyriq.top/sitemap.xml

@@ -1,4 +1,4 @@
-# Design — Novel Vault (lyriq.space)
+# Design — Lyriq (lyriq.top)
 
 A locked design system for this app. Every page redesign reads this file before
 emitting code. Do not regenerate per page — extend or amend this file when the
@@ -128,8 +128,8 @@ centered. Dark mode: gradient darkens, letter stays berry.
 
 ## What pages MUST share
 
-- The wordmark / logotype: "NOVEL VAULT" in Fraunces, berry, with the leading
-  "N" in ink (bold weight) — the split-letter logo pattern.
+- The wordmark / logotype: "LYRIQ" in Fraunces, berry, with the leading
+  "L" in ink (bold weight) — the split-letter logo pattern.
 - The accent colour (berry) and its placement (≤ 5% per viewport).
 - Fraunces (display) + Plus Jakarta Sans (body) across every page.
 - The CTA voice (pill shape, berry fill, verb-led copy).

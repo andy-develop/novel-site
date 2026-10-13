@@ -23,7 +23,7 @@ const TAG_BATCH = 20;
 // Active tag always stays visible; the rest sorted by frequency.
 const sortedTags = [...tags].sort((a, b) => (tagCounts[b] ?? 0) - (tagCounts[a] ?? 0));
 const description = truncateDescription(
-  `Browse ${tagged.length} free ${tag} novels online at Novel Vault. Read Dark Academia, Romance, Fantasy, Thriller and more.`,
+  `Browse ${tagged.length} free ${tag} novels online at Lyriq. Read Dark Academia, Romance, Fantasy, Thriller and more.`,
   160
 );
 
@@ -42,7 +42,7 @@ function cover(title: string) {
 <BaseLayout title={`${tag} Novels`} description={description} canonicalUrl={canonicalUrl} jsonLd={breadcrumbSchema}>
   <header>
     <div class="header-inner">
-      <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
+      <a href="/" class="logo"><span>L</span>YRIQ</a>
     </div>
   </header>
 

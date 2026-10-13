@@ -53,7 +53,7 @@ const breadcrumbSchema = buildBreadcrumbList([
 ]);
 
 const description = truncateDescription(
-  book.intro || `Read ${book.title} online for free at Novel Vault.`,
+  book.intro || `Read ${book.title} online for free at Lyriq.`,
   160
 );
 ---
@@ -67,7 +67,7 @@ const description = truncateDescription(
 >
   <header>
     <div class="header-inner">
-      <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
+      <a href="/" class="logo"><span>L</span>YRIQ</a>
       <span class="header-book-title">{book.title}</span>
       <SaveBookIsland client:load bookId={bookId} slug={getBookSlug(book)} title={book.title} chapters={chapters.map(c => ({ chapter_id: c.chapter_id }))} />
     </div>

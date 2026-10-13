@@ -1,25 +1,49 @@
 /**
- * LocalStorage utility for Novel Vault (Astro edition)
+ * LocalStorage utility for Lyriq (Astro edition)
  * Storage keys: readHistory, userBookshelf, bookshelfTipIgnore, readingProgress
+ *
+ * The site was called "Novel Vault" before the rename; keys written by that build
+ * (LEGACY) are read once and copied forward to the `lyriq-*` names so existing
+ * shelves / reading progress survive the rebrand.
  */
 const KEYS = {
-  history: 'novel-vault-history',
-  bookshelf: 'novel-vault-bookshelf',
-  tipIgnore: 'novel-vault-bookshelf-tip-ignore',
-  progress: 'novel-vault-progress',
+  history: 'lyriq-history',
+  bookshelf: 'lyriq-bookshelf',
+  tipIgnore: 'lyriq-bookshelf-tip-ignore',
+  progress: 'lyriq-progress',
 };
+
+const LEGACY = {
+  'lyriq-history': 'novel-vault-history',
+  'lyriq-bookshelf': 'novel-vault-bookshelf',
+  'lyriq-bookshelf-tip-ignore': 'novel-vault-bookshelf-tip-ignore',
+  'lyriq-progress': 'novel-vault-progress',
+};
+
+function raw(key) {
+  try {
+    const cur = localStorage.getItem(key);
+    if (cur !== null) return cur;
+    const legacy = LEGACY[key];
+    if (!legacy) return null;
+    const old = localStorage.getItem(legacy);
+    if (old === null) return null;
+    try { localStorage.setItem(key, old); } catch { /* quota / private mode */ }
+    return old;
+  } catch { return null; }
+}
 
 function load(key) {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : [];
+    const value = raw(key);
+    return value ? JSON.parse(value) : [];
   } catch { return []; }
 }
 
 function loadObj(key) {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : {};
+    const value = raw(key);
+    return value ? JSON.parse(value) : {};
   } catch { return {}; }
 }
 

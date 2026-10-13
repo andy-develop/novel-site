@@ -83,7 +83,7 @@ function shelfUrl(bookId) {
 <template>
   <header>
     <div class="header-inner">
-      <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
+      <a href="/" class="logo"><span>L</span>YRIQ</a>
       <div class="search-wrap">
         <span class="icon">⌕</span>
         <input type="search" v-model="query" placeholder="Search by title, author, or synopsis..." />

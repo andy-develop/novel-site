@@ -84,7 +84,7 @@ const breadcrumbSchema = buildBreadcrumbList([
 const description = truncateDescription(
   chapterData?.highlight
     ? `${chapterData.highlight} — from "${chapterTitle}" of ${book.title} by ${book.author || 'Unknown'}.`
-    : `Read "${chapterTitle}" of ${book.title} online for free at Novel Vault.`,
+    : `Read "${chapterTitle}" of ${book.title} online for free at Lyriq.`,
   160
 );
 
@@ -106,7 +106,7 @@ if (chapterData) {
 >
   <header>
     <div class="header-inner">
-      <a href="/" class="logo"><span>N</span>OVEL VAULT</a>
+      <a href="/" class="logo"><span>L</span>YRIQ</a>
       <span class="header-book-title">{book.title}</span>
       <SaveBookIsland client:load bookId={bookId} slug={bookSlug} title={book.title} chapters={chapters.map(c => ({ chapter_id: c.chapter_id }))} />
     </div>
@@ -208,9 +208,10 @@ if (chapterData) {
   // as a classic inline script, so a static `import` would throw
   // "Cannot use import statement outside a module" and progress never saved.
   try {
-    const KEY = 'novel-vault-progress';
+    const KEY = 'lyriq-progress';
+    const LEGACY_KEY = 'novel-vault-progress';
     let progress = {};
-    try { progress = JSON.parse(localStorage.getItem(KEY)) || {}; } catch {}
+    try { progress = JSON.parse(localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY)) || {}; } catch {}
     progress[bookId] = { chapterId: chId, chapterTitle, updatedAt: Date.now() };
     localStorage.setItem(KEY, JSON.stringify(progress));
   } catch {}

@@ -13,7 +13,7 @@ export default defineConfig({
         platformProxy: { enabled: false },
       })
     : node({ mode: 'standalone' }),
-  site: 'https://lyriq.space',
+  site: 'https://lyriq.top',
   integrations: [
     vue(),
   ],
