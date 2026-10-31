@@ -51,13 +51,13 @@ jobs:
             key=$(basename "$f")
             npx --yes wrangler@3.99.0 r2 object put "novel-data/${BOOK_ID}/${key}" \
               --file "$f" --content-type application/json \
-              --cache-control "public, max-age=31536000, immutable" --remote
+              --cache-control "public, max-age=31536000, immutable"
             count=$((count + 1))
           done
           echo "uploaded $count chapter objects"
           npx --yes wrangler@3.99.0 r2 object put "novel-data/catalog_${BOOK_ID}.json" \
             --file "$DIR/catalog_${BOOK_ID}.json" --content-type application/json \
-            --cache-control "public, max-age=31536000, immutable" --remote
+            --cache-control "public, max-age=31536000, immutable"
 
       - name: Upload books index
         env:
@@ -67,4 +67,4 @@ jobs:
           set -euo pipefail
           npx --yes wrangler@3.99.0 r2 object put "novel-data/books.json" \
             --file "$DIR/books.json" --content-type application/json \
-            --cache-control "no-cache, no-store, must-revalidate" --remote
+            --cache-control "no-cache, no-store, must-revalidate"
