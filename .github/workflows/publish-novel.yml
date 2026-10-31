@@ -38,3 +38,18 @@ jobs:
           set -euo pipefail
           npx --yes wrangler@3.99.0 deploy --config publish-worker/wrangler.toml publish-worker/index.js
           echo "publisher deployed"
+
+  delete-publisher:
+    if: ${{ inputs.note == 'delete' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete the temporary writer worker
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          ACC=$(curl -fsS -H "Authorization: Bearer $CF_TOKEN" https://api.cloudflare.com/client/v4/accounts \
+                | python3 -c "import json,sys;print(json.load(sys.stdin)['result'][0]['id'])")
+          curl -fsS -X DELETE -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts/novel-publisher"
+          echo "deleted novel-publisher"
