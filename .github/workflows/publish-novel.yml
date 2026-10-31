@@ -1,70 +1,30 @@
 name: Publish novel data to R2
 
-# Uploads a prepared novel payload (chapters/*.json, catalog_<id>.json, books.json)
-# into the `novel-data` R2 bucket using the same keys and cache headers the
-# Astro worker expects. Safe to re-run; immutable chapter keys are overwritten.
+# The CLOUDFLARE_API_TOKEN in this repo is scoped for Workers deploy, not the R2
+# admin API (wrangler r2 object put returns 403). So this job deploys a tiny
+# writer Worker that holds an R2 binding to `novel-data`; the caller then PUTs the
+# prepared payload through it. Delete the worker (novel-publisher) when done.
 
 on:
   workflow_dispatch:
     inputs:
-      dir:
-        description: "Directory holding books.json, catalog_<id>.json and chapters/<n>.json"
-        required: true
-        default: ".publish/maybe-tomorrow"
-      book_id:
-        description: "Book id (used for log lines only)"
-        required: true
-        default: "2079"
+      note:
+        description: "Free-text note for the run log"
+        required: false
+        default: "deploy R2 writer"
 
 jobs:
-  publish:
+  deploy-publisher:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Resolve account id
-        env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          set -euo pipefail
-          ACC=$(curl -fsS -H "Authorization: Bearer $CF_TOKEN" \
-                https://api.cloudflare.com/client/v4/accounts \
-                | python3 -c "import json,sys;print(json.load(sys.stdin)['result'][0]['id'])")
-          echo "Resolved account: $ACC"
-          echo "CLOUDFLARE_ACCOUNT_ID=$ACC" >> "$GITHUB_ENV"
-
-      - name: Upload chapter objects
+      - name: Deploy R2 writer worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          DIR: ${{ inputs.dir }}
-          BOOK_ID: ${{ inputs.book_id }}
         run: |
           set -euo pipefail
-          test -f "$DIR/books.json"
-          test -f "$DIR/catalog_${BOOK_ID}.json"
-          count=0
-          for f in "$DIR"/chapters/*.json; do
-            key=$(basename "$f")
-            npx --yes wrangler@3.99.0 r2 object put "novel-data/${BOOK_ID}/${key}" \
-              --file "$f" --content-type application/json \
-              --cache-control "public, max-age=31536000, immutable"
-            count=$((count + 1))
-          done
-          echo "uploaded $count chapter objects"
-          npx --yes wrangler@3.99.0 r2 object put "novel-data/catalog_${BOOK_ID}.json" \
-            --file "$DIR/catalog_${BOOK_ID}.json" --content-type application/json \
-            --cache-control "public, max-age=31536000, immutable"
-
-      - name: Upload books index
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          DIR: ${{ inputs.dir }}
-        run: |
-          set -euo pipefail
-          npx --yes wrangler@3.99.0 r2 object put "novel-data/books.json" \
-            --file "$DIR/books.json" --content-type application/json \
-            --cache-control "no-cache, no-store, must-revalidate"
+          npx --yes wrangler@3.99.0 deploy --config publish-worker/wrangler.toml publish-worker/index.js
+          echo "publisher deployed"
