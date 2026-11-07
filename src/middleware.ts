@@ -59,10 +59,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const body = await res.arrayBuffer();
   const out = new Response(body, { status: 200, statusText: res.statusText, headers });
 
-  try {
-    await cache!.put(key, out.clone());
-  } catch {
-    // A failed put must never break the response.
+  // A truncated render (Astro streams, so a runtime error yields 200 + partial
+  // HTML) must never be cached; those responses have no closing body tag.
+  // Only the tail is decoded: page scripts may be emitted after </html>.
+  const tailBytes = Math.min(body.byteLength, 262_144);
+  const tail = new TextDecoder('latin1').decode(
+    new Uint8Array(body, body.byteLength - tailBytes, tailBytes)
+  );
+  const complete = body.byteLength > 2000 && tail.includes('</body>');
+
+  if (complete) {
+    try {
+      await cache!.put(key, out.clone());
+    } catch {
+      // A failed put must never break the response.
+    }
   }
 
   return out;

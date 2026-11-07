@@ -1,16 +1,14 @@
 import type { APIRoute } from 'astro';
-import { getBooks, getEnglishBooks, getAllTags } from '../utils/data';
-import { getBookUrl, getChapterUrl, slugify } from '../utils/seo';
-
-interface UrlEntry {
-  loc: string;
-  lastmod: string;
-}
+import { getBooks, getEnglishBooks } from '../utils/data';
+import { planSitemap, renderIndex } from '../utils/sitemap';
 
 /**
- * Building this document walks every book and every chapter (~50k URLs, ~6 MB
- * of XML). Doing that on each request was the single most expensive route on
- * the free Workers plan, so the rendered XML is cached at the edge.
+ * Sitemap index. The catalog is ~2,000 books and ~75,000 chapters, which is
+ * more than a single sitemap may contain (50,000 URLs), so the URL set lives in
+ * /sitemap-<n>.xml shards and this document lists them.
+ *
+ * Both the index and the shards are cached at the edge: rebuilding the URL set
+ * walks the whole catalog and was the most expensive route on the free plan.
  */
 const CACHE_TTL_SECONDS = 21_600; // 6 h
 const STALE_WHILE_REVALIDATE = 86_400;
@@ -18,39 +16,19 @@ const STALE_WHILE_REVALIDATE = 86_400;
 export const GET: APIRoute = async ({ request }) => {
   const origin = new URL(request.url).origin;
   const cache = (globalThis as any).caches?.default as Cache | undefined;
-  const cacheKey = new Request(`${origin}/__cache__/sitemap.xml`, { method: 'GET' });
+  const cacheKey = new Request(`${origin}/__cache__/sitemap-index.xml`, { method: 'GET' });
 
   if (cache) {
     const hit = await cache.match(cacheKey);
-    if (hit) return hit;
-  }
-
-  const now = new Date().toISOString();
-  const allBooks = await getBooks();
-  const books = getEnglishBooks(allBooks);
-  const entries: UrlEntry[] = [{ loc: origin, lastmod: now }];
-
-  // Novel pages and chapter pages
-  for (const book of books) {
-    const bookUrl = `${origin}${getBookUrl(book)}`;
-    entries.push({ loc: bookUrl, lastmod: now });
-
-    const totalChapters = book.total_chapters || 0;
-    for (let i = 1; i <= totalChapters; i++) {
-      entries.push({ loc: `${origin}${getChapterUrl(book, i)}`, lastmod: now });
+    if (hit) {
+      const headers = new Headers();
+      hit.headers.forEach((value, name) => headers.set(name, value));
+      return new Response(hit.body, { status: hit.status, headers });
     }
   }
 
-  // Tag pages (slug URLs)
-  const tags = getAllTags(books);
-  for (const tag of tags) {
-    entries.push({ loc: `${origin}/tag/${slugify(tag)}`, lastmod: now });
-  }
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${entries.map(e => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n  </url>`).join('\n')}
-</urlset>`;
+  const books = getEnglishBooks(await getBooks());
+  const xml = renderIndex(planSitemap(books), origin, new Date().toISOString());
 
   const response = new Response(xml, {
     headers: {
@@ -59,7 +37,7 @@ ${entries.map(e => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}<
     },
   });
 
-  if (cache) {
+  if (cache && books.length > 0) {
     try {
       await cache.put(cacheKey, response.clone());
     } catch {
