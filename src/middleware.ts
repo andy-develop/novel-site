@@ -42,6 +42,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // still set its own response headers.
     const headers = new Headers();
     hit.headers.forEach((value, name) => headers.set(name, value));
+    headers.set('X-Lyriq-Cache', 'hit');
     return new Response(hit.body, { status: hit.status, headers });
   }
 
@@ -55,9 +56,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Chapter pages declare their own browser policy; the edge TTL is capped so
   // corrected text is visible within minutes rather than days.
   headers.set('Cache-Control', edgeCacheControl(res.headers.get('cache-control')));
-
   const body = await res.arrayBuffer();
-  const out = new Response(body, { status: 200, statusText: res.statusText, headers });
 
   // A truncated render (Astro streams, so a runtime error yields 200 + partial
   // HTML) must never be cached; those responses have no closing body tag.
@@ -67,6 +66,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     new Uint8Array(body, body.byteLength - tailBytes, tailBytes)
   );
   const complete = body.byteLength > 2000 && tail.includes('</body>');
+
+  headers.set('X-Lyriq-Cache', complete ? 'miss' : 'bypass');
+  const out = new Response(body, { status: 200, statusText: res.statusText, headers });
 
   if (complete) {
     try {
