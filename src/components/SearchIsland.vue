@@ -4,22 +4,39 @@ import MiniSearch from 'minisearch'
 import { getBookshelf, addToBookshelf, removeFromBookshelf, getReadingProgress } from '../utils/storage.js'
 
 const props = defineProps({
-  books: Array,
+  indexUrl: { type: String, default: '/search-index.json' },
 })
 
 const query = ref('')
 const ms = ref(null)
+const books = ref([])
 const shelf = ref([])
 const progress = ref({})
+const indexState = ref('idle') // idle | loading | ready | error
 
-onMounted(() => {
+function buildIndex() {
   const idx = new MiniSearch({
     fields: ['title', 'author', 'tags', 'intro'],
     storeFields: ['id', 'title', 'author', 'tags', 'intro', 'total_chapters', 'slug'],
     searchOptions: { boost: { title: 3, author: 2 }, prefix: true, fuzzy: 0.2 }
   })
-  idx.addAll(props.books)
+  idx.addAll(books.value)
   ms.value = idx
+  indexState.value = 'ready'
+}
+
+// The corpus (~2k books) is fetched on first interaction instead of being
+// inlined into every page's HTML.
+function ensureIndex() {
+  if (indexState.value === 'ready' || indexState.value === 'loading') return
+  indexState.value = 'loading'
+  fetch(props.indexUrl)
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json() })
+    .then(d => { books.value = Array.isArray(d) ? d : []; buildIndex() })
+    .catch(() => { indexState.value = 'error' })
+}
+
+onMounted(() => {
   shelf.value = getBookshelf()
   progress.value = getReadingProgress()
 })
@@ -30,7 +47,7 @@ const results = computed(() => {
   if (!hasSearch.value || !ms.value) return []
   const res = ms.value.search(query.value.trim())
   const ids = new Set(res.map(r => r.id))
-  return props.books
+  return books.value
     .filter(b => ids.has(b.id))
     .sort((a, b) => res.findIndex(r => r.id === a.id) - res.findIndex(r => r.id === b.id))
 })
@@ -75,7 +92,7 @@ function bookUrl(book) {
 }
 
 function shelfUrl(bookId) {
-  const b = props.books.find(book => book.id === bookId)
+  const b = books.value.find(book => book.id === bookId)
   return b ? bookUrl(b) : `/novel/${bookId}`
 }
 </script>
@@ -86,7 +103,7 @@ function shelfUrl(bookId) {
       <a href="/" class="logo"><span>L</span>YRIQ</a>
       <div class="search-wrap">
         <span class="icon">⌕</span>
-        <input type="search" v-model="query" placeholder="Search by title, author, or synopsis..." />
+        <input type="search" v-model="query" placeholder="Search by title, author, or synopsis..." @focus="ensureIndex" @input="ensureIndex" />
         <button v-if="hasSearch" class="search-clear" @click="query = ''" aria-label="Clear search">×</button>
       </div>
     </div>
@@ -128,8 +145,11 @@ function shelfUrl(bookId) {
         </a>
       </div>
     </div>
+    <div v-else-if="indexState !== 'ready'" class="empty-state">
+      <p>{{ indexState === 'error' ? 'Search is unavailable right now.' : 'Loading search…' }}</p>
+    </div>
     <div v-else class="empty-state">
-      <p>No novels found for "{{ query.trim }}"</p>
+      <p>No novels found for "{{ query.trim() }}"</p>
     </div>
   </div>
 </template>

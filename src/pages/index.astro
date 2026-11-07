@@ -56,7 +56,7 @@ function cover(title: string) {
 }
 ---
 <BaseLayout title="Home" description={description} canonicalUrl={`${origin}/`} jsonLd={jsonLd} ogImage={getDefaultOgImage(origin)}>
-  <SearchIsland client:load books={books.map(b => ({ ...b, intro: (b.intro || '').slice(0, 120) }))} />
+  <SearchIsland client:load />
 
   <!-- Hero marquee — typographic entry, no image -->
   <section class="hero-marquee" aria-label="Site intro">

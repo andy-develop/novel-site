@@ -7,9 +7,25 @@ interface UrlEntry {
   lastmod: string;
 }
 
+/**
+ * Building this document walks every book and every chapter (~50k URLs, ~6 MB
+ * of XML). Doing that on each request was the single most expensive route on
+ * the free Workers plan, so the rendered XML is cached at the edge.
+ */
+const CACHE_TTL_SECONDS = 21_600; // 6 h
+const STALE_WHILE_REVALIDATE = 86_400;
+
 export const GET: APIRoute = async ({ request }) => {
-  const now = new Date().toISOString();
   const origin = new URL(request.url).origin;
+  const cache = (globalThis as any).caches?.default as Cache | undefined;
+  const cacheKey = new Request(`${origin}/__cache__/sitemap.xml`, { method: 'GET' });
+
+  if (cache) {
+    const hit = await cache.match(cacheKey);
+    if (hit) return hit;
+  }
+
+  const now = new Date().toISOString();
   const allBooks = await getBooks();
   const books = getEnglishBooks(allBooks);
   const entries: UrlEntry[] = [{ loc: origin, lastmod: now }];
@@ -36,7 +52,20 @@ export const GET: APIRoute = async ({ request }) => {
 ${entries.map(e => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n  </url>`).join('\n')}
 </urlset>`;
 
-  return new Response(xml, {
-    headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+  const response = new Response(xml, {
+    headers: {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': `public, max-age=0, s-maxage=${CACHE_TTL_SECONDS}, stale-while-revalidate=${STALE_WHILE_REVALIDATE}`,
+    },
   });
+
+  if (cache) {
+    try {
+      await cache.put(cacheKey, response.clone());
+    } catch {
+      // Ignore cache write failures; the response is still valid.
+    }
+  }
+
+  return response;
 };
