@@ -2,9 +2,5 @@ name = "novel-publisher"
 main = "index.js"
 compatibility_date = "2024-12-01"
 
-[[r2_buckets]]
-binding = "R2_BUCKET"
-bucket_name = "novel-data"
-
 [vars]
-PUBLISH_KEY = "pk_5ab9e053d728e0dbeebeec"
+PUBLISH_KEY = "disabled_2088"
