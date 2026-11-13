@@ -176,6 +176,32 @@ export function getAllTags(books: Book[]): string[] {
   return Array.from(tagSet).sort();
 }
 
+/**
+ * Only tags with at least this many books are linked from the site and listed in
+ * the sitemap. The catalogue carries ~2,970 distinct tags, but ~98 of them cover
+ * the real categories; the long tail is 1-2 book tags that cost a full page
+ * render per crawl and add nothing a reader would browse.
+ */
+export const MIN_BOOKS_PER_INDEXABLE_TAG = 10;
+
+export interface TagStat {
+  tag: string;
+  count: number;
+}
+
+/** Indexable tags with their book counts, most-used first. */
+export function getTagStats(books: Book[], minBooks = MIN_BOOKS_PER_INDEXABLE_TAG): TagStat[] {
+  const counts = new Map<string, number>();
+  for (const book of books) {
+    for (const tag of book.tags || []) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+  return Array.from(counts, ([tag, count]) => ({ tag, count }))
+    .filter(stat => stat.count >= minBooks)
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+}
+
 /* ---------- Single book ---------- */
 
 export function findBook(books: Book[], id: number): Book | undefined {

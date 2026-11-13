@@ -1,20 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchIsland from '../components/SearchIsland.vue';
-import { getBooks, getEnglishBooks, getAllTags, getTagDisplay } from '../utils/data';
+import { getBooks, getEnglishBooks, getTagStats, getTagDisplay } from '../utils/data';
 import { getBookUrl, truncateDescription, slugify, getDefaultOgImage } from '../utils/seo';
 
 const allBooks = await getBooks();
 const books = getEnglishBooks(allBooks);
-const tags = getAllTags(books);
-const tagCounts: Record<string, number> = {};
-for (const b of books) {
-  for (const t of b.tags || []) tagCounts[t] = (tagCounts[t] || 0) + 1;
-}
+// Only the tags that carry real categories are inlined as links; see data.ts.
+const tagStats = getTagStats(books);
 // Sort tags by frequency desc (most popular first) for the progressive tag cloud.
 const INITIAL_TAGS = 15;
 const TAG_BATCH = 20;
-const sortedTags = [...tags].sort((a, b) => (tagCounts[b] ?? 0) - (tagCounts[a] ?? 0));
 
 const PER_PAGE = 20;
 const page = Math.max(1, parseInt(Astro.url.searchParams.get('page') || '1', 10));
@@ -68,8 +64,8 @@ function cover(title: string) {
   <!-- SSR visible grid: crawlers and no-JS users see this -->
   <div class="categories tag-cloud" id="tag-cloud" data-initial={INITIAL_TAGS} data-batch={TAG_BATCH}>
     <a href="/" class="cat-btn active">All</a>
-    {sortedTags.map((t, ti) => (
-      <a href={`/tag/${slugify(t)}`} class="cat-btn" data-tag-index={ti}>{getTagDisplay(t)} <span class="cat-count">({tagCounts[t]})</span></a>
+    {tagStats.map(({ tag: t, count }, ti) => (
+      <a href={`/tag/${slugify(t)}`} class="cat-btn" data-tag-index={ti}>{getTagDisplay(t)} <span class="cat-count">({count})</span></a>
     ))}
     <button type="button" class="cat-btn cat-toggle-btn" id="tag-toggle-btn" aria-expanded="false" aria-label="Show more tags"><span class="caret">More</span></button>
   </div>

@@ -1,4 +1,5 @@
 import type { Book } from './data';
+import { getTagStats } from './data';
 import { getBookUrl, getChapterUrl, slugify } from './seo';
 
 /**
@@ -18,13 +19,16 @@ export interface SitemapShard {
   urlCount: number;
 }
 
+/**
+ * Tag pages listed in the sitemap: only the indexable ones (see
+ * `MIN_BOOKS_PER_INDEXABLE_TAG`). The ~2,800 long-tail tags are 1-2 book pages
+ * that would otherwise eat most of the crawl budget.
+ */
 export function uniqueTagSlugs(books: Book[]): string[] {
   const seen = new Set<string>();
-  for (const book of books) {
-    for (const tag of book.tags || []) {
-      const slug = slugify(tag);
-      if (slug) seen.add(slug);
-    }
+  for (const { tag } of getTagStats(books)) {
+    const slug = slugify(tag);
+    if (slug) seen.add(slug);
   }
   return Array.from(seen).sort();
 }
