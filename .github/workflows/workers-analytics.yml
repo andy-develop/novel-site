@@ -1,7 +1,7 @@
 name: workers-analytics
 
-# Temporary diagnostic: prints 24h Workers invocation/CPU stats so we can see
-# which routes burn CPU on the free plan. Prints aggregates only (no account id).
+# Temporary diagnostic: 24h Workers invocations/CPU, plus zone-level request
+# paths when the token allows it. Prints aggregates only (no account/zone ids).
 
 on:
   workflow_dispatch:
@@ -30,56 +30,76 @@ jobs:
                   'https://api.cloudflare.com/client/v4/' + path,
                   data=json.dumps(payload).encode() if payload is not None else None,
                   headers={'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json'})
-              return json.loads(urllib.request.urlopen(req, timeout=60).read())
+              try:
+                  return json.loads(urllib.request.urlopen(req, timeout=90).read())
+              except urllib.error.HTTPError as e:
+                  return {'errors': [{'code': e.code, 'message': e.read().decode()[:300]}]}
 
           accounts = api('accounts')
-          if not accounts.get('success') or not accounts.get('result'):
-              print('ACCOUNT_READ_FAILED', accounts.get('errors'))
-              raise SystemExit(0)
-
+          if not accounts.get('result'):
+              print('ACCOUNT_READ_FAILED', accounts.get('errors')); raise SystemExit(0)
           acct = accounts['result'][0]['id']
-          print('accounts_visible', len(accounts['result']))
 
-          scripts = api(f'accounts/{acct}/workers/scripts')
-          print('scripts', [s['id'] for s in scripts.get('result') or []] if scripts.get('success') else scripts.get('errors'))
-
-          query = """query($a:String!,$f:Time!,$t:Time!){viewer{accounts(filter:{accountTag:$a}){
-            workersInvocationsAdaptive(limit:10000,filter:{datetime_geq:$f,datetime_lt:$t}){
-              sum{requests errors subrequests}
-              quantiles{cpuTimeP50 cpuTimeP99}
-              dimensions{scriptName status datetimeHour}}}}}"""
-
-          now = dt.datetime.utcnow()
+          now = dt.datetime.now(dt.UTC)
           f = (now - dt.timedelta(hours=24)).strftime('%Y-%m-%dT%H:00:00Z')
           t = now.strftime('%Y-%m-%dT%H:00:00Z')
-          gql = api('graphql', {'query': query, 'variables': {'a': acct, 'f': f, 't': t}})
-          if gql.get('errors'):
-              print('GQL_ERROR', gql['errors'])
+          print('window_utc', f, '->', t)
+
+          q1 = """query($a:String!,$f:Time!,$t:Time!){viewer{accounts(filter:{accountTag:$a}){
+            workersInvocationsAdaptive(limit:10000,filter:{datetime_geq:$f,datetime_lt:$t}){
+              sum{requests errors}
+              quantiles{cpuTimeP50 cpuTimeP99}
+              dimensions{scriptName status datetimeHour}}}}}"""
+          r = api('graphql', {'query': q1, 'variables': {'a': acct, 'f': f, 't': t}})
+          if r.get('errors'):
+              print('GQL_ERROR', r['errors']); raise SystemExit(0)
+          rows = r['data']['viewer']['accounts'][0]['workersInvocationsAdaptive']
+
+          print('-- hourly x status (novel-site)')
+          per = collections.defaultdict(collections.Counter)
+          cpu = {}
+          for x in rows:
+              d = x['dimensions']
+              if d['scriptName'] != 'novel-site':
+                  continue
+              h = d['datetimeHour'][:13]
+              per[h][d['status']] += x['sum']['requests']
+              p = cpu.setdefault(h, [0, 0])
+              p[0] = max(p[0], x['quantiles']['cpuTimeP50'] or 0)
+              p[1] = max(p[1], x['quantiles']['cpuTimeP99'] or 0)
+          for h in sorted(per):
+              s = per[h]
+              print(f"  {h}  total={sum(s.values()):>5d}  " + '  '.join(f'{k}={v}' for k, v in s.most_common())
+                    + f"  p50={cpu[h][0]}  p99={cpu[h][1]}")
+
+          zones = api('zones?per_page=50')
+          zl = zones.get('result') or []
+          print('zones_visible', len(zl))
+          if not zl:
+              print('ZONE_ERROR', zones.get('errors'))
               raise SystemExit(0)
 
-          rows = gql['data']['viewer']['accounts'][0]['workersInvocationsAdaptive']
-          by_status = collections.Counter()
-          hourly = collections.defaultdict(lambda: [0, 0, 0])  # req, p50 max, p99 max
-          per_script = collections.Counter()
-          for r in rows:
-              d = r['dimensions']
-              n = r['sum']['requests']
-              by_status[(d['scriptName'], d['status'])] += n
-              per_script[d['scriptName']] += n
-              h = hourly[d['datetimeHour'][:13]]
-              h[0] += n
-              h[1] = max(h[1], r['quantiles']['cpuTimeP50'] or 0)
-              h[2] = max(h[2], r['quantiles']['cpuTimeP99'] or 0)
+          zone = zl[0]['id']
+          q2 = """query($z:String!,$f:Time!,$t:Time!){viewer{zones(filter:{zoneTag:$z}){
+            httpRequestsAdaptiveGroups(limit:40,filter:{datetime_geq:$f,datetime_lt:$t},orderBy:[count_DESC]){
+              count
+              dimensions{clientRequestPath clientRequestHTTPMethodName edgeResponseStatus}}}}}"""
+          r2 = api('graphql', {'query': q2, 'variables': {'z': zone, 'f': f, 't': t}})
+          if r2.get('errors') or not r2.get('data'):
+              print('PATH_GQL_ERROR', r2.get('errors'))
+          else:
+              groups = r2['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups']
+              print('-- top request paths (zone)')
+              for g in groups:
+                  d = g['dimensions']
+                  print(f"  {g['count']:>7d}  {d['edgeResponseStatus']}  {d['clientRequestHTTPMethodName']}  {d['clientRequestPath'][:70]}")
 
-          print('window_utc', f, '->', t)
-          print('-- per script')
-          for k, v in per_script.most_common():
-              print(f'  {k:28s} {v:>8d}')
-          print('-- per status')
-          for k, v in by_status.most_common(20):
-              print(f'  {k[0]:28s} {k[1]:20s} {v:>8d}')
-          print('-- hourly (requests, cpuTimeP50 us, cpuTimeP99 us)')
-          for h in sorted(hourly):
-              a, p50, p99 = hourly[h]
-              print(f'  {h}  req={a:>6d}  p50={p50:>7d}  p99={p99:>7d}')
+          q3 = """query($z:String!,$f:Time!,$t:Time!){viewer{zones(filter:{zoneTag:$z}){
+            httpRequestsAdaptiveGroups(limit:15,filter:{datetime_geq:$f,datetime_lt:$t},orderBy:[count_DESC]){
+              count dimensions{clientRequestHTTPHost clientRequestScheme}}}}}"""
+          r3 = api('graphql', {'query': q3, 'variables': {'z': zone, 'f': f, 't': t}})
+          if not r3.get('errors') and r3.get('data'):
+              print('-- hosts')
+              for g in r3['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups']:
+                  print('  ', g['count'], g['dimensions'])
           PY
