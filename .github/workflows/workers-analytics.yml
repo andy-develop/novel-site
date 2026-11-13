@@ -41,7 +41,7 @@ jobs:
           acct = accounts['result'][0]['id']
 
           now = dt.datetime.now(dt.UTC)
-          f = (now - dt.timedelta(hours=24)).strftime('%Y-%m-%dT%H:00:00Z')
+          f = (now - dt.timedelta(hours=72)).strftime('%Y-%m-%dT%H:00:00Z')
           t = now.strftime('%Y-%m-%dT%H:00:00Z')
           print('window_utc', f, '->', t)
 
