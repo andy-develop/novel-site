@@ -1,0 +1,85 @@
+name: workers-analytics
+
+# Temporary diagnostic: prints 24h Workers invocation/CPU stats so we can see
+# which routes burn CPU on the free plan. Prints aggregates only (no account id).
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/workers-analytics.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query Workers analytics
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, datetime as dt, collections
+
+          tok = os.environ['CF_TOKEN']
+
+          def api(path, payload=None):
+              req = urllib.request.Request(
+                  'https://api.cloudflare.com/client/v4/' + path,
+                  data=json.dumps(payload).encode() if payload is not None else None,
+                  headers={'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json'})
+              return json.loads(urllib.request.urlopen(req, timeout=60).read())
+
+          accounts = api('accounts')
+          if not accounts.get('success') or not accounts.get('result'):
+              print('ACCOUNT_READ_FAILED', accounts.get('errors'))
+              raise SystemExit(0)
+
+          acct = accounts['result'][0]['id']
+          print('accounts_visible', len(accounts['result']))
+
+          scripts = api(f'accounts/{acct}/workers/scripts')
+          print('scripts', [s['id'] for s in scripts.get('result') or []] if scripts.get('success') else scripts.get('errors'))
+
+          query = """query($a:String!,$f:Time!,$t:Time!){viewer{accounts(filter:{accountTag:$a}){
+            workersInvocationsAdaptive(limit:10000,filter:{datetime_geq:$f,datetime_lt:$t}){
+              sum{requests errors subrequests}
+              quantiles{cpuTimeP50 cpuTimeP99}
+              dimensions{scriptName status datetimeHour}}}}}"""
+
+          now = dt.datetime.utcnow()
+          f = (now - dt.timedelta(hours=24)).strftime('%Y-%m-%dT%H:00:00Z')
+          t = now.strftime('%Y-%m-%dT%H:00:00Z')
+          gql = api('graphql', {'query': query, 'variables': {'a': acct, 'f': f, 't': t}})
+          if gql.get('errors'):
+              print('GQL_ERROR', gql['errors'])
+              raise SystemExit(0)
+
+          rows = gql['data']['viewer']['accounts'][0]['workersInvocationsAdaptive']
+          by_status = collections.Counter()
+          hourly = collections.defaultdict(lambda: [0, 0, 0])  # req, p50 max, p99 max
+          per_script = collections.Counter()
+          for r in rows:
+              d = r['dimensions']
+              n = r['sum']['requests']
+              by_status[(d['scriptName'], d['status'])] += n
+              per_script[d['scriptName']] += n
+              h = hourly[d['datetimeHour'][:13]]
+              h[0] += n
+              h[1] = max(h[1], r['quantiles']['cpuTimeP50'] or 0)
+              h[2] = max(h[2], r['quantiles']['cpuTimeP99'] or 0)
+
+          print('window_utc', f, '->', t)
+          print('-- per script')
+          for k, v in per_script.most_common():
+              print(f'  {k:28s} {v:>8d}')
+          print('-- per status')
+          for k, v in by_status.most_common(20):
+              print(f'  {k[0]:28s} {k[1]:20s} {v:>8d}')
+          print('-- hourly (requests, cpuTimeP50 us, cpuTimeP99 us)')
+          for h in sorted(hourly):
+              a, p50, p99 = hourly[h]
+              print(f'  {h}  req={a:>6d}  p50={p50:>7d}  p99={p99:>7d}')
+          PY
