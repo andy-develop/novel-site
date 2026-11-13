@@ -1,4 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
+import { dataStats } from './utils/data';
 
 /**
  * Edge HTML cache.
@@ -42,8 +43,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (!cacheable) return next();
 
   const key = new Request(url.toString(), { method: 'GET' });
+  // ?debug=1 forces a fresh render and reports timing; it never touches the cache.
+  const debug = url.searchParams.has('debug');
+  const startedAt = Date.now();
 
-  const hit = await cache!.match(key);
+  const hit = debug ? null : await cache!.match(key);
   if (hit) {
     // Cache API responses have immutable headers; copy them so the runtime can
     // still set its own response headers.
@@ -54,6 +58,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const res = await next();
+  const renderMs = Date.now() - startedAt;
 
   const type = res.headers.get('content-type') ?? '';
   if (res.status !== 200 || !type.includes('text/html')) return res;
@@ -74,9 +79,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const complete = body.byteLength > 2000 && tail.includes('</body>');
 
   headers.set('X-Lyriq-Cache', complete ? 'miss' : 'bypass');
+  if (debug) {
+    headers.set('X-Debug-Render-Ms', String(renderMs));
+    headers.set('X-Debug-Body-Kb', String(Math.round(body.byteLength / 1024)));
+    headers.set('X-Debug-Books', `${dataStats.cache}:${dataStats.fetchMs}ms:${Math.round(dataStats.bytes / 1024)}kb:map${dataStats.mapMs}ms`);
+  }
   const out = new Response(body, { status: 200, statusText: res.statusText, headers });
 
-  if (complete) {
+  if (complete && !debug) {
     try {
       await cache!.put(key, out.clone());
     } catch {

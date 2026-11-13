@@ -133,20 +133,36 @@ let _booksCache: Book[] | null = null;
 let _booksCacheTs = 0;
 const BOOKS_CACHE_TTL_MS = 60_000;
 
+/** Rolling timing for the last getBooks() call — surfaced by ?debug=1. */
+export const dataStats = { cache: 'cold', fetchMs: 0, bytes: 0, mapMs: 0 };
+
 export async function getBooks(): Promise<Book[]> {
   const now = Date.now();
-  if (_booksCache && now - _booksCacheTs < BOOKS_CACHE_TTL_MS) return _booksCache;
+  if (_booksCache && now - _booksCacheTs < BOOKS_CACHE_TTL_MS) {
+    dataStats.cache = 'warm';
+    dataStats.fetchMs = 0;
+    dataStats.mapMs = 0;
+    return _booksCache;
+  }
   let data: any[] | null = null;
+  const t0 = Date.now();
+  let bytes = 0;
   const bucket = getBucket();
   if (bucket) {
     try {
       const obj = await bucket.get('books.json');
-      if (obj) data = await obj.json();
+      if (obj) { bytes = obj.size; data = await obj.json(); }
     } catch { /* fall through */ }
   }
   if (!data) data = (await httpGetJson(`${R2_PUBLIC}/books.json`)) ?? [];
+  const t1 = Date.now();
   _booksCache = (data as any[]).map(b => ({ ...b, tags: normalizeTags(b.tags) }));
+  const t2 = Date.now();
   _booksCacheTs = now;
+  dataStats.cache = 'cold';
+  dataStats.fetchMs = t1 - t0;
+  dataStats.bytes = bytes;
+  dataStats.mapMs = t2 - t1;
   return _booksCache;
 }
 
