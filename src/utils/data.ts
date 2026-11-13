@@ -68,6 +68,91 @@ async function httpGetJson(url: string): Promise<any> {
   }
 }
 
+/**
+ * Read a JSON object with the Workers Cache API in front of R2.
+ *
+ * A cold isolate otherwise pays a ~1.2 MB R2 read for books.json before it can
+ * render anything (measured 100-290 ms), which dominates the request. The edge
+ * cache is shared by every isolate in the colo, so only the first request per
+ * TTL window pays it.
+ */
+async function getJsonCached(
+  key: string,
+  ttlSeconds = 3600
+): Promise<{ data: any | null; source: 'edge-cache' | 'r2' | 'http' | 'miss'; bytes: number }> {
+  const cache = (globalThis as any).caches?.default as Cache | undefined;
+  // Key on a path of the site's own zone: the Workers Cache API only stores
+  // responses for URLs inside the zone the Worker is bound to.
+  const cacheKey = new Request(`https://lyriq.top/__data__/${key}`, { method: 'GET' });
+
+  if (cache) {
+    try {
+      const hit = await cache.match(cacheKey);
+      if (hit) return { data: await hit.json(), source: 'edge-cache', bytes: 0 };
+    } catch {
+      /* cache read failures must not break rendering */
+    }
+  }
+
+  let text: string | null = null;
+  let bytes = 0;
+  let source: 'r2' | 'http' | 'miss' = 'miss';
+
+  const bucket = getBucket();
+  if (bucket) {
+    try {
+      const obj = await bucket.get(key);
+      if (obj) {
+        bytes = obj.size;
+        text = await obj.text();
+        source = 'r2';
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+
+  if (!text) {
+    try {
+      const res = await fetch(`${R2_PUBLIC}/${key}`, { headers: { 'User-Agent': BROWSER_UA } });
+      if (res.ok) {
+        text = await res.text();
+        bytes = text.length;
+        source = 'http';
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+
+  if (!text) return { data: null, source: 'miss', bytes: 0 };
+
+  let data: any = null;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    return { data: null, source: 'miss', bytes: 0 };
+  }
+
+  if (cache) {
+    try {
+      await cache.put(
+        cacheKey,
+        new Response(text, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': `public, max-age=${ttlSeconds}`,
+          },
+        })
+      );
+    } catch {
+      /* cache writes are best-effort */
+    }
+  }
+
+  return { data, source, bytes };
+}
+
 /* ---------- Tag normalization ---------- */
 
 /**
@@ -134,7 +219,7 @@ let _booksCacheTs = 0;
 const BOOKS_CACHE_TTL_MS = 60_000;
 
 /** Rolling timing for the last getBooks() call — surfaced by ?debug=1. */
-export const dataStats = { cache: 'cold', fetchMs: 0, bytes: 0, mapMs: 0 };
+export const dataStats = { cache: 'cold', source: 'r2', fetchMs: 0, bytes: 0, mapMs: 0 };
 
 export async function getBooks(): Promise<Book[]> {
   const now = Date.now();
@@ -144,22 +229,15 @@ export async function getBooks(): Promise<Book[]> {
     dataStats.mapMs = 0;
     return _booksCache;
   }
-  let data: any[] | null = null;
   const t0 = Date.now();
-  let bytes = 0;
-  const bucket = getBucket();
-  if (bucket) {
-    try {
-      const obj = await bucket.get('books.json');
-      if (obj) { bytes = obj.size; data = await obj.json(); }
-    } catch { /* fall through */ }
-  }
-  if (!data) data = (await httpGetJson(`${R2_PUBLIC}/books.json`)) ?? [];
+  const { data, source, bytes } = await getJsonCached('books.json', 900);
   const t1 = Date.now();
-  _booksCache = (data as any[]).map(b => ({ ...b, tags: normalizeTags(b.tags) }));
+  const list = Array.isArray(data) ? data : [];
+  _booksCache = (list as any[]).map(b => ({ ...b, tags: normalizeTags(b.tags) }));
   const t2 = Date.now();
   _booksCacheTs = now;
   dataStats.cache = 'cold';
+  dataStats.source = source;
   dataStats.fetchMs = t1 - t0;
   dataStats.bytes = bytes;
   dataStats.mapMs = t2 - t1;
@@ -227,29 +305,17 @@ export function findBook(books: Book[], id: number): Book | undefined {
 /* ---------- Catalog ---------- */
 
 export async function getCatalog(bookId: number): Promise<Catalog | null> {
-  const bucket = getBucket();
-  const key = `catalog_${bookId}.json`;
-  if (bucket) {
-    try {
-      const obj = await bucket.get(key);
-      if (obj) return await obj.json();
-    } catch { /* fall through */ }
-  }
-  return await httpGetJson(`${R2_PUBLIC}/${key}`);
+  const { data } = await getJsonCached(`catalog_${bookId}.json`, 900);
+  return (data as Catalog) ?? null;
 }
 
 /* ---------- Chapter content ---------- */
 
 export async function getChapter(bookId: number, chapterId: number): Promise<ChapterData | null> {
-  const bucket = getBucket();
-  const key = `${bookId}/${chapterId}.json`;
-  if (bucket) {
-    try {
-      const obj = await bucket.get(key);
-      if (obj) return await obj.json();
-    } catch { /* fall through */ }
-  }
-  return await httpGetJson(`${R2_PUBLIC}/${key}`);
+  // Chapter text never changes once published, so it can sit in the edge cache
+  // much longer than the catalog.
+  const { data } = await getJsonCached(`${bookId}/${chapterId}.json`, 86_400);
+  return (data as ChapterData) ?? null;
 }
 
 /* ---------- Character config ---------- */

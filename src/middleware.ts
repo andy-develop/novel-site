@@ -82,7 +82,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (debug) {
     headers.set('X-Debug-Render-Ms', String(renderMs));
     headers.set('X-Debug-Body-Kb', String(Math.round(body.byteLength / 1024)));
-    headers.set('X-Debug-Books', `${dataStats.cache}:${dataStats.fetchMs}ms:${Math.round(dataStats.bytes / 1024)}kb:map${dataStats.mapMs}ms`);
+    headers.set('X-Debug-Books', `${dataStats.cache}:${dataStats.source}:${dataStats.fetchMs}ms:${Math.round(dataStats.bytes / 1024)}kb:map${dataStats.mapMs}ms`);
   }
   const out = new Response(body, { status: 200, statusText: res.statusText, headers });
 
