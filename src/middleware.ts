@@ -11,15 +11,22 @@ import { defineMiddleware } from 'astro:middleware';
  * Only complete 2xx HTML documents are stored. Redirects, 404s, API routes and
  * static assets are passed through untouched.
  */
-const DEFAULT_SMAXAGE = 900; // 15 min fresh
-const MAX_SMAXAGE = 900; // cap: content fixes should reach readers within minutes
-const DEFAULT_SWR = 86400; // serve stale for a day while revalidating
+const DEFAULT_SMAXAGE = 3_600; // 1 h — home/tag/book pages change as books publish
+const CHAPTER_SMAXAGE = 86_400; // 24 h — a chapter's HTML never changes once written
+const DEFAULT_SWR = 86_400;
 
-function edgeCacheControl(existing: string | null): string {
+/**
+ * Chapter URLs (`/novel/<slug>/<chapterId>`) are immutable: corrections are rare
+ * and chapters arrive as new URLs, so one render per day per URL is enough.
+ * Listing pages (home, tags, book) reflect new chapters and get an hour.
+ */
+function ttlForPath(pathname: string): number {
+  return /^\/novel\/[^/]+\/\d+\/?$/.test(pathname) ? CHAPTER_SMAXAGE : DEFAULT_SMAXAGE;
+}
+
+function edgeCacheControl(existing: string | null, pathname: string): string {
   const maxAge = /max-age=(\d+)/.exec(existing ?? '')?.[1] ?? '0';
-  const declared = Number(/s-maxage=(\d+)/.exec(existing ?? '')?.[1] ?? DEFAULT_SMAXAGE);
-  const sMaxAge = Math.min(declared, MAX_SMAXAGE);
-  return `public, max-age=${maxAge}, s-maxage=${sMaxAge}, stale-while-revalidate=${DEFAULT_SWR}`;
+  return `public, max-age=${maxAge}, s-maxage=${ttlForPath(pathname)}, stale-while-revalidate=${DEFAULT_SWR}`;
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -53,9 +60,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const headers = new Headers();
   res.headers.forEach((value, name) => headers.set(name, value));
-  // Chapter pages declare their own browser policy; the edge TTL is capped so
-  // corrected text is visible within minutes rather than days.
-  headers.set('Cache-Control', edgeCacheControl(res.headers.get('cache-control')));
+  // Chapter pages keep their browser policy; the edge TTL follows the path.
+  headers.set('Cache-Control', edgeCacheControl(res.headers.get('cache-control'), url.pathname));
   const body = await res.arrayBuffer();
 
   // A truncated render (Astro streams, so a runtime error yields 200 + partial
