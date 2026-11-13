@@ -15,6 +15,7 @@ on:
 
 jobs:
   deploy-publisher:
+    if: ${{ inputs.note != 'delete' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
