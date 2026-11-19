@@ -42,9 +42,14 @@ jobs:
           set -uo pipefail
           URL="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/novel-publisher-3/subdomain"
           for i in 1 2 3 4 5 6; do
-            CODE=$(curl -sS -o /tmp/sub.json -w "%{http_code}" --max-time 30 -X PUT \
+            CODE=$(curl -sS -o /tmp/sub.json -w "%{http_code}" --max-time 30 -X POST \
               -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" \
               -d '{"enabled":true,"previews_enabled":false}' "$URL")
+            if [ "$CODE" != "200" ]; then
+              CODE=$(curl -sS -o /tmp/sub.json -w "%{http_code}" --max-time 30 -X PUT \
+                -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" \
+                -d '{"enabled":true,"previews_enabled":false}' "$URL")
+            fi
             echo "attempt $i -> $CODE"
             cat /tmp/sub.json; echo
             if [ "$CODE" = "200" ]; then break; fi
