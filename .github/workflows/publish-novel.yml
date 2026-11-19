@@ -27,13 +27,29 @@ jobs:
           echo "account=$ACC"
           echo "CLOUDFLARE_ACCOUNT_ID=$ACC" >> "$GITHUB_ENV"
 
-      - name: Deploy R2 writer worker
+      - name: Upload R2 writer worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          set -euo pipefail
-          npx --yes wrangler@3.99.0 deploy --config publish-worker/wrangler.toml publish-worker/index.js
-          echo "publisher deployed"
+          set -uo pipefail
+          npx --yes wrangler@3.99.0 deploy --config publish-worker/wrangler.toml publish-worker/index.js || true
+          echo "upload step finished"
+
+      - name: Enable workers.dev route
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -uo pipefail
+          URL="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/novel-publisher/subdomain"
+          for i in 1 2 3 4 5 6; do
+            CODE=$(curl -sS -o /tmp/sub.json -w "%{http_code}" --max-time 30 -X PUT \
+              -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" \
+              -d '{"enabled":true,"previews_enabled":false}' "$URL")
+            echo "attempt $i -> $CODE"
+            cat /tmp/sub.json; echo
+            if [ "$CODE" = "200" ]; then break; fi
+            sleep 8
+          done
 
   delete-publisher:
     if: ${{ inputs.note == 'delete' }}
@@ -46,12 +62,9 @@ jobs:
           set -euo pipefail
           ACC=$(curl -fsS -H "Authorization: Bearer $CF_TOKEN" https://api.cloudflare.com/client/v4/accounts \
                 | python3 -c "import json,sys;print(json.load(sys.stdin)['result'][0]['id'])")
-          echo "before:"
-          curl -fsS -H "Authorization: Bearer $CF_TOKEN" \
-            "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts" | head -c 600; echo
-          curl -fsS -X DELETE -H "Authorization: Bearer $CF_TOKEN" \
+          curl -sS -X DELETE -H "Authorization: Bearer $CF_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts/novel-publisher?force=true" || true
-          sleep 15
+          sleep 10
           echo "after:"
-          curl -fsS -H "Authorization: Bearer $CF_TOKEN" \
-            "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts" | head -c 600; echo
+          curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts" | head -c 400; echo
