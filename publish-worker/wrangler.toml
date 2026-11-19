@@ -7,4 +7,4 @@ binding = "R2_BUCKET"
 bucket_name = "novel-data"
 
 [vars]
-PUBLISH_KEY = "factory-2102-10065y"
+PUBLISH_KEY = "factory-tmq-butmy0"
