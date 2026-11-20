@@ -67,7 +67,7 @@ jobs:
           set -euo pipefail
           ACC=$(curl -fsS -H "Authorization: Bearer $CF_TOKEN" https://api.cloudflare.com/client/v4/accounts \
                 | python3 -c "import json,sys;print(json.load(sys.stdin)['result'][0]['id'])")
-          for N in novel-publisher novel-publisher-2 novel-publisher-3 novel-publisher-4 novel-publisher-5 novel-publisher-6 novel-publisher-7 novel-publisher-8 novel-publisher-9 novel-publisher-10 novel-publisher-11 novel-publisher-12 novel-publisher-13 novel-publisher-14 novel-publisher-15 novel-publisher-16; do
+          for N in novel-publisher novel-publisher-2 novel-publisher-3 novel-publisher-4 novel-publisher-5 novel-publisher-6 novel-publisher-7 novel-publisher-8 novel-publisher-9 novel-publisher-10 novel-publisher-11 novel-publisher-12 novel-publisher-13 novel-publisher-14 novel-publisher-15 novel-publisher-16 novel-publisher-17; do
             curl -sS -X DELETE -H "Authorization: Bearer $CF_TOKEN" \
               "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts/$N?force=true" || true
           done
