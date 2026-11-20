@@ -7,4 +7,4 @@ binding = "R2_BUCKET"
 bucket_name = "novel-data"
 
 [vars]
-PUBLISH_KEY = "factory-2182-g7oxn"
+PUBLISH_KEY = "factory-2183-of2f2"
